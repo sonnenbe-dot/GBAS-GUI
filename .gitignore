@@ -1,0 +1,14 @@
+# Ignore the bin subfolder 
+**/bin/
+
+#Ignore pycache
+**/__pycache__/
+
+# Ignore output folders 
+**/output/
+
+#ignore parameter files
+*parameters*.txt
+
+#ignore database files
+*.db
