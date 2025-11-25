@@ -159,7 +159,7 @@ class main_window(ctk.CTkFrame):
 
         check_params = check_paramsdict(self.paramsdict, self.parameters_list)
         if (paramscheck and not(check_params)):
-            raise Exception("Either parameterfile empty or parameterfile does not include certain parameter values necessary for the GBAS pipeline!\n")
+            print("Either parameterfile empty or parameterfile does not include certain parameter values necessary for the GBAS pipeline!\n")
         
         if (not(self.paramsdict) or not(check_params)):
             print("Setting Parameters to defaults. \n")
@@ -344,23 +344,23 @@ class main_window(ctk.CTkFrame):
 
         runTrimomatic_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, rawsamplenames, self.performance, int(self.paramsdict["NumberCores"]))
         logs["QualityTrimmimg"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs["QualityTrimmimg"]["Time"]:.4g}.\n")
+        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['QualityTrimmimg']['Time']:.4g}.\n")
 
         runUsearch_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, self.performance, int(self.paramsdict["NumberCores"]))
         logs["Merging"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["Merging"]["Time"]) + ".\n")
+        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Merging']['Time']) + ".\n")
 
         runDemultiplexing_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, samples_dict, self.performance, int(self.paramsdict["NumberCores"]))
         logs["Demultiplexing"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["Demultiplexing"]["Time"]) + ".\n")
+        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Demultiplexing']['Time']) + ".\n")
 
         runLengthstatistics_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, self.performance, int(self.paramsdict["NumberCores"]))
         logs["LengthCounts"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["LengthCounts"]["Time"]) + ".\n")
+        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['LengthCounts']['Time']) + ".\n")
 
         runMarkerplots_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, samples_dict)
         logs["Markerplots"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["Markerplots"]["Time"]) + ".\n")
+        self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Markerplots']['Time']) + ".\n")
 
 
 
@@ -412,19 +412,19 @@ class main_window(ctk.CTkFrame):
 
         run_Length_Extraction_GUI(self.textbox_pipeline, self.paramsdict)
         logs["LengthExtraction"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs["LengthExtraction"]["Time"]:.4g}.\n")
+        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['LengthExtraction']['Time']:.4g}.\n")
 
         RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
         logs["ConsensusSeqs"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs["ConsensusSeqs"]["Time"]:.4g}.\n")
+        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['ConsensusSeqs']['Time']:.4g}.\n")
 
         RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
         logs["NCorrection"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs["NCorrection"]["Time"]:.4g}.\n")
+        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['NCorrection']['Time']:.4g}.\n")
 
         run_Allele_Call_GUI(self.textbox_pipeline, self.paramsdict)
         logs["AlleleCall"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs["AlleleCall"]["Time"]:.4g}.\n")
+        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['AlleleCall']['Time']:.4g}.\n")
 
         # inputfolderpath = Path("E:\\Work_Paper_GUI\\PIC\\test_folder")
         # outputfolderpath = Path("E:\\Work_Paper_GUI\\PIC\\output")

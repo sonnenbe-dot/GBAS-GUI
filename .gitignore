@@ -12,3 +12,9 @@
 
 #ignore database files
 *.db
+
+#ignore running main files
+**/run_gbas_gui.py
+
+#ignore toml files for building
+**/pyproject.toml
