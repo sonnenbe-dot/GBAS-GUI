@@ -18,7 +18,8 @@ from GBAS_package_sonnenbe.GUI_widgets.data_prep_widget import data_prep_window
 from GBAS_package_sonnenbe.GUI_widgets.status_widget import status_window
 from GBAS_package_sonnenbe.GUI_widgets.PIC_calculation_widget import PIC_calculation_window
 from GBAS_package_sonnenbe.GUI_widgets.advanced_widget import advanced_window
-from GBAS_package_sonnenbe.GUI_widgets.database_widget import Database_window
+from GBAS_package_sonnenbe.GUI_widgets.database_widget import Database_adding_window, Database_status_window
+from GBAS_package_sonnenbe.GUI_widgets.extract_subset_widget import extract_subset_window
 
 from GBAS_package_sonnenbe.main_functions.trimmomatic import checkInputDir, runTrimomatic, runTrimomatic_GUI
 from GBAS_package_sonnenbe.main_functions.merging import runUsearch, runUsearch_GUI
@@ -102,8 +103,8 @@ class main_window(ctk.CTkFrame):
 
         self.parameterfilepath_default = self.current_workspace / "parameters.txt"
 
-        self.parameters_list = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Rexecutable", "Metadata", "Allelelist", "Database", "Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
-        self.parameters_default = [("Outputfolder", str(self.current_workspace / "output")), ("Bin", str(self.current_workspace / "bin")), ("Rawdata", "None"), ("Primerfile", "None"), ("Samplefile", "None"), ("Rexecutable", "R"), ("Metadata", "None"), ("Allelelist", "None"), ("Database", "None"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
+        self.parameters_list = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Metadata", "Allelelist", "Database", "Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
+        self.parameters_default = [("Outputfolder", str(self.current_workspace / "output")), ("Bin", str(self.current_workspace / "bin")), ("Rawdata", "None"), ("Primerfile", "None"), ("Samplefile", "None"), ("Metadata", "None"), ("Allelelist", "None"), ("Database", "None"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
 
         self.paramsdict = {}
         #self.executablesdict = {}
@@ -111,7 +112,7 @@ class main_window(ctk.CTkFrame):
         self.parse_parameterfile()
 
         self.list_not_mandatory = ["Metadata", "Allelelist", "Database"]
-        self.list_mandatory = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Rexecutable"]
+        self.list_mandatory = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile"]
 
         self.executablesdict = {
             "Folders" : {
@@ -144,6 +145,14 @@ class main_window(ctk.CTkFrame):
         self.checkboxes_pipeline1 = []
         self.checkboxes_pipeline2 = []
         self.checkbox_advanced = []
+
+
+        
+        self.checkbox_include_dict = {}
+        self.checkbox_states_dict2 = {}
+        self.checkbox_states_dict2["Project"] = {}
+        self.checkbox_states_dict2["Metadata2"] = {}
+        self.checkbox_states_dict2["Loci"] = {}
 
         self.build_mainframe()
 
@@ -224,6 +233,8 @@ class main_window(ctk.CTkFrame):
         ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "PIC Calculation", command = self.PIC_calculation).grid(row=1, column=0, padx=20, pady=(10, 10)) 
 
         ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Add to Database", command = self.adding_dataset).grid(row=3, column=0, padx=20, pady=(10, 10))    
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Database Status", command = self.show_database_status).grid(row=4, column=0, padx=20, pady=(10, 10))  
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Extract subset", command = self.extract_subset_from_database).grid(row=5, column=0, padx=20, pady=(10, 10))#extract_subset_from_database_threading
 
     def get_general_params(self):
         #window = tk.Toplevel(self)
@@ -236,7 +247,7 @@ class main_window(ctk.CTkFrame):
         self.parse_parameterfile()
 
         param_list_dirs = ["Outputfolder", "Bin", "Rawdata"]
-        param_list_files = ["Primerfile", "Samplefile", "Rexecutable", "Metadata", "Allelelist"]
+        param_list_files = ["Primerfile", "Samplefile", "Metadata", "Allelelist"]
         param_list_calc = ["Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow"]
         param_list_special = ["Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
         obj = general_params_window(self, self.parameterfilepath, self.current_workspace, self.paramsdict, "Folders", "Files", "Calculation Params", "Additional Params", param_list_dirs, param_list_files, param_list_calc, param_list_special, on_done=self.update_parameterfilepath)
@@ -267,6 +278,12 @@ class main_window(ctk.CTkFrame):
         self.checkbox_states_pipeline_advanced = checkbox_states_pipeline_advanced
         self.performance = performance
 
+    def update_extract(self, text : str, include_dict1 : dict, include_dict2 : dict):
+        self.textbox_pipeline.delete(0.0, 'end')
+        self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
+        self.checkbox_include_dict = include_dict1
+        self.checkbox_states_dict2 = include_dict2
+
     
     def get_data_prep(self):
         self.textbox_pipeline.delete(0.0, 'end')
@@ -283,7 +300,7 @@ class main_window(ctk.CTkFrame):
         #self.executablesdict = get_bin_executables(self.paramsdict["Bin"], self.adaptersfilename, self.RscriptDiploid, self.RscriptHaploid)
 
         #list_not_mandatory = ["Metadata", "Allelelist", "Database"]
-        #list_mandatory = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Rexecutable"]
+        #list_mandatory = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile"]
         Path(self.paramsdict["Outputfolder"]).mkdir(parents=True, exist_ok=True)
         status_window(self, self.paramsdict, self.executablesdict, self.parameters_list, self.list_not_mandatory, self.list_mandatory, on_done=self.update_textbox)
     
@@ -452,14 +469,33 @@ class main_window(ctk.CTkFrame):
 
     def adding_dataset(self):
         self.textbox_pipeline.delete(0.0, 'end')
-        self.textbox_pipeline.insert('end-1c', "Show Database Window \n")
+        self.textbox_pipeline.insert('end-1c', "Show Database Adding Window \n")
         self.parse_parameterfile()
 
         matrix_outputpath = Path(self.paramsdict["Outputfolder"]) / ("AlleleCall/matrix.json")
         if (matrix_outputpath.exists()):
-            Database_window(self, self.current_workspace, self.paramsdict, str(matrix_outputpath), on_done=self.update_textbox)
+            Database_adding_window(self, self.current_workspace, self.paramsdict, str(matrix_outputpath), on_done=self.update_textbox)
         else:
-            Database_window(self, self.current_workspace, self.paramsdict, "", on_done=self.update_textbox)
+            Database_adding_window(self, self.current_workspace, self.paramsdict, "", on_done=self.update_textbox)
+    
+    def show_database_status(self):
+        self.textbox_pipeline.delete(0.0, 'end')
+        self.textbox_pipeline.insert('end-1c', "Show Database Status Window \n")
+        self.parse_parameterfile()
+
+        Database_status_window(self, self.current_workspace, self.paramsdict, on_done=self.update_textbox)
+    
+
+    # def extract_subset_from_database_threading(self):
+    #     thread = threading.Thread(target=self.extract_subset_from_database)
+    #     thread.start()
+
+    def extract_subset_from_database(self):
+        self.textbox_pipeline.delete(0.0, 'end')
+        self.textbox_pipeline.insert('end-1c', "Show Extract Subset Window \n")
+        self.parse_parameterfile()
+
+        extract_subset_window(self, self.current_workspace, self.paramsdict, self.checkbox_include_dict, self.checkbox_states_dict2, self.textbox_pipeline, on_done=self.update_extract)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,9 @@
 # Ignore the bin subfolder 
 **/bin/
 
+# Ignore the dist subfolder 
+**/dist/
+
 #Ignore pycache
 **/__pycache__/
 

@@ -11,6 +11,11 @@ class local_database_sqlite():
         self.cursor = self.connection.cursor() #NOT NULL PRIMARY KEY
     
     def create_tables(self):
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS table_project(
+                            projectname VARCHAR(20) NOT NULL,
+                            ploidy VARCHAR(20) NOT NULL,
+                            CONSTRAINT PK_table_poject PRIMARY KEY(projectname)
+                    );""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS table_loci(
                             Locusname VARCHAR(20) NOT NULL,
                             Forwardsequence VARCHAR(200) NOT NULL,
@@ -21,11 +26,13 @@ class local_database_sqlite():
                     );""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS table_sample(
                             SampleID VARCHAR(20) NOT NULL,
-                            Metadata1 VARCHAR(20), 
+                            projectname VARCHAR(20), 
                             Metadata2 VARCHAR(20),
                             Metadata3 VARCHAR(20),
                             Metadata4 VARCHAR(20),
+                            CONSTRAINT FK_table_project_table_sample FOREIGN KEY(projectname) REFERENCES table_project,
                             CONSTRAINT PK_table_sample PRIMARY KEY(SampleID)
+
                     );""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS table_allele(
                             Alleleindex VARCHAR(20) NOT NULL,
@@ -65,7 +72,7 @@ class local_database_sqlite():
         self.connection.close()
 
 
-    def insert_dataset(self, primers_dict : dict, matrix_dict : dict, meta_dict : dict, metadata_headers : list):
+    def insert_dataset(self, primers_dict : dict, matrix_dict : dict, meta_dict : dict, metadata_headers : list, ploidy : str):
         #samples_already_processed = []
         loci_already_processed = []
 
@@ -75,7 +82,14 @@ class local_database_sqlite():
         added_sequences = 0
         ignored_sequences = 0
 
+        additional_info = ""
+
         try:
+            if (not(ploidy == "diploid" or ploidy == "haploid")):
+                print("\nNeither diploid nor haploid!\n")
+                additional_info += "Neither diploid nor haploid!"
+                return (False, None, added_sequences, additional_info)
+
             for sampleID, data in matrix_dict.items():
                 if (not(sampleID in meta_dict) and not(matrix_dict[sampleID]["Metadata"])):
                     continue
@@ -85,10 +99,17 @@ class local_database_sqlite():
                     list_metadata_values.append(meta_dict[sampleID][header])
                     if (i == 4):
                         break
+                
+
+                row_table_project = (list_metadata_values[0], ploidy)
+                query_table_project = """INSERT OR IGNORE INTO table_project
+                            (projectname, ploidy) values(?, ?);
+                """
+                self.cursor.execute(query_table_project, row_table_project)
 
                 row_table_sample = (sampleID,) + tuple(list_metadata_values)
                 query_table_sample = """INSERT OR IGNORE INTO table_sample
-                            (SampleID, Metadata1, Metadata2, Metadata3, Metadata4) values(?, ?, ?, ?, ?);
+                            (SampleID, projectname, Metadata2, Metadata3, Metadata4) values(?, ?, ?, ?, ?);
                 """
                 self.cursor.execute(query_table_sample, row_table_sample)
                 if self.cursor.rowcount > 0:
@@ -153,11 +174,239 @@ class local_database_sqlite():
                             ignored_sequences += 1
 
             self.connection.commit()
-            return (True, None, added_sequences)
+            return (True, None, added_sequences, additional_info)
         except Exception as e:
             print(f"An Error occurred when adding the dataset into the local database:\n{e}\n")
-            return (False, e, added_sequences)
+            return (False, e, added_sequences, additional_info)
     
+
+    def get_view_for_extracting(self):
+        self.cursor.execute("DROP VIEW IF EXISTS view_extraction")
+        create_view_query_samples = """
+            CREATE VIEW IF NOT EXISTS view_extraction AS
+            SELECT 
+                s.SampleID,
+                s.projectname,
+                s.Metadata2,
+                s.Metadata3,
+                s.Metadata4,
+                p.ploidy,
+                ls.Locusname,
+                l.Forwardsequence,
+                l.Lengthforwardsequence,
+                l.Reversesequence,
+                l.Lengthreversesequence,
+                a.Alleleindex,
+                a.Sequencelength,
+                a.Sequenceread
+            FROM 
+                table_sample s
+
+            INNER JOIN table_project p
+                ON s.projectname = p.projectname
+
+            INNER JOIN beziehung_loci_sample ls
+                ON s.SampleID = ls.SampleID
+
+            INNER JOIN table_loci l
+                ON ls.Locusname = l.Locusname
+
+            LEFT JOIN beziehung_allele_sample bas
+                ON bas.SampleID = s.SampleID
+                AND bas.Locusname = ls.Locusname
+
+            LEFT JOIN table_allele a
+                ON a.Alleleindex = bas.Alleleindex
+                AND a.Locusname = bas.Locusname;
+        """
+        # create_view_query_samples = """
+        #     CREATE VIEW IF NOT EXISTS view_extraction AS
+        #     SELECT 
+        #         s.SampleID,
+        #         s.projectname,
+        #         s.Metadata2,
+        #         s.Metadata3,
+        #         s.Metadata4,
+        #         p.ploidy,
+        #         ls.Locusname,
+        #         l.Forwardsequence,
+        #         l.Lengthforwardsequence,
+        #         l.Reversesequence,
+        #         l.Lengthreversesequence,
+        #         a.Alleleindex,
+        #         a.Sequencelength,
+        #         a.Sequenceread
+        #     FROM 
+        #         table_sample s
+        #     INNER JOIN 
+        #         table_project p
+        #         ON s.projectname = p.projectname
+        #     INNER JOIN 
+        #         beziehung_loci_sample ls
+        #         ON s.SampleID = ls.SampleID
+        #     INNER JOIN 
+        #         table_loci l
+        #         ON ls.Locusname = l.Locusname
+        #     LEFT JOIN
+        #         table_allele a
+        #         ON ls.Locusname = a.Locusname
+        #     INNER JOIN
+        #         beziehung_allele_sample as
+        #         ON s.SampleID = as.SampleID
+        #         ON ls.Locusname
+        # """
+        try:
+            self.cursor.execute(create_view_query_samples)
+            self.connection.commit()
+            print("VIEW 'view_allele_sample' created successfully.")
+        except sq.Error as e:
+            print(f"An error occurred while creating the VIEW: {e}")
+
+    def get_selected_projects(self, project_include):
+        if not project_include:
+            print("Error: 'project_include' list is empty.")
+            return []
+        query = """
+            SELECT 
+                projectname,
+                ploidy
+            FROM 
+                table_project
+            WHERE 
+                projectname IN ({include_placeholders_project}) 
+        """
+
+        include_placeholders_project = ','.join(['?'] * len(project_include))
+        query = query.format(include_placeholders_project=include_placeholders_project)
+
+        # Combine all parameters into a single tuple in the order of placeholders
+        parameters = tuple(project_include)
+
+        try:
+            self.cursor.execute(query, parameters)
+            rows = self.cursor.fetchall()
+            print(f"Number of rows fetched: {len(rows)}")
+            return rows
+        except sq.Error as e:
+            print(f"An error occurred while executing the query: {e}")
+            return []
+
+    def get_selected_loci_project_metadata(self, project_include, metadata_include, loci_include):
+        """
+        Retrieves rows from the view_extraction VIEW where:
+        - Locusname is in loci_include
+        - Project is in project_include
+        - metadata is in metadata_include
+
+        Parameters:
+            loci_include (list of str): List of Locusname values to include.
+            project_include (list of str): List of Project values to include.
+            organism_include (list of str): List of Organism values to include.
+
+        Returns:
+            list of tuples: Retrieved rows matching the criteria.
+        """
+        
+        # Validate that all input lists are non-empty
+        if not loci_include:
+            print("Error: 'loci_include' list is empty.")
+            return []
+        if not project_include:
+            print("Error: 'project_include' list is empty.")
+            return []
+        if not metadata_include:
+            print("Error: 'metadata_include' list is empty.")
+            return []
+
+        # Prepare the SQL query with placeholders
+        query = """
+            SELECT 
+                SampleID,
+                projectname,
+                Metadata2,
+                Metadata3,
+                Metadata4,
+                ploidy,
+                Locusname,
+                Forwardsequence,
+                Lengthforwardsequence,
+                Reversesequence,
+                Lengthreversesequence,
+                Alleleindex,
+                Sequencelength,
+                Sequenceread
+            FROM 
+                view_extraction
+            WHERE 
+                Locusname IN ({include_placeholders_loci}) 
+                AND projectname IN ({include_placeholders_project}) 
+                AND Metadata2 IN ({include_placeholders_metadata})
+        """
+
+        # Generate placeholders for each IN clause based on list lengths
+        include_placeholders_loci = ','.join(['?'] * len(loci_include))
+        include_placeholders_project = ','.join(['?'] * len(project_include))
+        include_placeholders_metadata = ','.join(['?'] * len(metadata_include))
+
+        # Format the query with the correct number of placeholders
+        query = query.format(
+            include_placeholders_loci=include_placeholders_loci,
+            include_placeholders_project=include_placeholders_project,
+            include_placeholders_metadata=include_placeholders_metadata
+        )
+
+        # Combine all parameters into a single tuple in the order of placeholders
+        parameters = tuple(loci_include) + tuple(project_include) + tuple(metadata_include)
+
+        # Debug: Print the final query and parameters
+        # print("Executing SQL Query:")
+        # print(query)
+        # print("With Parameters:")
+        # print(parameters)
+
+        try:
+            # Execute the query with the combined parameters
+            self.cursor.execute(query, parameters)
+            rows = self.cursor.fetchall()
+
+            # Debug: Print the number of rows fetched
+            print(f"Number of rows fetched: {len(rows)}")
+            return rows
+        except sq.Error as e:
+            print(f"An error occurred while executing the query: {e}")
+            return []
+
+
+
+    def get_view_for_extracting2(self):
+        create_view_query = """
+            CREATE VIEW IF NOT EXISTS view_allele_sample2 AS
+            SELECT 
+                t.Locusname,
+                t.Alleleindex,
+                t.Sequencelength,
+                t.Sequenceread,
+                b.SampleID,
+                s.projectname,
+                s.Organism,
+                s.Locality,
+                s.Country
+            FROM 
+                table_allele t
+            INNER JOIN 
+                beziehung_allele_sample b 
+                ON t.Locusname = b.Locusname 
+                AND t.Alleleindex = b.Alleleindex
+            INNER JOIN 
+                table_sample s 
+                ON s.SampleID = b.SampleID;
+        """
+        try:
+            self.cursor.execute(create_view_query)
+            self.connection.commit()
+            print("VIEW 'view_allele_sample' created successfully.")
+        except sq.Error as e:
+            print(f"An error occurred while creating the VIEW: {e}")
 
     def get_number_nonempty_sequences(self):
         query = """SELECT COUNT(*) 
@@ -195,7 +444,7 @@ class local_database_sqlite():
         number = self.cursor.fetchone()
         return number[0]
 
-    def get_distinct(self, query):
+    def get_rows(self, query):
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
         return rows
