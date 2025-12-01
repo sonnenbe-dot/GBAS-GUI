@@ -231,47 +231,56 @@ class extract_subset_window(tk.Toplevel):
         print("Subset rows:\n")
         print(rows_specified)
 
+        # output_dir_path = self.workspace / ("subset_output")
+        # if (not output_dir_path.exists()):
+        #     output_dir_path.mkdir(parents=True, exist_ok=True)
+
+        # subset_matrix_dict = {}
+        # dict_path = output_dir_path / ("subset.json")
+        # loci_list = []
+
+        # for project_row in rows_projects_include:
+        #     subset_matrix_dict[project_row[0]] = {}
+        #     subset_matrix_dict[project_row[0]]["Projectname"] = project_row[0]
+        #     subset_matrix_dict[project_row[0]]["Ploidy"] = project_row[1]
+        #     subset_matrix_dict[project_row[0]]["Samples"] = {}
+
+        #     for row in rows_specified:
+        #         if (not(row[0] in subset_matrix_dict[project_row[0]]["Samples"])):
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]] = {}
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Metadata"] = {
+        #                 "Project" : row[1],
+        #                 "Metadata2" : row[2],
+        #                 "Metadata3" : row[3],
+        #                 "Metadata4" : row[4],
+        #                 "ploidy" : row[5]
+        #             }
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"] = {}
+        #         if (not(row[6] in subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"])):
+        #             if (row[6] not in loci_list):
+        #                 loci_list.append(row[6])
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]] = {}
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"] = {}
+        #         if (not(row[11] == None or row[11] in subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"])):
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]] = {}
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["ID"] = row[11]
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["Length"] = row[12]
+        #             subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["Read"] = row[13]
+
         output_dir_path = self.workspace / ("subset_output")
         if (not output_dir_path.exists()):
             output_dir_path.mkdir(parents=True, exist_ok=True)
 
-        subset_matrix_dict = {}
         dict_path = output_dir_path / ("subset.json")
-        loci_list = []
+        
 
-        for project_row in rows_projects_include:
-            subset_matrix_dict[project_row[0]] = {}
-            subset_matrix_dict[project_row[0]]["Projectname"] = project_row[0]
-            subset_matrix_dict[project_row[0]]["Ploidy"] = project_row[1]
-            subset_matrix_dict[project_row[0]]["Samples"] = {}
-
-            for row in rows_specified:
-                if (not(row[0] in subset_matrix_dict[project_row[0]]["Samples"])):
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]] = {}
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Metadata"] = {
-                        "Project" : row[1],
-                        "Metadata2" : row[2],
-                        "Metadata3" : row[3],
-                        "Metadata4" : row[4],
-                        "ploidy" : row[5]
-                    }
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"] = {}
-                if (not(row[6] in subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"])):
-                    if (row[6] not in loci_list):
-                        loci_list.append(row[6])
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]] = {}
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"] = {}
-                if (not(row[11] == None or row[11] in subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"])):
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]] = {}
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["ID"] = row[11]
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["Length"] = row[12]
-                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["Read"] = row[13]
-
+        subset_matrix_dict, loci_per_project = self.get_subset_matrix(rows_projects_include, rows_specified)
 
         with open(dict_path, "w", encoding="utf-8") as f:
             json.dump(subset_matrix_dict, f, indent=4, ensure_ascii=False)
         
         for projectname, rest in subset_matrix_dict.items():
+            loci_list = loci_per_project[projectname]
             csv_path = output_dir_path / ("matrix_" + projectname + ".csv")
             with open(csv_path , 'w', newline='') as outcsv:
                 csvwriter = csv.writer(outcsv, delimiter=';')
@@ -295,7 +304,62 @@ class extract_subset_window(tk.Toplevel):
                     csvwriter.writerow(row_sample)
 
     def get_genalex_output(self):
-        pass
+        self.textbox_pipeline.delete(0.0, 'end')
+        self.textbox_pipeline.insert('end-1c', "Generating Genalex output from chosen subset.\n")
+
+        project_include, metadata2_include, loci_include = self.set_subset()
+
+        rows_projects_include = self.db_instance.get_selected_projects(project_include)
+        self.db_instance.get_view_for_extracting()
+        rows_specified = self.db_instance.get_selected_loci_project_metadata(project_include, metadata2_include, loci_include)
+
+        output_dir_path = self.workspace / ("subset_output")
+        if (not output_dir_path.exists()):
+            output_dir_path.mkdir(parents=True, exist_ok=True)
+
+        dict_path = output_dir_path / ("subset.json")
+
+        subset_matrix_dict, loci_list = self.get_subset_matrix(rows_projects_include, rows_specified)
+
+        with open(dict_path, "w", encoding="utf-8") as f:
+            json.dump(subset_matrix_dict, f, indent=4, ensure_ascii=False)
+    
+    def get_subset_matrix(self, rows_projects_include : list, rows_specified : list) -> dict:
+        subset_matrix_dict = {}
+        loci_per_project = {}
+        for project_row in rows_projects_include:
+            subset_matrix_dict[project_row[0]] = {}
+            subset_matrix_dict[project_row[0]]["Projectname"] = project_row[0]
+            subset_matrix_dict[project_row[0]]["Ploidy"] = project_row[1]
+            subset_matrix_dict[project_row[0]]["Samples"] = {}
+
+            loci_per_project[project_row[0]] = []
+
+            for row in rows_specified:
+                if (not(row[1] == project_row[0])):
+                    continue
+                if (not(row[0] in subset_matrix_dict[project_row[0]]["Samples"])):
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]] = {}
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Metadata"] = {
+                        "Project" : row[1],
+                        "Metadata2" : row[2],
+                        "Metadata3" : row[3],
+                        "Metadata4" : row[4],
+                        "ploidy" : row[5]
+                    }
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"] = {}
+                if (not(row[6] in subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"])):
+                    if (row[6] not in loci_per_project[project_row[0]]):
+                        loci_per_project[project_row[0]].append(row[6])
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]] = {}
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"] = {}
+                if (not(row[11] == None or row[11] in subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"])):
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]] = {}
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["ID"] = row[11]
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["Length"] = row[12]
+                    subset_matrix_dict[project_row[0]]["Samples"][row[0]]["Loci"][row[6]]["Alleles"][row[13]]["Read"] = row[13]
+
+        return subset_matrix_dict, loci_per_project
 
 
     def updating_checkboxes(self, checkboxes, values, search_var, scrollframe):
