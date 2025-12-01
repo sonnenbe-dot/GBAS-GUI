@@ -47,4 +47,10 @@ When first executing the GUI a main window separated into 3 columns will pop up:
 
 **Preparation**: User defined settings necessary to run the pipeline. This includes locations of input and output files and parameters to be used by each step of the pipeline. Here the following options can be found.
 
+_Pipeline Parameters_: Add settings required to run the pipeline
+_Workspace status_: Checkpoint to evaluate if all the parameters required were added and if they are in conformity
+_Data Preparation_: Import necessary samples into another folder to avoid copy pasting all samples
+_Instructions_: Short version of the manual
+
+
 
