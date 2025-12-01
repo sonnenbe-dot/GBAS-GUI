@@ -39,4 +39,10 @@ If users however wish to set up their own bin folder they can follow the next fe
 
 Once the bin folder is ready the user can proceed with starting the GUI as described above. <br><br>
 
+## GUI overview
+When first executing the GUI a main window separated into 3 columns will pop up:
+<br>
+**Preparation**, **Pipeline** and **Database**
+<br>
+
 
