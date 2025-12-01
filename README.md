@@ -23,7 +23,7 @@ The GUI can be started with the command:
 gbas_gui_vers2_start 
 <br>
 
-Furthermore in order to run the pipeline the user neers to install Python (>3.10) and Java. All other dependencies are downloaded through the installation process.
+Furthermore in order to run the pipeline the user needs to install Python (>3.10) and Java. All other dependencies are downloaded through the installation process.
 
 ## Bin
 The bin folder contains all the necessary external executables in order to run the GBAS pipeline. This folder must be in the same location as the starting point of the GUI application in order to be recognized. The bin folder will contain the executables for Trimmomatic (REF) and Usearch (REF). The first part of the pipeline calls upon these executables; therefore, they are necessary for the pipeline to proceed.
