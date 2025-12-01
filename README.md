@@ -52,5 +52,11 @@ _Workspace status_: Checkpoint to evaluate if all the parameters required were a
 _Data Preparation_: Import necessary samples into another folder to avoid copy pasting all samples<br>
 _Instructions_: Short version of the manual<br><br>
 
+**Pipeline**: Options to actually run the different components of the pipeline <br><br>
+_Advance Mode_: Run individual pipeline components on their own provided the necessary input folders are in the same folder as the GUI application.
+_Individual Mode_: Run individual pipeline components of the first script on their own. Input folders do not need to be in the same folder as the GUI application.
+_Run Length Detection_: Run first part of the pipeline focused on allele call based on amplicon length
+_Run SNP Detection_: Run the second part of the pipeline that takes the outputs from Run Length Detection to call alleles based on whole sequence information.
+
 
 
