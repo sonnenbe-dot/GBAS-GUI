@@ -9,7 +9,9 @@ This manual refers to an updated version of the GBAS pipeline integrating a GUI.
 
 ## Installation
 Users can install the GUI application using PIP with the following command:
+<br>
 pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade GBAS-package-sonnenbe-vers2
+<br>
 After installing the GUI through PIP the user should download the bin folder with the the command:
 gbas_get_bin_vers2
 This will copy the folders and files of the bin into a local bin directory at the same location from where the GUI has been installed.
