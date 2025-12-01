@@ -45,7 +45,7 @@ When first executing the GUI a main window separated into 3 columns will pop up:
 **Preparation**, **Pipeline** and **Database**
 <br>
 
-## Preparation
-The **Preparation** column allows the user to choose the general parameters used for the inputs and check for errors in their content and required format.
+## Preparation:
+User defined settings necessary to run the pipeline. This includes locations of input and output files and parameters to be used by each step of the pipeline. Here the following options can be found.
 
 
