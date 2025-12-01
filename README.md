@@ -13,10 +13,15 @@ Users can install the GUI application using PIP with the following command:
 pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade GBAS-package-sonnenbe-vers2
 <br><br>
 After installing the GUI through PIP the user should download the bin folder with the the command:
+<br><br>
 gbas_get_bin_vers2
+<br><br>
 This will copy the folders and files of the bin into a local bin directory at the same location from where the GUI has been installed.
+<br><br>
 The GUI can be started with the command:
+<br>
 gbas_gui_vers2_start 
+<br>
 
 Furthermore in order to run the pipeline the user neers to install Python (>3.10) and Java. All other dependencies are downloaded through the installation process.
 
