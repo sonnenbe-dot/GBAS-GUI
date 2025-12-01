@@ -45,4 +45,7 @@ When first executing the GUI a main window separated into 3 columns will pop up:
 **Preparation**, **Pipeline** and **Database**
 <br>
 
+## Preparation
+The **Preparation** column allows the user to choose the general parameters used for the inputs and check for errors in their content and required format.
+
 
