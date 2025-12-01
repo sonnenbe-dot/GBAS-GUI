@@ -31,4 +31,12 @@ Below is a graphical view of the bin folder structure.
 <br><br>
 The bin can be either downloaded through the command as described above.
 If users however wish to set up their own bin folder they can follow the next few steps.
+<br><br>
+
+&rarr; Download the Trimmomatic binary (http://www.usadellab.org/cms/?page=trimmomatic), unzip the downloaded folder and add it to the bin folder. This folder also contains the adapters subfolder which has multiple FASTA files containing the different illumina adapters. For our purpose of processing pair-end amplicons adapters are used from the TrueSeqAdaptersInUsage.fa file and thus these adapters are used by default. Users have the option to select different adapters.<br><br>
+ 
+&rarr; Next download Usearch (https://drive5.com/usearch/download.html). Choose the correct binary file depending on your Operating System (Windows, Linux, Mac). These binary files are of filetype GZ and as described on the website, you will need gunzip to decompress the GZ file and get the executable (EXE). Put the executable in the bin folder.<br><br>
+
+Once the bin folder is ready the user can proceed with starting the GUI as described above. <br><br>
+
 
