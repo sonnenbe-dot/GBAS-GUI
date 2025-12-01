@@ -45,12 +45,12 @@ When first executing the GUI a main window separated into 3 columns will pop up:
 **Preparation**, **Pipeline** and **Database**
 <br>
 
-**Preparation**: User defined settings necessary to run the pipeline. This includes locations of input and output files and parameters to be used by each step of the pipeline. Here the following options can be found.
+**Preparation**: User defined settings necessary to run the pipeline. This includes locations of input and output files and parameters to be used by each step of the pipeline. Here the following options can be found.<br><br>
 
-_Pipeline Parameters_: Add settings required to run the pipeline
-_Workspace status_: Checkpoint to evaluate if all the parameters required were added and if they are in conformity
-_Data Preparation_: Import necessary samples into another folder to avoid copy pasting all samples
-_Instructions_: Short version of the manual
+_Pipeline Parameters_: Add settings required to run the pipeline<br>
+_Workspace status_: Checkpoint to evaluate if all the parameters required were added and if they are in conformity<br>
+_Data Preparation_: Import necessary samples into another folder to avoid copy pasting all samples<br>
+_Instructions_: Short version of the manual<br><br>
 
 
 
