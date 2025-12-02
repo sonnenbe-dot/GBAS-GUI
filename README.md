@@ -41,6 +41,8 @@ Once the bin folder is ready the user can proceed with starting the GUI as descr
 
 <h2 align="center"> GUI overview</h2>
 When first executing the GUI a main window separated into 3 columns will pop up:
+<img width="452" height="262" alt="subset_window" src="https://github.com/user-attachments/assets/21b52941-4781-4e13-b574-7ad98ad89ced" />
+
 <br>
 **Preparation**, **Pipeline** and **Database**
 <br>
