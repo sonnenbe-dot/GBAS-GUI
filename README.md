@@ -189,8 +189,11 @@ Each full run of the pipeline results in an Allelematrix (TXT), an Allelelist (T
 <p align="center">
 <img width="638" height="457" alt="combined_output_example_oak" src="https://github.com/user-attachments/assets/206ca101-da93-4719-907c-a8838698c527" />
 </p>
+If no alleles are found per sample locus the _Alleles_ field will be left empty. This is to distinguish between loci which failed for a sample and those that did not. This combined output file can be stored in the local database which will be described in more detail down below. <br> <br>
 
+<h3 align="center"> Allelelist Comparison </h3>
 
+<h3 align="center"> PIC Calculation </h3>
 
 
 
