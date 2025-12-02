@@ -69,8 +69,9 @@ _Add to Database_: Adding genotyping results into a local database incorporating
 _Database Status_: Shows all alleles currently stored in the local database.<br>
 _Extract Subset_: Filtering the stored genotypes and corresponding allele information according to the metadata parameters Project, the metadata parameter and Loci used. Users can generate the matrix output in both CSV and JSON format based on the filtering parameters.<br><br>
 
-## Preparation
-### Pipeline Parameters
+<h2 align="center"> Preparation</h2>
+<h3 align="center"> Pipeline Parameters</h3>
+
 The **Pipeline Parameters** button opens a window separated into 4 subwindows: **Folders**, **Files**, **Calculation Params** and **Additional Params**. <br>
 
 
