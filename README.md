@@ -59,11 +59,11 @@ _Run Length Detection_: Run first part of the pipeline focused on allele call ba
 _Run SNP Detection_: Run the second part of the pipeline that takes the outputs from Run Length Detection to call alleles based on whole sequence information.<br><br>
 
 **Pipeline**: Options to actually run the different components of the pipeline <br><br>
-_Allelelist Comparison_: Shows differences between 2 Allelists
-_PIC Calculation_: Calculates the PIC value per marker for length-based and sequence-baded allele-matrices per project
-_Add to Database_: Adding genotyping results into a local database incorporating metainformation regarding markers used and individuals genotypes. The necessary inputs are: matrix output from the final pipeline step (JSON), a file with samples metadata information, and the primerfile used for generating the matrix output.
-_Database Status_: Shows all alleles currently stored in the local database
-_Extract Subset_: Filtering the stored genotypes and corresponding allele information according to the metadata parameters Project, the metadata parameter and Loci used. Users can generate the matrix output in both CSV and JSON format based on the filtering parameters.
+_Allelelist Comparison_: Shows differences between 2 Allelists.<br>
+_PIC Calculation_: Calculates the PIC value per marker for length-based and sequence-baded allele-matrices per project.<br>
+_Add to Database_: Adding genotyping results into a local database incorporating metainformation regarding markers used and individuals genotypes. The necessary inputs are: matrix output from the final pipeline step (JSON), a file with samples metadata information, and the primerfile used for generating the matrix output.<br>
+_Database Status_: Shows all alleles currently stored in the local database.<br>
+_Extract Subset_: Filtering the stored genotypes and corresponding allele information according to the metadata parameters Project, the metadata parameter and Loci used. Users can generate the matrix output in both CSV and JSON format based on the filtering parameters.<br>
 
 
 
