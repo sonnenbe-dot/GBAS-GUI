@@ -79,4 +79,7 @@ The **Pipeline Parameters** button opens a window separated into 4 subwindows: *
 </p>
 <br>
 
+In order for the SSR-GBAS pipeline to start and process data correctly following parameters need to be set:<br>
+* Outputfolder: Path to the Folder where all results will be stored. By default the path is set to a folder named “output” located in the user's home directory. 
+
 
