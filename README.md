@@ -118,5 +118,21 @@ By clicking on Save Params all your set values will be saved in a paramterfile w
  <img width="546" height="314" alt="paramterfile_example" src="https://github.com/user-attachments/assets/4470e4bf-31a6-43a3-a7ef-fc4a43790ff8" />
 </p>
 <br>
-Lines starting with '#' will be ignored. The remaining lines containing text are of the following format: “parametername = value”. Only the “value” should be changed by the user. Modifying the parameter name will result in the parameter not being recognized by the GUI.
+Lines starting with '#' will be ignored. The remaining lines containing text are of the following format: “parametername = value”. Only the “value” should be changed by the user. Modifying the parameter name will result in the parameter not being recognized by the GUI.<br><br>
+
+A test dataset for the GBAS pipeline for a small set of individuals from oak species (2 samples and 4 markers)  can be  downloaded from the repository and used to test the GBAS workflow yourself.
+This consists in a folder containing a samplefile, a primerfile, and the rawdata folder with the gunzipped FASTQ files.
+<br><br>
+
+<h3 align="center"> Workspace Status </h3>
+Clicking on the Workspace Status button allows the user to check if parameters were correctly set preventing to start runs with empty parameters or invalid paths.<br>
+The user should also see if the bin folder has been correctly placed and if it contains all necessary executables and adapter files that are needed for parts of the pipeline to execute.<br>
+The contents of the samplefile are checked for possible duplicates in both columns (sample identifiers and final sample names), which the user must eliminate or change the FASTQ file names to ensure they are different. Otherwise the GBAS pipeline will  overwrite the  results of the first duplicated entry with the results of the latter duplicate entry. The correct delimiter usage is ("," or ";").
+The content and format of the Primerfile is also checked according to uniqueness and correct delimiter usage (","). Primers for Microsatellites have the name structure: primername_motif; while for remaining marker types: primername_ .<br><br>
+
+The use of underscore as a delimiter plays an important role in the identification of the primername and samplename from the initial raw FASTQ files and all intermediate files produced by the different components of the pipeline. More specifically it is used to divide file names into fields that are read by the pipeline.<br>
+If the user unknowingly used repeated sample names, the pipeline produces a  warning message. 
+At the end of the Workspace Window a message will display if the pipeline is safe to start or not. If it is safe to start (no duplicates in sample file, there are no  missing files in bin, etc.) then the number of input FASTQ files is shown.<br>
+
+
 
