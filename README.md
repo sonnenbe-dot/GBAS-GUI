@@ -96,7 +96,7 @@ The Samplefile contains 2 columns separated by ";" or "," : sample identifier, f
 
 * Metadata: Path to an existing Metadata file which contains Metadata information per SampleID. The file has at minimum 2 columns SampleID and Project but the user can add up to 3 more columns for metadata, allowing a maximum of 4 different metadata values to be added for the final output of the matrix. The first row must contain headers sample, Project and additional headers if the user chooses to use add more metadata values. Below is an example for a  metadata file for Oak samples:<br>
 <p align="center">
- <img width="167" height="113" alt="samplefile_example" src="https://github.com/user-attachments/assets/8a027bf7-afe8-4ad8-9b6f-dab6b94f4a86" />
+<img width="341" height="205" alt="metadata_example" src="https://github.com/user-attachments/assets/45d8aaa6-faba-4fbe-8ef2-5230f3a33c23" />
 </p>
 
 * Allelelist: Path to an existing Allelelist file where newly detected alleles will be added. If no path is given then a brand new Allelelist file will be generated at the end of the pipeline run. Allelelist is a file containing a catalog of all alleles called by the pipeline. This catalog allows for results from multiple runs to be combined into a single dataset, since the alleles in this catalog will be used to produce genotype calls of new runs. New alleles and markers are added to the existing allele list.
