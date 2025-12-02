@@ -132,7 +132,9 @@ The content and format of the Primerfile is also checked according to uniqueness
 
 The use of underscore as a delimiter plays an important role in the identification of the primername and samplename from the initial raw FASTQ files and all intermediate files produced by the different components of the pipeline. More specifically it is used to divide file names into fields that are read by the pipeline.<br>
 If the user unknowingly used repeated sample names, the pipeline produces a  warning message. 
-At the end of the Workspace Window a message will display if the pipeline is safe to start or not. If it is safe to start (no duplicates in sample file, there are no  missing files in bin, etc.) then the number of input FASTQ files is shown.<br>
+At the end of the Workspace Window a message will display if the pipeline is safe to start or not. If it is safe to start (no duplicates in sample file, there are no  missing files in bin, etc.) then the number of input FASTQ files is shown.<br><br>
 
+<h3 align="center"> Data Preparation </h3>
+In many cases the raw gunzipped FASTQ files will be in an external folder. Copy pasting them all into local machine when the user plans to run the GBAS pipeline locally can be memory- and time intensive, especially since most of the time the user only requires the raw gunzipped FASTQ files corresponding to the Sample Identifiers in the samplesheet. Choosing the paths for the rawdata folder, the samplesheet and the outputfolder the user can then import only the FASTQ files which correspond to the Sample Identifiers from the samplesheet, saving memory and time.<br><br>
 
 
