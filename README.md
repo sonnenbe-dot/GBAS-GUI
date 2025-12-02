@@ -199,5 +199,7 @@ The GUI offers the option to determine the absolue PIC (Polymorphism Information
  <img width="316" height="332" alt="PIC_calculation" src="https://github.com/user-attachments/assets/3d1d38e6-8047-4e97-9cca-e1f2eb23d9bf" />
 </p>
 
+The inputfolder needs to have a specific structure in order for the calculation to process. Below is example figure for the folder structure for PIC calculation of the projects **Oak**, **Buvi** and **Spruce**. <br>
+
 
 
