@@ -135,6 +135,10 @@ If the user unknowingly used repeated sample names, the pipeline produces a  war
 At the end of the Workspace Window a message will display if the pipeline is safe to start or not. If it is safe to start (no duplicates in sample file, there are no  missing files in bin, etc.) then the number of input FASTQ files is shown.<br><br>
 
 <h3 align="center"> Data Preparation </h3>
-In many cases the raw gunzipped FASTQ files will be in an external folder. Copy pasting them all into local machine when the user plans to run the GBAS pipeline locally can be memory- and time intensive, especially since most of the time the user only requires the raw gunzipped FASTQ files corresponding to the Sample Identifiers in the samplesheet. Choosing the paths for the rawdata folder, the samplesheet and the outputfolder the user can then import only the FASTQ files which correspond to the Sample Identifiers from the samplesheet, saving memory and time.<br><br>
+In many cases the raw gunzipped FASTQ files will be in an external folder. Copy pasting them all into local machine when the user plans to run the GBAS pipeline locally can be memory- and time intensive, especially since most of the time the user only requires the raw gunzipped FASTQ files corresponding to the Sample Identifiers in the samplesheet. Data Preparation will open a window with the input fields Rawdata, Samplesheet and Output.<br>
+<p align="center">
+ <img width="265" height="193" alt="data_preparation_window" src="https://github.com/user-attachments/assets/b48c400c-3b05-40d7-be73-698ad47d4ec7" />
+</p>
+Choosing the paths for Rawdata, Samplesheet and Output the user can import from Rawdata only the FASTQ files which correspond to the Sample Identifiers from the samplesheet into Output, saving memory and time.<br><br>
 
 
