@@ -148,7 +148,7 @@ Here the user has the option to see a shortened version of the manual and most i
 If all input parameters are set to valid values and no errors are detected by workspace status the GBAS pipeline can start. The middle column of the GUI allows the user to do so in three modes: default mode (each pipeline part runs sequentially one after the other), Advanced Mode (combinations of individual components of the pipeline) and Individual Run mode (run a specific part of the pipeline). The figure showcases the pipeline process.<br>
 
 <p align="center">
-<img width="743" height="468" alt="main_window" src="https://github.com/user-attachments/assets/263fa82d-1092-426e-87f4-eaaf3d48b0c5" />
+<img width="457" height="394" alt="flowchart_pipeline_with_database" src="https://github.com/user-attachments/assets/508cdb3f-0456-4f6d-8229-6cc1c76736aa" />
 </p>
 
 
