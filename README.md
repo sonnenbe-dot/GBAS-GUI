@@ -141,4 +141,14 @@ In many cases the raw gunzipped FASTQ files will be in an external folder. Copy 
 </p>
 Choosing the paths for Rawdata, Samplesheet and Output the user can import from Rawdata only the FASTQ files which correspond to the Sample Identifiers from the samplesheet into Output, saving memory and time.<br><br>
 
+<h3 align="center"> Instructions </h3>
+Here the user has the option to see a shortened version of the manual and most important points summarized in a new window. <br><br>
+
+<h2 align="center"> Pipeline </h2>
+If all input parameters are set to valid values and no errors are detected by workspace status the GBAS pipeline can start. The middle column of the GUI allows the user to do so in three modes: default mode (each pipeline part runs sequentially one after the other), Advanced Mode (combinations of individual components of the pipeline) and Individual Run mode (run a specific part of the pipeline). The figure showcases the pipeline process.<br>
+
+<p align="center">
+<img width="743" height="468" alt="main_window" src="https://github.com/user-attachments/assets/263fa82d-1092-426e-87f4-eaaf3d48b0c5" />
+</p>
+
 
