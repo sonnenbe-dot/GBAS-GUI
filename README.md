@@ -186,6 +186,10 @@ The pipeline takes the  FASTQ files from the MergedOut folder and saves reads in
 
 <h2 align="center"> Database </h2>
 Each full run of the pipeline results in an Allelematrix (TXT), an Allelelist (TXT, JSON, FASTA), and their combined output (JSON). The Allelelist contains all found sequence variants while the Allelematrix contains the final genotype table with allele call based on whole sequence information. The user can choose to use the obtained Allelelist as an input in a future run. The Allelelist will be  extended with newly found variants and data from additional individuals and markers. The combined output contains all found allele sequences per marker and per SampleID as well as Metadata information per sample if a metadata filepath has been given. The figure below shows an example for a combined output in JSON format. <br>
+<p align="center">
+<img width="638" height="457" alt="combined_output_example_oak" src="https://github.com/user-attachments/assets/206ca101-da93-4719-907c-a8838698c527" />
+</p>
+
 
 
 
