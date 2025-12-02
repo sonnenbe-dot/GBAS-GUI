@@ -80,6 +80,11 @@ The **Pipeline Parameters** button opens a window separated into 4 subwindows: *
 <br>
 
 In order for the SSR-GBAS pipeline to start and process data correctly following parameters need to be set:<br>
-* Outputfolder: Path to the Folder where all results will be stored. By default the path is set to a folder named “output” located in the user's home directory. 
+* Outputfolder: Path to the Folder where all results will be stored. By default the path is set to a folder named “output” located in the user's home directory.
+* Bin: Path to the folder named bin containing the necessary third party executables (Trimmomatic, Usearch, both R scripts). The program assumes by default that the bin folder is located at the user’s home directory.
+* Rawdata: Path to a folder containing gunzipped FASTQ files of raw amplicon sequencing data (fileending must be fastq.gz!).
+* Primerfile: A TXT or CSV file (without a header) containing all primers used for the amplification of the target DNA regions. The Primerfile contains 3 columns separated by comma corresponding to: Name of the marker, sequence of primer forward in 5' -> 3' direction, sequence of reverse primer in 5' -> 3' direction. Furthermore each marker name must have the following format: primername_repetitionmotif (eg. Tn1_ACT). The primer name should only be composed by alphanumeric characters. Non microsatellite markers (eg. EPIC) should have the following name structure: primername_. Below is an example of a primerfile.
+
+ 
 
 
