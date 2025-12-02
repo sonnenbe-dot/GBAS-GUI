@@ -41,6 +41,8 @@ Once the bin folder is ready the user can proceed with starting the GUI as descr
 
 <h2 align="center"> GUI overview</h2>
 When first executing the GUI a main window separated into 3 columns will pop up:
+**Preparation**, **Pipeline** and **Database**
+
 <p align="center">
 <img width="743" height="468" alt="main_window" src="https://github.com/user-attachments/assets/263fa82d-1092-426e-87f4-eaaf3d48b0c5" />
 </p>
@@ -48,9 +50,6 @@ When first executing the GUI a main window separated into 3 columns will pop up:
 <p align="center">
 Figure 1:  Main window of the Local graphical user interface (GUI) for handling the GBAS pipeline and corresponding database
 </p>
-<br>
-<br>
-**Preparation**, **Pipeline** and **Database**
 <br>
 
 **Preparation**: User defined settings necessary to run the pipeline. This includes locations of input and output files and parameters to be used by each step of the pipeline. Here the following options can be found.<br><br>
