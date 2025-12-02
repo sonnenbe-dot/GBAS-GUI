@@ -14,7 +14,7 @@ pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade GBAS-p
 <br><br>
 After installing the GUI through PIP the user should download the bin folder with the the command:
 <br><br>
-***gbas_get_bin_vers2***
+gbas_get_bin_vers2
 <br><br>
 This will copy the folders and files of the bin into a local bin directory at the same location from where the GUI has been installed.
 <br><br>
