@@ -112,7 +112,11 @@ The Samplefile contains 2 columns separated by ";" or "," : sample identifier, f
 </p>
 <br><br>
 
-By clicking on Save Params all your set values will be saved in a paramterfile with the name given in parameterfilepath. Every time the GUI is opened the user is asked to input the filepath of the parameterfilepath. If the user chooses just clicks Enter without choosing anything the GUI will try to parse the inputs from a default _parameters.txt_ file. Failing to do so will result in the GUI not able to parse any inputs. Update Params is useful in case the user wants to make a test run with different  parameters settings. This option saves the parameters but only for the current run and the changes are lost once the GUI is closed. Below is an example for a parameterfile:<br>
- 
+By clicking on Save Params all your set values will be saved in a paramterfile with the name given in parameterfilepath. Every time the GUI is opened the user is asked to input the filepath of the parameterfilepath. If the user just clicks Enter without entering anything the GUI will try to parse the inputs from a default _parameters.txt_ filepath. Failing to do so will result in the GUI not able to parse any inputs. Update Params is useful in case the user wants to make a test run with different  parameters settings. This option saves the parameters but only for the current run and the changes are lost once the GUI is closed. Below is an example for a parameterfile:<br>
 
+<p align="center">
+ <img width="546" height="314" alt="paramterfile_example" src="https://github.com/user-attachments/assets/4470e4bf-31a6-43a3-a7ef-fc4a43790ff8" />
+</p>
+<br>
+Lines starting with '#' will be ignored. The remaining lines containing text are of the following format: “parametername = value”. Only the “value” should be changed by the user. Modifying the parameter name will result in the parameter not being recognized by the GUI.
 
