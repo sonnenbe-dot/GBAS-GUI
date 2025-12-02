@@ -101,9 +101,9 @@ The Samplefile contains 2 columns separated by ";" or "," : sample identifier, f
 
 * Allelelist: Path to an existing Allelelist file where newly detected alleles will be added. If no path is given then a brand new Allelelist file will be generated at the end of the pipeline run. Allelelist is a file containing a catalog of all alleles called by the pipeline. This catalog allows for results from multiple runs to be combined into a single dataset, since the alleles in this catalog will be used to produce genotype calls of new runs. New alleles and markers are added to the existing allele list.
 * Calculation Params: The right upper section of the window has multiple parameters which are all already set to default values and do not have to be changed for the pipeline to run. However they can be optimized depending on the type of amplicon sequencing data. These parameters will be referenced in the various script parts of the Pipeline section below. Further explanation on how they interact with the pipeline can be found in this section.
-* Additional Params: These parameters also have default values that do not have to be changed. They will also be referenced in later sections of the manual.<br>
+* Additional Params: These parameters also have default values that do not have to be changed. They will also be referenced in later sections of the manual.<br><br>
 *  Databasefilepath: Path to an existing or new SQlite file (.db) for storing results. The default name is database.db and will be created in the same location from where the GUI was executed the first time the user clicks the button _Add to Database_
-*  Parameterfilepath: Path to an existing or new parameter file (.txt) for storing all input values chosen. The default name is parameters.txt and will be created in the same location from where the GUI was executed the first time the user clicks the button _Save Params_
+*  Parameterfilepath: Path to an existing or new parameter file (.txt) for storing all input values chosen. The default name is parameters.txt and will be created in the same location from where the GUI was executed the first time the user clicks the button _Save Params_ <br><br>
  
 
 
