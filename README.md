@@ -210,5 +210,10 @@ The inputfolder contains a subfolder per project. Each project folder must conta
 * _PIC_results.json_ contains the absolute PIC value (both length- and sequence based) for each marker per project, the absolute PIC difference as well as the individual frequencies of each allele appearing per marker (both length- and sequence based). A positive PIC difference indicates indicates an increase in the PIC value when identifying alleles from the length-based allele-matrix to identifying alles from the sequence-based allele-matrix.
 * _PIC_additional_info.json_ shows for each project the 5 best performing markers based on absolute length-based and sequence-based PIC values as well as on absolute PIC increase from length-based to sequence-based.
 * A plot (PNG) showing for each marker per project a bar representing the PIC value difference from length-based to sequence-based value. A bar to the right indicates an increase from length-based to sequence-based while a bar going to the left indicates a PIC drop.<br><br>
+Below is a figure showcasing the Allele frequencies, PIC values and PIC differences for the Marker Bv1_AATA for the project Buvi.<br>
+<p align="center">
+ <img width="457" height="455" alt="PIC_values_example" src="https://github.com/user-attachments/assets/7457c2a4-8278-4928-9ff2-e6d109871449" />
+</p>
+<br>
 
 
