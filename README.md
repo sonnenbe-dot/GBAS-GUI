@@ -88,6 +88,18 @@ In order for the SSR-GBAS pipeline to start and process data correctly following
  <img width="344" height="76" alt="primerfile_example_small" src="https://github.com/user-attachments/assets/b2bd7b9c-7144-4bd1-bb99-70ff3d0f40ac" />
 </p>
 
+* Samplefile: A TXT or CSV file providing the correspondence between the sample identifier present in the FASTQ files and the final sample name (SampleID). The sample identifier corresponds to the string before the first underscore “_” of the file name. For example, for the file name “P7CS35-P5CS25_S144_L001_R1_001.fastq.gz” the sample identifier would be “P7CS35-P5CS25”.<br>
+The Samplefile contains 2 columns separated by ";" or "," : sample identifier, final sample name (SampleID). Below is an example for a samplesheet containing Oak Illumina data:<br>
+<p align="center">
+ <img width="167" height="113" alt="samplefile_example" src="https://github.com/user-attachments/assets/e7f42b5b-22ae-44f4-91f1-f8529c1d45fc" />
+</p>
+
+* Metadata: Path to an existing Metadata file which contains Metadata information per SampleID. The file has at minimum 2 columns SampleID and Project but the user can add up to 3 more columns for metadata, allowing a maximum of 4 different metadata values to be added for the final output of the matrix. The first row must contain headers sample, Project and additional headers if the user chooses to use add more metadata values. Below is an example for a  metadata file for Oak samples:<br>
+<p align="center">
+ <img width="167" height="113" alt="samplefile_example" src="https://github.com/user-attachments/assets/8a027bf7-afe8-4ad8-9b6f-dab6b94f4a86" />
+</p>
+
+* Allelelist: Path to an existing Allelelist file where newly detected alleles will be added. If no path is given then a brand new Allelelist file will be generated at the end of the pipeline run. Allelelist is a file containing a catalog of all alleles called by the pipeline. This catalog allows for results from multiple runs to be combined into a single dataset, since the alleles in this catalog will be used to produce genotype calls of new runs. New alleles and markers are added to the existing allele list.
  
 
 
