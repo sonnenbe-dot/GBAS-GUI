@@ -110,6 +110,9 @@ The Samplefile contains 2 columns separated by ";" or "," : sample identifier, f
 ***It is important to note that the ”_”separators are important in the filename structure of all intermediate and final output files, so under any circumstances do not add any additional ”_” in the samplenames, primernames and raw data FASTQ filenames besides the ones described above.***
  
 </p>
+<br><br>
+
+By clicking on Save Params all your set values will be saved in a paramterfile with the name given in parameterfilepath. Every time the GUI is opened the user is asked to input the filepath of the parameterfilepath. If the user chooses just clicks Enter without choosing anything the GUI will try to parse the inputs from a default _parameters.txt_ file. Failing to do so will result in the GUI not able to parse any inputs. Update Params is useful in case the user wants to make a test run with different  parameters settings. This option saves the parameters but only for the current run and the changes are lost once the GUI is closed. <br><br>
  
 
 
