@@ -163,6 +163,21 @@ The pipeline produces multiple outputs:
 In order to run the pipeline in normal mode the user can click on the Run Length Detection button to start the first part of the pipeline getting the genotypes based on allele length.  Afterwards the Run SNP Detection can be run for the final allele call.<br><br>
 
 The folders  **QC**, **MergedOut**, **SeparatOut**, **MarkerStatistics** and **MarkerPlots** are created when running Length Detection while the folders **AllelesOut**, **ConsensusOut**, **ConsensusTogether**, **Corrected** and **AlleleCall** when running SNP Detection. These are subfolders of the Outputfolder and will contain all outputs and intermediate files.
-The following section explains in detail the main functions and parts of the pipeline.<br><br>
+The following section explains in detail the main functions and parts of the pipeline.<br><br><br>
+
+The first part of the pipeline runs in five steps: 1st raw reads are quality controlled, 2nd paired reads are merged, 3rd sequences are sorted according to maker, 4th amplicon lengths are counted per individual and marker, and 5th genotypes are defined based on amplicon length.<br><br> 
+
+**Read quality control**:
+First raw FASTQ reads are quality controlled with Trimmomatic by removing 3’ low quality portions  (< 20) and trimming adapter sequences listed in the TrueSeqAdapterInUsage.fa adapterfile . More specifically the Trimmomatic is run with the following parameters:<br><br>
+“ILLUMINACLIP:adapterfilename:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20”
+<br><br>
+Per default the adaperfilename is set as TrueSeqAdaptersInUsage.fa but can be changed in the Pipeline Parameters window in the Files Section (**currently broken!**)<br><br>
+
+More information about these parameters and the resulting output files can be found in the manual of Trimmomatic: http://www.usadellab.org/cms/index.php?page=trimmomatic <br><br>
+
+The resulting FASTQ files are stored in the QC folder. The paired read files contain R1 and R2 in their names corresponding to the forward and reverse directions, respectively .
+
+
+
 
 
