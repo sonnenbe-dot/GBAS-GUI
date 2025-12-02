@@ -151,4 +151,18 @@ If all input parameters are set to valid values and no errors are detected by wo
 <img width="457" height="394" alt="flowchart_pipeline_with_database" src="https://github.com/user-attachments/assets/508cdb3f-0456-4f6d-8229-6cc1c76736aa" />
 </p>
 
+<br>
+As described above the user has to provide the following inputs in order to run the GBAS pipeline:  a Samplefile making the correspondence between fastq names and final samples IDs, a Primerfile providing information regarding primer sequences, and a folder containing all gunzipped FASTQ files of the raw data.<br><br>
+
+The pipeline produces multiple outputs:
+* Allelelist in TXT, JSON and FASTA format containing the catalog of all Allele names and corresponding Sequences per Marker
+* Allelematrix in TXT format containing diploid genotype information where each row represents an individual and each pair of columns a marker. The genotypes are coded in two consecutive cells.  Each cell contains an Integer which represents an the Alleleindex whose sequence can be found in the Allele list. Thus the matrix assigns all found alleles to the corresponding samples and markers.
+* A Combined Output in JSON format merging information from both Allelelist and Allelematrix. If a valid metadata filepath has been set in _Pipeline Parameters_ then the metadata (Project, etc.) will be added for each SampleID in the JSON output. If no valid metadata filepath has been set then the _Metadata_ field of the combined output will be empty.<br><br>
+
+<h3 align="center"> Pipeline details </h3>
+In order to run the pipeline in normal mode the user can click on the Run Length Detection button to start the first part of the pipeline getting the genotypes based on allele length.  Afterwards the Run SNP Detection can be run for the final allele call.<br><br>
+
+The folders  **QC**, **MergedOut**, **SeparatOut**, **MarkerStatistics** and **MarkerPlots** are created when running Length Detection while the folders **AllelesOut**, **ConsensusOut**, **ConsensusTogether**, **Corrected** and **AlleleCall** when running SNP Detection. These are subfolders of the Outputfolder and will contain all outputs and intermediate files.
+The following section explains in detail the main functions and parts of the pipeline.<br><br>
+
 
