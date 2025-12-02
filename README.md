@@ -104,6 +104,12 @@ The Samplefile contains 2 columns separated by ";" or "," : sample identifier, f
 * Additional Params: These parameters also have default values that do not have to be changed. They will also be referenced in later sections of the manual.<br><br>
 *  Databasefilepath: Path to an existing or new SQlite file (.db) for storing results. The default name is database.db and will be created in the same location from where the GUI was executed the first time the user clicks the button _Add to Database_
 *  Parameterfilepath: Path to an existing or new parameter file (.txt) for storing all input values chosen. The default name is parameters.txt and will be created in the same location from where the GUI was executed the first time the user clicks the button _Save Params_ <br><br>
+
+<p align="center">
+ 
+***It is important to note that the ”_”separators are important in the filename structure of all intermediate and final output files, so under any circumstances add any additional ”_” in the samplenames, primernames and raw data FASTQ filenames besides the ones described above.***
+ 
+</p>
  
 
 
