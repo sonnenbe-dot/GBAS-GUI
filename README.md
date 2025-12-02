@@ -74,4 +74,9 @@ _Extract Subset_: Filtering the stored genotypes and corresponding allele inform
 
 The **Pipeline Parameters** button opens a window separated into 4 subwindows: **Folders**, **Files**, **Calculation Params** and **Additional Params**. <br>
 
+<p align="center">
+<img width="450" height="496" alt="general_parameters_window" src="https://github.com/user-attachments/assets/1bb1ca89-2ac1-413c-9800-594407ffecdf" />
+</p>
+<br>
+
 
