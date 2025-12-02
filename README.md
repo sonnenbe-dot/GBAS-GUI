@@ -175,7 +175,14 @@ Per default the adaperfilename is set as TrueSeqAdaptersInUsage.fa but can be ch
 
 More information about these parameters and the resulting output files can be found in the manual of Trimmomatic: http://www.usadellab.org/cms/index.php?page=trimmomatic <br><br>
 
-The resulting FASTQ files are stored in the QC folder. The paired read files contain R1 and R2 in their names corresponding to the forward and reverse directions, respectively .
+The resulting FASTQ files are stored in the QC folder. The paired read files contain R1 and R2 in their names corresponding to the forward and reverse directions, respectively.<br><br>
+
+**Merging paired end reads**:
+In a second step paired reads are merged into a consensus read covering the totality of the amplicon using Usearch. Usearch takes the paired reads in the QC folder as input and merges both forward and reverse reads storing resulting FASTQ files in the  MergedOUT folder. Usearch runs  with the minimum percentage identity parameter (-fastq_pctid) set to 80% and the maximum number of mismatches parameter (-fastq_maxdiffs) set to 40.<br><br>
+
+**Demultiplexing**:
+The Demultiplexing process sorts reads into different markers defined according to the sequences of the amplification primers. Merged amplicon sequences should start and end with the sequences of the forward and reverse primers, respectively. The pipeline compares these parts of the merged read with the primer sequences provided by the user. If the number of mismatches between them is bellow the user defined threshold the read is saved into a new file for the matching marker. The mismatch threshold can be set in the Calculation Params subwindow of the Pipeline Parameters window. By default the mismatch parameter is set to 2.<br>
+The pipeline takes the  FASTQ files from the MergedOut folder and saves reads into a FASTA file per marker within the SeparatOut folder. The FASTA files will have the following name structure: _samplename_primername_motifFASTA_. Demultiplexing yields a large number of fasta files (number of fasta files = number of primers*number of samples). The advanced pipeline mode (which will be described more in detail later) allows the user to start running the GBAS pipeline from this step if files are already trimmed and merged with other tools.<br><br>
 
 
 
