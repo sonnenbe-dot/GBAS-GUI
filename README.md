@@ -7,7 +7,7 @@ The GBAS pipeline as described in Curto et al. (2019) and Tibihika et al (2019) 
 
 This manual refers to an updated version of the GBAS pipeline integrating a GUI. The GUI allows easy usage of the GBAS pipeline by detecting errors in the necessary inputs, the possibility of running individual pipeline parts on their own and the option to store detected alleles in a local database using the SQLite3 module. Furthermore in the process of integrating the SSR-GBAS pipeline into the GUI application parts of the original scripts have been rewritten and enhanced to give the user more insight into the intermediate results of pipeline parts and allow a faster processing time while not changing the basic procedure and goal of each script part.
 
-## Installation
+<h2 align="center"> Installation</h2>
 Users can install the GUI application using PIP with the following command:
 <br><br>
 pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade GBAS-package-sonnenbe-vers2
@@ -25,7 +25,7 @@ gbas_gui_vers2_start
 
 Furthermore in order to run the pipeline the user needs to install Python (>3.10) and Java. All other dependencies are downloaded through the installation process.
 
-## Bin
+<h2 align="center"> Bin</h2>
 The bin folder contains all the necessary external executables in order to run the GBAS pipeline. This folder must be in the same location as the starting point of the GUI application in order to be recognized. The bin folder will contain the executables for Trimmomatic (REF) and Usearch (REF). The first part of the pipeline calls upon these executables; therefore, they are necessary for the pipeline to proceed.
 Below is a graphical view of the bin folder structure.
 <br><br>
@@ -39,7 +39,7 @@ If users however wish to set up their own bin folder they can follow the next fe
 
 Once the bin folder is ready the user can proceed with starting the GUI as described above. <br><br>
 
-## GUI overview
+<h2 align="center"> GUI overview</h2>
 When first executing the GUI a main window separated into 3 columns will pop up:
 <br>
 **Preparation**, **Pipeline** and **Database**
