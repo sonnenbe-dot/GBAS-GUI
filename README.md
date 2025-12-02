@@ -1,4 +1,4 @@
-<p align="center"> # GBAS GUI </p>
+<h1 align="center">GBAS GUI</h1>
 A local graphical user interface (GUI) application which enables a user-friendly handling of the GABS-pipeline from https://github.com/mcurto/SSR-GBS-pipeline
 
 
