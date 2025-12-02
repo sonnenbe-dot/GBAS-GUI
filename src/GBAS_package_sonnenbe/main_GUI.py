@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog
 import tkinter as tk
 import os, argparse, json, re, shutil
 from pathlib import Path
-import platform, threading, multiprocessing, time
+import platform, threading, multiprocessing, time, subprocess
 
 from GBAS_package_sonnenbe.helper_functions.parse_write_parameters import parse_parameterfile, check_paramsdict, new_paramsdict
 from GBAS_package_sonnenbe.helper_functions.parse_executables import check_executables #get_bin_executables
@@ -196,7 +196,9 @@ class main_window(ctk.CTkFrame):
         ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Pipeline Parameters", command = self.get_general_params).grid(row=1, column=0, padx=20, pady=(10, 10)) #, command = self.get_general_params
         ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Workspace Status", command = self.get_status_window).grid(row=2, column=0, padx=20, pady=(10, 20)) #, command = self.check_status
         ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Data Preparation", command = self.get_data_prep).grid(row=3, column=0, padx=20, pady=(10, 20)) #, command = self.check_status
-
+        ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Instructions", command = self.get_instructions).grid(row=5, column=0, padx=20, pady=(20, 5)) #, command = self.get_instructions
+        ctk.CTkLabel(self.parameters, text="Appearance:", font=ctk.CTkFont(size=10, weight="bold")).grid(row=6, column=0, padx=20, pady=(5, 5))
+        ctk.CTkOptionMenu(self.parameters, values=["Dark", "Light"], command=self.change_appearance_mode_event).grid(row=7, column=0, padx=20, pady=(5, 10))
 
 
         self.separator1 = tk.Canvas(self, width=2, bg='black')
@@ -230,11 +232,11 @@ class main_window(ctk.CTkFrame):
         self.database.grid_rowconfigure(5, weight=1)
 
         ctk.CTkLabel(self.database, text="Database", font=ctk.CTkFont(size=28, weight="bold")).grid(row=0, column=0, padx=20, pady=(20, 20), sticky="nsew")
-        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "PIC Calculation", command = self.PIC_calculation).grid(row=1, column=0, padx=20, pady=(10, 10)) 
-
-        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Add to Database", command = self.adding_dataset).grid(row=3, column=0, padx=20, pady=(10, 10))    
-        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Database Status", command = self.show_database_status).grid(row=4, column=0, padx=20, pady=(10, 10))  
-        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Extract subset", command = self.extract_subset_from_database).grid(row=5, column=0, padx=20, pady=(10, 10))#extract_subset_from_database_threading
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Allelelist Comparison").grid(row=1, column=0, padx=20, pady=(10, 10)) #command = self.allelelist_comparison
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "PIC Calculation", command = self.PIC_calculation).grid(row=2, column=0, padx=20, pady=(10, 10)) 
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Add to Database", command = self.adding_dataset).grid(row=4, column=0, padx=20, pady=(10, 10))    
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Database Status", command = self.show_database_status).grid(row=5, column=0, padx=20, pady=(10, 10))  
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Extract subset", command = self.extract_subset_from_database).grid(row=7, column=0, padx=20, pady=(10, 10))#extract_subset_from_database_threading
 
     def get_general_params(self):
         #window = tk.Toplevel(self)
@@ -321,7 +323,12 @@ class main_window(ctk.CTkFrame):
         self.parse_parameterfile()
         
         self.textbox_pipeline.insert("end", "Check Inputs: ")
-        flag_inputs = check_inputs(self.paramsdict, self.executablesdict, self.parameters_list, self.list_mandatory)
+        try:
+            flag_inputs = check_inputs(self.paramsdict, self.executablesdict, self.parameters_list, self.list_mandatory)
+        except Exception as e:
+            flag_inputs = False
+            print(f"Error when parsing inputs for the check:\n{e}\n")
+            
         if (flag_inputs):
             self.textbox_pipeline.insert("end", "Correct.\n")
             self.textbox_pipeline.insert("end", "Pipeline is ready to start.\n\n")
@@ -497,6 +504,39 @@ class main_window(ctk.CTkFrame):
 
         extract_subset_window(self, self.current_workspace, self.paramsdict, self.checkbox_include_dict, self.checkbox_states_dict2, self.textbox_pipeline, on_done=self.update_extract)
 
+
+    def get_instructions(self):
+        print("Get Instructions:")
+        
+        #["ColumnNrSample", "ColumnNrIndexComb", "ColumnNrOrganism", "ColumnNrProject", "ColumnNrCountry", "ColumnNrLocality"]
+        
+        with open("Instructions.txt", 'w') as file:
+            file.write("###Instructions for handling the process of using the SSR-GBAS Pipeline and storing them into a local database: \n\n")
+            file.write("#The GUI is separated into 3 columns. We prepare our workspace through the left column. \n\n")
+            file.write("We need a reference (csv format with columns separated by semicolons (;) \n \n")
+            file.write("Click on the first button 'Reference Parameters'. There first set the path to the reference file. \n")
+            file.write("Afterwards add the columNumbers for the relevant parameters (SampleID, Indexcombination, etc.) Only positive integer numbers are allowed! \n")
+            file.write("Add the number or rows you want to use for the pipeline (number of rows indicates number of samples) \n")
+            file.write("Update the numbers and now create your samplesheet which stores the Information Indexcombo - SampleID \n\n")
+            file.write("Click on the button Pipeline Parameters to set the path for all other folders and files (Primers, Samplesheet, rawfastq folder, etc.): \n")
+            file.write("Important: Inputfiles like above mentioned must be manually added into the workspace! (Same location where the GUI script/exe is located)")
+            file.write("When using Windows you need to set the path to the Rexecutable which is called Rscript.exe \n\n")
+            file.write("#The Genalex Parameters lets you choose through which parameter the genalex output is generated. Only one at the same time possible! \n\n")
+            file.write("The button 'Workspace Status' you can check if all input files and paths have been correctly set up. \n\n\n")
+            file.write("Start the pipeline process in the middle column by first choosing a projectname for your folder where all your pipeline outputs will be stored. \n")
+            file.write("The following 2 buttons run the pipeline. \n")
+            file.write("(1st part handles the trimming, merging, demultiplexing and genotypelengthsearch of most likely alleles")
+            file.write("(2nd part handles the search for SNPs based (denovo or based on a previously produced AlleleList) \n\n\n")
+            file.write("The third column included the storing of output data into a local database and extracting a genalex output based on various parameters. \n\n\n")
+            
+        
+        if (self.paramsdict["Operatingsystem"].lower() == "windows"):
+            os.startfile("Instructions.txt")
+        elif (self.paramsdict["Operatingsystem"].lower() == "linux"):
+            subprocess.call(["xdg-open", "Instructions.txt"])
+
+    def change_appearance_mode_event(self, new_appearance_mode: str):
+        ctk.set_appearance_mode(new_appearance_mode)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,27 @@
+###Instructions for handling the process of using the SSR-GBAS Pipeline and storing them into a local database: 
+
+#The GUI is separated into 3 columns. We prepare our workspace through the left column. 
+
+We need a reference (csv format with columns separated by semicolons (;) 
+ 
+Click on the first button 'Reference Parameters'. There first set the path to the reference file. 
+Afterwards add the columNumbers for the relevant parameters (SampleID, Indexcombination, etc.) Only positive integer numbers are allowed! 
+Add the number or rows you want to use for the pipeline (number of rows indicates number of samples) 
+Update the numbers and now create your samplesheet which stores the Information Indexcombo - SampleID 
+
+Click on the button Pipeline Parameters to set the path for all other folders and files (Primers, Samplesheet, rawfastq folder, etc.): 
+Important: Inputfiles like above mentioned must be manually added into the workspace! (Same location where the GUI script/exe is located)When using Windows you need to set the path to the Rexecutable which is called Rscript.exe 
+
+#The Genalex Parameters lets you choose through which parameter the genalex output is generated. Only one at the same time possible! 
+
+The button 'Workspace Status' you can check if all input files and paths have been correctly set up. 
+
+
+Start the pipeline process in the middle column by first choosing a projectname for your folder where all your pipeline outputs will be stored. 
+The following 2 buttons run the pipeline. 
+(1st part handles the trimming, merging, demultiplexing and genotypelengthsearch of most likely alleles(2nd part handles the search for SNPs based (denovo or based on a previously produced AlleleList) 
+
+
+The third column included the storing of output data into a local database and extracting a genalex output based on various parameters. 
+
+
