@@ -52,11 +52,18 @@ _Workspace status_: Checkpoint to evaluate if all the parameters required were a
 _Data Preparation_: Import necessary samples into another folder to avoid copy pasting all samples<br>
 _Instructions_: Short version of the manual<br><br>
 
-**Pipeline**: Options to actually run the different components of the pipeline <br><br>
+**Database**: Option for storing results in a local database, generating filtered outputs and additional utilities <br><br>
 _Advance Mode_: Run individual pipeline components on their own provided the necessary input folders are in the same folder as the GUI application.<br>
 _Individual Mode_: Run individual pipeline components of the first script on their own. Input folders do not need to be in the same folder as the GUI application.<br>
 _Run Length Detection_: Run first part of the pipeline focused on allele call based on amplicon length.<br>
 _Run SNP Detection_: Run the second part of the pipeline that takes the outputs from Run Length Detection to call alleles based on whole sequence information.<br><br>
+
+**Pipeline**: Options to actually run the different components of the pipeline <br><br>
+_Allelelist Comparison_: Shows differences between 2 Allelists
+_PIC Calculation_: Calculates the PIC value per marker for length-based and sequence-baded allele-matrices per project
+_Add to Database_: Adding genotyping results into a local database incorporating metainformation regarding markers used and individuals genotypes. The necessary inputs are: matrix output from the final pipeline step (JSON), a file with samples metadata information, and the primerfile used for generating the matrix output.
+_Database Status_: Shows all alleles currently stored in the local database
+_Extract Subset_: Filtering the stored genotypes and corresponding allele information according to the metadata parameters Project, the metadata parameter and Loci used. Users can generate the matrix output in both CSV and JSON format based on the filtering parameters.
 
 
 
