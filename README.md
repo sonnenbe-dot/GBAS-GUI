@@ -107,7 +107,7 @@ The Samplefile contains 2 columns separated by ";" or "," : sample identifier, f
 
 <p align="center">
  
-***It is important to note that the ”_”separators are important in the filename structure of all intermediate and final output files, so under any circumstances add any additional ”_” in the samplenames, primernames and raw data FASTQ filenames besides the ones described above.***
+***It is important to note that the ”_”separators are important in the filename structure of all intermediate and final output files, so under any circumstances do not add any additional ”_” in the samplenames, primernames and raw data FASTQ filenames besides the ones described above.***
  
 </p>
  
