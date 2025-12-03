@@ -236,7 +236,7 @@ A relational structure was chosen and implemented for the database and the figur
  <img width="615" height="481" alt="relational_database_scheme_withgrid" src="https://github.com/user-attachments/assets/9dc892f1-ceff-443b-80e9-ca1f96c09591" />
 </p>
 <br>
-Each rectangle represents a table and each connected oval form
+Each rectangle represents a table and the connected oval forms for each table represent it's columns. For example the table Locus contains 3 columns representing the Locus name, and the used Forward and Reverse Primer sequence to amplify that Locus region. Each table is linked by lines and the numbers above the lines indicate the cardinalities, meaning the multiplicities. As an example for the link between Locus and Allele indicates that 1 for Locus we can gain multiple alleles but 1 allele can only belong to one Locus region. Each table has a primary column which uniquely identify each row of the table.
 <br><br>
 If it is the first time adding data then a new SQlite database file will be created with filename given in databasefilepath.<br>
 
