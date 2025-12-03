@@ -242,5 +242,6 @@ Each rectangle represents a table and the connected oval forms for each table re
 If it is the first time adding data then a new SQlite database file will be created with the filename given in the databasefilepath field.<br>
 Afterwards the content from the input filepaths will be parsed and correctly added to the respective tables of the database. With the _Check Status_ Button the current status of the database will be updated and the current number of alleles will be displayed.<br><br>
 
+<h3 align="center"> Extract subset </h3>
 
 along with sample metadata and primer information to an existing database.  The user needs to choose the path to a combined output file (non SQL database), primerfile and, reference metadata file. After choosing the path the user should click on Update to make sure that each path is set to a valid file. By clicking Add to local database the allele sequences along with the metadata and the primer sequence information is added  to the database .
