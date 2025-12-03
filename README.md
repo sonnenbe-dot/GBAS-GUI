@@ -243,5 +243,5 @@ If it is the first time adding data then a new SQlite database file will be crea
 Afterwards the content from the input filepaths will be parsed and correctly added to the respective tables of the database. With the _Check Status_ Button the current status of the database will be updated and the current number of alleles will be displayed.<br><br>
 
 <h3 align="center"> Extract subset </h3>
+The Extract Subset feature can be used to filter final results. It is separated into 3 columns. Each column represents a different parameter for which we can filter our saved data. For now these parameters are the metadata field Project, the second metadata column (depending what the user put as the second metadata column in the metadata file)  Locus name taken from the primer file. In the future more parameters will be included to enhance the filtering options.
 
-along with sample metadata and primer information to an existing database.  The user needs to choose the path to a combined output file (non SQL database), primerfile and, reference metadata file. After choosing the path the user should click on Update to make sure that each path is set to a valid file. By clicking Add to local database the allele sequences along with the metadata and the primer sequence information is added  to the database .
