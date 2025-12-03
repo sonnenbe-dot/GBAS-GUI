@@ -236,9 +236,11 @@ A relational structure was chosen and implemented for the database and the figur
  <img width="615" height="481" alt="relational_database_scheme_withgrid" src="https://github.com/user-attachments/assets/9dc892f1-ceff-443b-80e9-ca1f96c09591" />
 </p>
 <br>
-Each rectangle represents a table and the connected oval forms for each table represent it's columns. For example the table Locus contains 3 columns representing the Locus name, and the used Forward and Reverse Primer sequence to amplify that Locus region. Each table is linked by lines and the numbers above the lines indicate the cardinalities, meaning the multiplicities. As an example for the link between Locus and Allele indicates that 1 for Locus we can gain multiple alleles but 1 allele can only belong to one Locus region. Each table has a primary column which uniquely identify each row of the table.
+Each rectangle represents a table and the connected oval forms for each table represent it's columns. For example the table Locus contains 3 columns representing the Locus name, and the used Forward and Reverse Primer sequence to amplify that Locus region. Each table is linked by lines and the numbers above the lines indicate the cardinalities, meaning the multiplicities. As an example for the link between Locus and Allele indicates that 1 for Locus we can gain multiple alleles but 1 allele can only belong to one Locus region. Each table has a primary column which uniquely identifies each row of the table.
 <br><br>
-If it is the first time adding data then a new SQlite database file will be created with filename given in databasefilepath.<br>
+
+If it is the first time adding data then a new SQlite database file will be created with the filename given in the databasefilepath field.<br>
+Afterwards the content from the input filepaths will be parsed and correctly added to the respective tables of the database. With the _Check Status_ Button the current status of the database will be updated and the current number of alleles will be displayed.<br><br>
 
 
 along with sample metadata and primer information to an existing database.  The user needs to choose the path to a combined output file (non SQL database), primerfile and, reference metadata file. After choosing the path the user should click on Update to make sure that each path is set to a valid file. By clicking Add to local database the allele sequences along with the metadata and the primer sequence information is added  to the database .
