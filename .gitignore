@@ -10,6 +10,12 @@
 # Ignore output folders 
 **/output/
 
+# Ignore output folders 
+**/subset/
+
+# Ignore output folders 
+**/testfolder/
+
 #ignore parameter files
 *parameters*.txt
 

@@ -25,8 +25,10 @@ from GBAS_package_sonnenbe.main_functions.allele_determination import RunVariant
 from GBAS_package_sonnenbe.main_functions.allele_calling import run_Allele_Call_GUI
 
 class advanced_window(tk.Toplevel):
-    def __init__(self, parent, current_workspace : Path, paramsdict : dict, performance : bool, num_cores : int, checkbox_states_pipeline_advanced : dict, executablesdict : dict, parameters_list : list, list_mandatory : list, textbox_pipeline : ctk.CTkTextbox, outputfolders_list1 : list, outputfolders_list2 : list, on_done):
+    def __init__(self, parent, current_workspace : Path, paramsdict : dict, performance : bool, zipping : bool, num_cores : int, checkbox_states_pipeline_advanced : dict, executablesdict : dict, parameters_list : list, list_mandatory : list, textbox_pipeline : ctk.CTkTextbox, outputfolders_list1 : list, outputfolders_list2 : list, filtering_param : float, on_done):
         super().__init__(parent)
+
+        self.filtering_param = filtering_param
 
         self.on_done = on_done
         self.add_dots_pipelinetextbox = False
@@ -53,9 +55,14 @@ class advanced_window(tk.Toplevel):
 
         self.number_cores = num_cores
         self.performance = performance
+        self.zipping = zipping
         self.checkbox_performance = 1
+        self.checkbox_zipping = 1
         if (not(self.performance)):
             self.checkbox_performance = 0
+        if (not(self.zipping)):
+            self.checkbox_zipping = 0
+        
         self.checkbox_states_pipeline_advanced = checkbox_states_pipeline_advanced
         self.checkboxes_pipeline1 = []
         self.checkboxes_pipeline2 = []
@@ -79,8 +86,10 @@ class advanced_window(tk.Toplevel):
                 checkbox_text = checkbox.cget("text")
                 self.checkbox_states_pipeline_advanced[checkbox_text] = checkbox.get()
             
-            for checkbox in self.checkbox_advanced:
-                self.checkbox_performance = checkbox.get()
+            self.checkbox_performance = self.checkbox_advanced[0].get()
+            self.checkbox_zipping = self.checkbox_advanced[1].get()
+            # for checkbox in self.checkbox_advanced:
+            #     self.checkbox_performance = checkbox.get()
 
             #update self.number_cores here as well in the future!
             
@@ -88,7 +97,11 @@ class advanced_window(tk.Toplevel):
                 self.performance = True
             else:
                 self.performance = False
-            self.on_done("Pipeline has not started:", self.performance, self.checkbox_states_pipeline_advanced)
+            if (self.checkbox_zipping):
+                self.zipping = True
+            else:
+                self.zipping = False
+            self.on_done("Pipeline has not started:", self.performance, self.zipping, self.checkbox_states_pipeline_advanced)
         finally:
             self.destroy()
 
@@ -110,10 +123,10 @@ class advanced_window(tk.Toplevel):
         checkbox_performance.grid(row=1, column=0, padx=10, pady=(5, 5), sticky="w")
         self.checkbox_advanced.append(checkbox_performance)
 
-        checkbox_performance_var = tk.IntVar(value = self.checkbox_performance)
-        checkbox_performance = ctk.CTkCheckBox(advanced_input_settings, text="Zipping files", variable=checkbox_performance_var)
-        checkbox_performance.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="w")
-        self.checkbox_advanced.append(checkbox_performance)
+        checkbox_zipping_var = tk.IntVar(value = self.checkbox_zipping)
+        checkbox_zipping = ctk.CTkCheckBox(advanced_input_settings, text="Zipping files", variable=checkbox_zipping_var)
+        checkbox_zipping.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="w")
+        self.checkbox_advanced.append(checkbox_zipping)
         
         advanced_pipeline1_settings_logo = ctk.CTkLabel(self, text="Advanced Pipeline Settings (1):", font=ctk.CTkFont(size=20, weight="bold"))
         advanced_pipeline1_settings_logo.grid(row=3, column=0, padx=20, pady=(20, 20))
@@ -209,6 +222,7 @@ class advanced_window(tk.Toplevel):
                 "ConsensusSeqs" : {},
                 "NCorrection" : {},
                 "AlleleCall" : {},
+                "RamUsage" : {},
                 "Total" : {}
         }
 
@@ -219,25 +233,25 @@ class advanced_window(tk.Toplevel):
         self.append_period()
 
         if (self.checkbox_states_pipeline_advanced["Trimmomatic"] == 1):
-            runTrimomatic_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, rawsamplenames, self.performance, self.number_cores)
+            runTrimomatic_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, rawsamplenames, self.performance, self.number_cores, self.zipping)
             logs["QualityTrimmimg"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs["QualityTrimmimg"]["Time"]:.4g}.\n")
+            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['QualityTrimmimg']['Time']:.4g}.\n")
         if (self.checkbox_states_pipeline_advanced["Usearch"] == 1):
-            runUsearch_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, self.performance, self.number_cores)
+            runUsearch_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, self.performance, self.number_cores, self.zipping)
             logs["Merging"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["Merging"]["Time"]) + ".\n")
+            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Merging']['Time']) + ".\n")
         if (self.checkbox_states_pipeline_advanced["Demultiplexing"] == 1):
             runDemultiplexing_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, samples_dict, self.performance, self.number_cores)
             logs["Demultiplexing"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["Demultiplexing"]["Time"]) + ".\n")
+            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Demultiplexing']['Time']) + ".\n")
         if (self.checkbox_states_pipeline_advanced["Markerstatistics"] == 1):
             runLengthstatistics_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, self.performance, self.number_cores)
             logs["LengthCounts"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["LengthCounts"]["Time"]) + ".\n")
+            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['LengthCounts']['Time']) + ".\n")
         if (self.checkbox_states_pipeline_advanced["Markerplots+Markermatrix"] == 1):
-            runMarkerplots_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, samples_dict)
+            runMarkerplots_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, samples_dict, self.filtering_param)
             logs["Markerplots"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs["Markerplots"]["Time"]) + ".\n")
+            self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Markerplots']['Time']) + ".\n")
 
         self.add_dots_pipelinetextbox = False
         self.textbox_pipeline.insert('end-1c', "\n\nTotal Time spent: " + str(t.total()) + "s \n\n")
@@ -278,6 +292,7 @@ class advanced_window(tk.Toplevel):
                 "ConsensusSeqs" : {},
                 "NCorrection" : {},
                 "AlleleCall" : {},
+                "RamUsage" : {},
                 "Total" : {}
         }
 
@@ -291,19 +306,19 @@ class advanced_window(tk.Toplevel):
         if (self.checkbox_states_pipeline_advanced["LengthExtraction"] == 1):
             run_Length_Extraction_GUI(self.textbox_pipeline, self.paramsdict)
             logs["LengthExtraction"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs["LengthExtraction"]["Time"]:.4g}.\n")
+            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['LengthExtraction']['Time']:.4g}.\n")
         if (self.checkbox_states_pipeline_advanced["ConsensusSequence"] == 1):
             RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, self.number_cores)
             logs["ConsensusSeqs"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs["ConsensusSeqs"]["Time"]:.4g}.\n")
+            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['ConsensusSeqs']['Time']:.4g}.\n")
         if (self.checkbox_states_pipeline_advanced["AlleleDetection"] == 1):
             RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
             logs["NCorrection"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs["NCorrection"]["Time"]:.4g}.\n")
+            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['NCorrection']['Time']:.4g}.\n")
         if (self.checkbox_states_pipeline_advanced["AlleleCall"] == 1):
             run_Allele_Call_GUI(self.textbox_pipeline, self.paramsdict)
             logs["AlleleCall"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs["AlleleCall"]["Time"]:.4g}.\n")
+            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['AlleleCall']['Time']:.4g}.\n")
 
 
 

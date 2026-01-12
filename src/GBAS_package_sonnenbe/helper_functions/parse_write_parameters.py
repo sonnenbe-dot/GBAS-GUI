@@ -103,6 +103,8 @@ def write_parameterfile_helper(keystring : str) -> str:
             return "#Consensusthreshold (float; default = 0.7) \n"
         case "Lengthwindow":
             return "#boundaries on the x-axis of Markerplots \n"
+        case "Filtering":
+            return "#Filters matrix outputs depending on number of zeroes column and row-wise \n"
         case "Ploidy":
             return "#Ploidy level of the data (haploid = barcoding, diploid = SSR): \n"
         case "Operatingsystem":

@@ -1,6 +1,4 @@
 from GBAS_package_sonnenbe.helper_functions.parse_primerfile import get_primers
-from GBAS_package_sonnenbe.helper_functions.filter_matrix import filtering
-
 import pandas as pd
 import json
 import numpy as np
@@ -19,7 +17,7 @@ def main():
     return 0
 
 
-def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_param : float):
+def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path):
     PIC_dict = {}
     for folderpath in inputfolderpath.iterdir():
         if (folderpath.is_dir()):
@@ -51,19 +49,13 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
 
 
             for allele_matrix_path in allele_matrices_path.iterdir():
-                filtered_matrix_path = allele_matrices_path / (allele_matrix_path.stem + "_filtered.csv")
-                filtering(allele_matrix_path, filtered_matrix_path, filtering_param)
-
-                if (filtered_matrix_path.suffix == ".csv"):
-                    df = pd.read_csv(filtered_matrix_path, sep=r"[;,|\t]", engine="python")
-                elif (filtered_matrix_path.suffix == ".xlsx"):
-                    df = pd.read_excel(filtered_matrix_path) #sheet_name="Barcording_database"
+                if (allele_matrix_path.suffix == ".csv"):
+                    df = pd.read_csv(allele_matrix_path, sep=r"[;,|\t]", engine="python")
+                elif (allele_matrix_path.suffix == ".xlsx"):
+                    df = pd.read_excel(allele_matrix_path) #sheet_name="Barcording_database"
                 else:
                     print("\nThis is not excel fileformat!\n")
                     return
-
-                if filtered_matrix_path.exists():
-                    filtered_matrix_path.unlink()
                 
                 print(df)
                 primer_headers = [header.strip() for header in list(df.columns)]
@@ -96,19 +88,13 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
             
 
             for length_matrix_path in length_matrices_path.iterdir():
-                filtered_matrix_path = length_matrices_path / (length_matrix_path.stem + "_filtered.csv")
-                filtering(length_matrix_path, filtered_matrix_path, filtering_param)
-
-                if (filtered_matrix_path.suffix == ".csv"):
-                    df = pd.read_csv(filtered_matrix_path, sep=r"[;,|\t]", engine="python")
-                elif (filtered_matrix_path.suffix == ".xlsx"):
-                    df = pd.read_excel(filtered_matrix_path) #sheet_name="Barcording_database"
+                if (length_matrix_path.suffix == ".csv"):
+                    df = pd.read_csv(length_matrix_path, sep=r"[;,|\t]", engine="python")
+                elif (length_matrix_path.suffix == ".xlsx"):
+                    df = pd.read_excel(length_matrix_path) #sheet_name="Barcording_database"
                 else:
                     print("\nThis is not excel fileformat!\n")
                     return
-                
-                if filtered_matrix_path.exists():
-                    filtered_matrix_path.unlink()
                 
                 df = df.replace({"empty": "0","too little reads": "0"})
                 print(df)
@@ -149,15 +135,6 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
 
     dict_additional = {}
     n = 5
-    
-    for project, rest in PIC_dict.items():
-        primers = [primer for primer in PIC_dict[project]["Markers"].keys()]
-        PIC_excel_path = outputfolderpath / ("PIC_results" + str(project) + ".csv")
-        with open(PIC_excel_path, 'w', newline='') as outcsv:
-            csvwriter = csv.writer(outcsv, delimiter=';')
-            csvwriter.writerow(["Markers", "LengthBasedPic", "SequenceBasedPic", "PIC SequenceBased - PIC Lengthbased"])
-            for primer in primers:
-                csvwriter.writerow([primer] + [rest["Markers"][primer]["LengthBased"]["PIC"]] + [rest["Markers"][primer]["AlleleBased"]["PIC"]] + [rest["Markers"][primer]["PIC SequenceBased - PIC Lengthbased"]])
 
     for project, rest in PIC_dict.items():
         dict_additional[project] = {}
@@ -215,13 +192,7 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
             project = folderpath.name
 
             markers = data[project]["Markers"]
-            #marker_names = list(markers.keys())
-            markers = data[project]["Markers"]
-            marker_names = []
-            for marker, rest in data[project]["Markers"].items():
-                if (rest["AlleleBased"]["PIC"] == 0.0 or rest["LengthBased"]["PIC"] == 0.0):
-                    continue
-                marker_names.append(marker)
+            marker_names = list(markers.keys())
             allele_pics = [markers[m]["AlleleBased"]["PIC"]  for m in marker_names]
             length_pics = [markers[m]["LengthBased"]["PIC"] for m in marker_names]
 
@@ -236,7 +207,7 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
             ax.set_xticks(x)
             ax.set_xticklabels(marker_names, rotation=45, ha="right")
             ax.set_ylabel("PIC value")
-            ax.set_title(f"WAI vs AL PIC – Project {project}")
+            ax.set_title(f"Allele vs Length-based PIC – Project {project}")
             ax.set_ylim(0, 1)
             ax.legend()
 
@@ -249,227 +220,37 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
             print(f"Saved PIC histogram for project '{project}' to {savepath}")
 
     
-    
-    all_labels = []       
-    allele_all = []
-    length_all = []
-    project_boundaries = []
-
-    current_pos = 0
     for folderpath in inputfolderpath.iterdir():
-        if folderpath.is_dir():
+        if (folderpath.is_dir()):
             project = folderpath.name
 
             markers = data[project]["Markers"]
-            marker_names = []
-            for marker, rest in data[project]["Markers"].items():
-                if (rest["AlleleBased"]["PIC"] == 0.0 or rest["LengthBased"]["PIC"] == 0.0):
-                    continue
-                marker_names.append(marker)
-            #marker_names = list(markers.keys())
+            marker_names = list(markers.keys())
+            PIC_diffs = [markers[m]["PIC SequenceBased - PIC Lengthbased"]  for m in marker_names]
 
-            allele_pics = [markers[m]["AlleleBased"]["PIC"] for m in marker_names]
-            length_pics = [markers[m]["LengthBased"]["PIC"] for m in marker_names]
+            x = np.arange(len(marker_names))
+            width = 0.35
 
-            project_boundaries.append((current_pos, project))
+            fig, ax = plt.subplots(figsize=(12, 5))
 
-            for m, a, l in zip(marker_names, allele_pics, length_pics):
-                all_labels.append(f"{project} – {m}")
-                allele_all.append(a)
-                length_all.append(l)
-                current_pos += 1
+            ax.bar(x - width/2, PIC_diffs, width, label="PIC_differences")
 
-            all_labels.append("")
-            allele_all.append(0)
-            length_all.append(0)
-            current_pos += 1
+            ax.axhline(0, color="black", linewidth=1)
 
-    all_labels.pop()
-    allele_all.pop()
-    length_all.pop()
+            ax.set_xticks(x)
+            ax.set_xticklabels(marker_names, rotation=45, ha="right")
+            ax.set_ylabel("PIC Diff value")
+            ax.set_title(f"Allele vs Length-based PIC-Diff – Project {project}")
+            ax.set_ylim(-0.2, 1)
+            ax.legend()
 
-    x = np.arange(len(all_labels))
-    width = 0.4
+            plt.tight_layout()
 
-    fig, ax = plt.subplots(figsize=(max(12, len(x) * 0.4), 6))
+            savepath = outputfolderpath / f"{project}_PIC_diffs_histogram.png"
+            plt.savefig(savepath, dpi=200)
+            plt.close(fig)
 
-    ax.bar(x - width/2, allele_all, width, label="WAI PIC")
-    ax.bar(x + width/2, length_all, width, label="AL PIC")
-
-    ax.set_xticks(x)
-    ax.set_xticklabels(all_labels, rotation=60, ha="right")
-    ax.set_ylabel("PIC value")
-    ax.set_ylim(0, 1)
-    ax.set_title("WAI vs AL PIC – All Projects")
-    ax.legend()
-
-    # Add vertical separators between projects
-    for pos, project in project_boundaries[1:]:
-        ax.axvline(pos - 0.5, linestyle="--", linewidth=1)
-
-    plt.tight_layout()
-
-    savepath = outputfolderpath / "ALL_PROJECTS_PIC_histogram.png"
-    plt.savefig(savepath, dpi=200)
-    plt.close(fig)
-
-    print(f"Saved combined PIC histogram to {savepath}")
-
-
-
-
-
-
-
-    project_names = []
-    allele_data = []
-    length_data = []
-
-    for folderpath in inputfolderpath.iterdir():
-        if not folderpath.is_dir():
-            continue
-
-        project = folderpath.name
-        markers = data[project]["Markers"]
-
-        allele_vals = []
-        length_vals = []
-
-        for marker, rest in markers.items():
-            a = rest["AlleleBased"]["PIC"]
-            l = rest["LengthBased"]["PIC"]
-
-            # Skip invalid markers
-            if (a == 0.0 or l == 0.0):
-                continue
-
-            allele_vals.append(a)
-            length_vals.append(l)
-
-        # Skip empty projects
-        if allele_vals:
-            project_names.append(project)
-            allele_data.append(allele_vals)
-            length_data.append(length_vals)
-
-    # -------------------------------------------------
-    # Define x positions
-    # -------------------------------------------------
-    n_projects = len(project_names)
-    gap = 1.6
-
-    positions_allele = []
-    positions_length = []
-    project_centers = []
-
-    current_x = 0.0
-    for _ in range(n_projects):
-        pos_l = current_x 
-        pos_a = current_x + 0.6
-        # pos_a = current_x
-        # pos_l = current_x + 0.6
-
-        positions_allele.append(pos_a)
-        positions_length.append(pos_l)
-        project_centers.append((pos_a + pos_l) / 2)
-
-        current_x += gap
-
-    fig, ax = plt.subplots(figsize=(max(10, n_projects * 2.2), 6))
-
-    ax.boxplot(
-        allele_data,
-        positions=positions_allele,
-        widths=0.5,
-        patch_artist=True,
-        showfliers=False,
-        boxprops=dict(facecolor="lightblue", alpha=0.6),
-        medianprops=dict(color="black"),
-        whiskerprops=dict(color="black"),
-        capprops=dict(color="black"),
-        zorder=2
-    )
-
-    ax.boxplot(
-        length_data,
-        positions=positions_length,
-        widths=0.5,
-        patch_artist=True,
-        showfliers=False,
-        boxprops=dict(facecolor="lightgreen", alpha=0.6),
-        medianprops=dict(color="black"),
-        whiskerprops=dict(color="black"),
-        capprops=dict(color="black"),
-        zorder=2
-    )
-
-    for x, vals in zip(positions_allele, allele_data):
-        ax.scatter(
-            np.random.normal(x, 0.045, size=len(vals)),
-            vals,
-            s=25,
-            alpha=0.75,
-            color="tab:blue",
-            zorder=3
-        )
-
-    for x, vals in zip(positions_length, length_data):
-        ax.scatter(
-            np.random.normal(x, 0.045, size=len(vals)),
-            vals,
-            s=25,
-            alpha=0.75,
-            color="tab:green",
-            zorder=3
-        )
-
-    for i in range(1, n_projects):
-        ax.axvline(
-            (positions_length[i - 1] + positions_allele[i]) / 2,
-            linestyle="--",
-            linewidth=1,
-            color="gray",
-            zorder=1
-        )
-
-    ax.set_xticks(project_centers)
-    ax.set_xticklabels(project_names, rotation=45, ha="right")
-
-    ax.set_ylabel("PIC value")
-    ax.set_ylim(0, 1)
-    ax.set_title("WAI vs AL PIC per Project")
-
-    legend_handles = [
-        plt.Line2D([0], [0], color="lightblue", lw=8, label="WAI PIC"),
-        plt.Line2D([0], [0], color="lightgreen", lw=8, label="AL PIC"),
-    ]
-    #ax.legend(handles=legend_handles)
-    ax.legend(
-        handles=legend_handles,
-        loc="upper left",
-        bbox_to_anchor=(0.02, 0.98)
-    )
-
-    plt.tight_layout()
-
-    savepath = outputfolderpath / "ALL_PROJECTS_PIC_boxplot.png"
-    plt.savefig(savepath, dpi=200)
-    plt.close(fig)
-
-    print(f"Saved combined PIC boxplot to {savepath}")
-
-
-
-
-
-
-
-
-
-
-
-
-
+            print(f"Saved PIC histogram for project '{project}' to {savepath}")
 
     
     # Storage for the final combined plot
@@ -612,13 +393,12 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
             start_idx = len(project_marker_labels)
 
             diffs = [markers[m]["PIC Difference"] for m in marker_names]
-            diffs_sorted = sorted(diffs, reverse=True)
 
             # Build labels like "Buvi – Bv1_AATA"
             for m in marker_names:
                 project_marker_labels.append(f"{project} – {m}")
 
-            diffs_all.extend(diffs_sorted)
+            diffs_all.extend(diffs)
 
             end_idx = len(project_marker_labels)
             project_boundaries.append((start_idx, end_idx, project))
@@ -644,7 +424,7 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
 
     ax.set_yticks(y)
     ax.set_yticklabels(project_marker_labels)
-    ax.set_xlabel("PIC difference (AL - WAI)")
+    ax.set_xlabel("PIC difference (Sequence-based - Length-based)")
     title_text = "PIC differences for Projects:"
     for i, project in enumerate(project_names,1):
         title_text += project

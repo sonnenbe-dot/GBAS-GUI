@@ -4,7 +4,7 @@ import tkinter as tk
 import threading, json
 from tkinter import ttk
 
-import csv
+import csv, sys, os, subprocess
 
 from GBAS_package_sonnenbe.main_functions.database_class import local_database_sqlite
 
@@ -302,6 +302,12 @@ class extract_subset_window(tk.Toplevel):
                                     row_sample.append(int(data["ID"]))
                 
                     csvwriter.writerow(row_sample)
+        
+        if dict_path.exists():
+            if sys.platform.startswith("win"):
+                os.startfile(dict_path)
+            elif (sys.platform == "linux"):
+                subprocess.run(["xdg-open", str(dict_path)])
 
     def get_genalex_output(self):
         self.textbox_pipeline.delete(0.0, 'end')

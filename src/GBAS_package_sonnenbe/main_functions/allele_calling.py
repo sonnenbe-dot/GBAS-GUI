@@ -1,6 +1,6 @@
 from pathlib import Path
 import customtkinter as ctk
-import json
+import json, os, sys, subprocess
 
 from GBAS_package_sonnenbe.helper_functions.parse_write_parameters import is_valid
 from GBAS_package_sonnenbe.helper_functions.parse_fasta import parse_fasta
@@ -29,6 +29,54 @@ def run_Allele_Call_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict):
     textbox_pipeline.insert('end-1c', "\nStarting Allele Call! \n")
     run_Allele_Call(correctedpath, allelecallpath, loci_list, sample_list, samples_dict, allelist_path, metadata_path, textbox_pipeline)
     textbox_pipeline.insert('end-1c', "\nFinished Allele Call! \n")
+
+
+
+def run_Allele_Call_CLI(paramsdict : dict):
+    allelesoutpath = Path(paramsdict["Outputfolder"] + "/AllelesOut")
+    correctedpath = Path(paramsdict["Outputfolder"] + "/Corrected")
+    allelecallpath = Path(paramsdict["Outputfolder"] + "/AlleleCall")
+    length_matrix_json_path = Path(paramsdict["Outputfolder"] + '/MarkerPlots/markermatrix.json')
+    loci_list = extract_locinames_from_matrix(length_matrix_json_path)
+    sample_list = extract_samplenames_from_matrix(length_matrix_json_path)
+    samples_dict, number_lines = get_samples(paramsdict["Samplefile"])
+    allelist_path = Path(paramsdict["Allelelist"])
+    metadata_path = Path(paramsdict["Metadata"])
+    print("\nStarting Allele Call! \n")
+    run_Allele_Call_CLI_more(correctedpath, allelecallpath, loci_list, sample_list, samples_dict, allelist_path, metadata_path)
+    print("\nFinished Allele Call! \n")
+
+
+
+def run_Allele_Call_CLI_more(correctedpath : Path, allelecallpath : Path, loci_list : list, sample_list : list, samples_dict : dict, allelist_path : Path, metadata_path : Path):
+    allelesdict = {}
+    if (is_valid(str(allelist_path))):
+        print("\nValid Allelelist, Listbased Call! \n")
+        print("\nStarting Listbased AlleleCall!\n")
+        if (allelist_path.suffix == ".txt"):
+            allelesdict = parse_allelelist_txt(allelist_path)
+        elif (allelist_path.suffix == ".json"):
+            allelesdict = parse_allelelist_json(allelist_path)
+        else:
+            print("\nNo correct fileformat for allelelist!\n")
+        
+        number_loci = len(allelesdict.keys())
+        allelesequences = [sequence for locus, data in allelesdict.items() for sequence in data[1]]
+        number_allelesequences = len(allelesequences)
+        print("Allelelist contains " + str(number_loci) + " loci and in total " + str(number_allelesequences) + " alleles. \n")
+        
+
+    else:
+        print("\nNo Allelelist Given, Denovo Call!\n")
+
+    alleles_dict_complete, number_new_alleles, number_new_loci, number_old_loci_added = Complete_AlleleList_All(correctedpath, allelesdict)
+
+    print(str(number_new_alleles) + " new alleles found!")
+    print(str(number_new_loci) + " new loci added!")
+
+    CallAlleles(alleles_dict_complete, correctedpath, allelecallpath, sample_list, loci_list, samples_dict, metadata_path)
+
+
 
 def run_Allele_Call(correctedpath : Path, allelecallpath : Path, loci_list : list, sample_list : list, samples_dict : dict, allelist_path : Path, metadata_path : Path, textbox_pipeline : ctk.CTkTextbox):
     allelesdict = {}
@@ -210,6 +258,11 @@ def CallAlleles(complete_alleles_dict : dict, correctedpath : Path, allelecallpa
         json.dump(allele_matrix_json, json_output, indent = 4)
     
     print("\nFinished Allele Call!\n")
+    if matrix_path.exists():
+        if sys.platform.startswith("win"):
+            os.startfile(matrix_path)
+        elif (sys.platform == "linux"):
+            subprocess.run(["xdg-open", str(matrix_path)])
 
 
 def Define_genotypes(alleles_dict_per_locus : dict, fasta_parsed : dict):

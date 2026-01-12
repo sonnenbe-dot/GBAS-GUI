@@ -26,7 +26,7 @@ class local_database_sqlite():
                     );""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS table_sample(
                             SampleID VARCHAR(20) NOT NULL,
-                            projectname VARCHAR(20), 
+                            projectname VARCHAR(20) NOT NULL, 
                             Metadata2 VARCHAR(20),
                             Metadata3 VARCHAR(20),
                             Metadata4 VARCHAR(20),
@@ -96,7 +96,10 @@ class local_database_sqlite():
 
                 list_metadata_values = []
                 for i, header in enumerate(metadata_headers, 1):
-                    list_metadata_values.append(meta_dict[sampleID][header])
+                    if (header in meta_dict[sampleID]):
+                        list_metadata_values.append(meta_dict[sampleID][header])
+                    else:
+                        list_metadata_values.append("None")
                     if (i == 4):
                         break
                 
@@ -106,6 +109,16 @@ class local_database_sqlite():
                             (projectname, ploidy) values(?, ?);
                 """
                 self.cursor.execute(query_table_project, row_table_project)
+
+                # print("HHHEEERE")
+                # print(list_metadata_values)
+                
+                if (len(list_metadata_values) < 4):
+                    while (len(list_metadata_values) < 4):
+                        list_metadata_values.append("None")
+
+                # print("HHHEEERE")
+                # print(list_metadata_values)
 
                 row_table_sample = (sampleID,) + tuple(list_metadata_values)
                 query_table_sample = """INSERT OR IGNORE INTO table_sample

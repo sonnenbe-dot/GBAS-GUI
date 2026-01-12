@@ -15,10 +15,11 @@ def main():
 
 
 class PIC_calculation_window(tk.Toplevel):
-    def __init__(self, parent, current_workspace : Path, paramsdict : dict, on_done):
+    def __init__(self, parent, current_workspace : Path, paramsdict : dict, filtering_param : float, on_done):
         super().__init__(parent)
 
         self.on_done = on_done
+        self.filtering_param = filtering_param
 
         self.title("Calculate PIC")
         self.transient(parent)
@@ -83,7 +84,7 @@ class PIC_calculation_window(tk.Toplevel):
 
         ctk.CTkLabel(frame_upper, text="Outputfolder:", width=20, font=ctk.CTkFont(size=15, weight="bold")).grid(column=0, row=1, padx=5, pady=5)
         output_entry = ctk.CTkEntry(frame_upper, corner_radius=5)
-        ctk.CTkButton(frame_upper, text="Browse", width=70, height=25, font=ctk.CTkFont(size=14), text_color="black", fg_color = "#add8e6", hover_color="#87ceeb", command=lambda entry = output_entry, dir_param = self.params["Outputfolder"] : browse_file(entry, dir_param)).grid(column=2, row=1, padx=5, pady=5)
+        ctk.CTkButton(frame_upper, text="Browse", width=70, height=25, font=ctk.CTkFont(size=14), text_color="black", fg_color = "#add8e6", hover_color="#87ceeb", command=lambda entry = output_entry, dir_param = self.params["Outputfolder"] : browse_dir(entry, dir_param)).grid(column=2, row=1, padx=5, pady=5)
         output_entry.insert(tk.END, str(self.outputfolderpath))
         output_entry.grid(column=1, row=1, padx=5, pady=5)
 
@@ -162,7 +163,7 @@ class PIC_calculation_window(tk.Toplevel):
         self.PC_calc_textbox.insert('end-1c', "Calculating PIC value.\n")
         self.add_dots_pipelinetextbox = True
         self.append_period()
-        calculate_PIC(self.inputpath, self.outputfolderpath)
+        calculate_PIC(self.inputpath, self.outputfolderpath, self.filtering_param)
 
         self.add_dots_pipelinetextbox = False
         self.PC_calc_textbox.insert('end-1c', "\nFinished Calculating PIC value.\n")

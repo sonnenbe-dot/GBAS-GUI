@@ -18,6 +18,15 @@ def RunVariants_Determination_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict 
     textbox_pipeline.insert('end-1c', "\nFinished Determining Variants! \n")
 
 
+def RunVariants_Determination_CLI(paramsdict : dict):
+    consensustogetherpath = Path(paramsdict["Outputfolder"] + "/ConsensusTogether")
+    allelesoutpath = Path(paramsdict["Outputfolder"] + "/AllelesOut")
+    correctedpath = Path(paramsdict["Outputfolder"] + "/Corrected")
+    print("\nStarting Determining Variants! \n")
+    RunVariants_Determination(consensustogetherpath, allelesoutpath, correctedpath, paramsdict["Ploidy"], int(paramsdict["Mincount"]))
+    print("\nFinished Determining Variants! \n")
+
+
 def RunVariants_Determination(consensustogetherpath : Path, allelesoutpath : Path, correctedpath : Path, ploidy : str, mincount : int):
     for consensus_file_path in consensustogetherpath.iterdir():
         correctedfastafilepath = Path(correctedpath / (consensus_file_path.stem + "_Corr.fasta"))

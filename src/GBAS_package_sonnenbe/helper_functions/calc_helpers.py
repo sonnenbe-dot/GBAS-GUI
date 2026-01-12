@@ -1,3 +1,4 @@
+import numpy as np
 
 def main():
     
@@ -31,6 +32,24 @@ def mismatch(seq_a, seq_b):
         else:
             mismatches+=1
     return mismatches
+
+
+def mismatch_binary(seq_a : str, seq_b : str, dna_lookup : dict):
+    n = min(len(seq_a), len(seq_b))
+
+    a_ints = np.frombuffer(seq_a[:n].encode('ascii'), dtype=np.uint8)
+    b_ints = np.frombuffer(seq_b[:n].encode('ascii'), dtype=np.uint8)
+    
+    # 3. Retrieve Bitmasks from Lookup Table
+    a_bits = dna_lookup[a_ints]
+    b_bits = dna_lookup[b_ints]
+    
+    # 4. The Comparison
+    # Bitwise AND (&). If result is 0, they share no bits -> Mismatch
+    # If result is > 0 (e.g. 1, 2, 4...), they share a bit -> Match
+    matches = a_bits & b_bits
+
+    return int(np.sum(matches == 0))
 
 
 if __name__ == "__main__":

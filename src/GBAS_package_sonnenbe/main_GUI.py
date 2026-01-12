@@ -5,6 +5,8 @@ import os, argparse, json, re, shutil
 from pathlib import Path
 import platform, threading, multiprocessing, time, subprocess
 
+import psutil
+
 from GBAS_package_sonnenbe.helper_functions.parse_write_parameters import parse_parameterfile, check_paramsdict, new_paramsdict
 from GBAS_package_sonnenbe.helper_functions.parse_executables import check_executables #get_bin_executables
 from GBAS_package_sonnenbe.helper_functions.input_checks import check_inputs #get_bin_executables
@@ -20,6 +22,7 @@ from GBAS_package_sonnenbe.GUI_widgets.PIC_calculation_widget import PIC_calcula
 from GBAS_package_sonnenbe.GUI_widgets.advanced_widget import advanced_window
 from GBAS_package_sonnenbe.GUI_widgets.database_widget import Database_adding_window, Database_status_window
 from GBAS_package_sonnenbe.GUI_widgets.extract_subset_widget import extract_subset_window
+from GBAS_package_sonnenbe.GUI_widgets.allele_comparison_widget import allele_comparison_window
 
 from GBAS_package_sonnenbe.main_functions.trimmomatic import checkInputDir, runTrimomatic, runTrimomatic_GUI
 from GBAS_package_sonnenbe.main_functions.merging import runUsearch, runUsearch_GUI
@@ -86,7 +89,7 @@ class main_window(ctk.CTkFrame):
     def __init__(self, parent, parameterfilepath : Path):
         super().__init__(parent)
 
-
+        #self.paramsdict["Filtering"] = 0.6
 
         # self.parameterfilename = "parameters_GBAS"
         self.parameterfilepath = parameterfilepath
@@ -103,8 +106,8 @@ class main_window(ctk.CTkFrame):
 
         self.parameterfilepath_default = self.current_workspace / "parameters.txt"
 
-        self.parameters_list = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Metadata", "Allelelist", "Database", "Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
-        self.parameters_default = [("Outputfolder", str(self.current_workspace / "output")), ("Bin", str(self.current_workspace / "bin")), ("Rawdata", "None"), ("Primerfile", "None"), ("Samplefile", "None"), ("Metadata", "None"), ("Allelelist", "None"), ("Database", "None"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
+        self.parameters_list = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Metadata", "Allelelist", "Database", "Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Filtering", "Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
+        self.parameters_default = [("Outputfolder", str(self.current_workspace / "output")), ("Bin", str(self.current_workspace / "bin")), ("Rawdata", "None"), ("Primerfile", "None"), ("Samplefile", "None"), ("Metadata", "None"), ("Allelelist", "None"), ("Database", "database.db"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Filtering", 0.8), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
 
         self.paramsdict = {}
         #self.executablesdict = {}
@@ -138,6 +141,7 @@ class main_window(ctk.CTkFrame):
         self.add_dots_pipelinetextbox = False
 
         self.performance = True
+        self.zipping = False
         self.number_cores = multiprocessing.cpu_count()-1
 
         self.advanced_pipeline_options = ["Trimmomatic", "Usearch", "Demultiplexing", "Markerstatistics", "Markerplots+Markermatrix",  "LengthExtraction", "ConsensusSequence", "AlleleDetection", "AlleleCall"]
@@ -232,7 +236,7 @@ class main_window(ctk.CTkFrame):
         self.database.grid_rowconfigure(5, weight=1)
 
         ctk.CTkLabel(self.database, text="Database", font=ctk.CTkFont(size=28, weight="bold")).grid(row=0, column=0, padx=20, pady=(20, 20), sticky="nsew")
-        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Allelelist Comparison").grid(row=1, column=0, padx=20, pady=(10, 10)) #command = self.allelelist_comparison
+        ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Allelelist Comparison", command = self.allelelist_comparison).grid(row=1, column=0, padx=20, pady=(10, 10)) #command = self.allelelist_comparison
         ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "PIC Calculation", command = self.PIC_calculation).grid(row=2, column=0, padx=20, pady=(10, 10)) 
         ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Add to Database", command = self.adding_dataset).grid(row=4, column=0, padx=20, pady=(10, 10))    
         ctk.CTkButton(self.database, border_width=1, border_color="black", text_color="black", text = "Database Status", command = self.show_database_status).grid(row=5, column=0, padx=20, pady=(10, 10))  
@@ -250,7 +254,7 @@ class main_window(ctk.CTkFrame):
 
         param_list_dirs = ["Outputfolder", "Bin", "Rawdata"]
         param_list_files = ["Primerfile", "Samplefile", "Metadata", "Allelelist"]
-        param_list_calc = ["Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow"]
+        param_list_calc = ["Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Filtering"]
         param_list_special = ["Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
         obj = general_params_window(self, self.parameterfilepath, self.current_workspace, self.paramsdict, "Folders", "Files", "Calculation Params", "Additional Params", param_list_dirs, param_list_files, param_list_calc, param_list_special, on_done=self.update_parameterfilepath)
         
@@ -274,11 +278,12 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
 
-    def update_advanced(self, text : str, performance : bool, checkbox_states_pipeline_advanced : dict):
+    def update_advanced(self, text : str, performance : bool, zipping : bool, checkbox_states_pipeline_advanced : dict):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
         self.checkbox_states_pipeline_advanced = checkbox_states_pipeline_advanced
         self.performance = performance
+        self.zipping = zipping
 
     def update_extract(self, text : str, include_dict1 : dict, include_dict2 : dict):
         self.textbox_pipeline.delete(0.0, 'end')
@@ -328,7 +333,7 @@ class main_window(ctk.CTkFrame):
         except Exception as e:
             flag_inputs = False
             print(f"Error when parsing inputs for the check:\n{e}\n")
-            
+
         if (flag_inputs):
             self.textbox_pipeline.insert("end", "Correct.\n")
             self.textbox_pipeline.insert("end", "Pipeline is ready to start.\n\n")
@@ -353,6 +358,7 @@ class main_window(ctk.CTkFrame):
                 "ConsensusSeqs" : {},
                 "NCorrection" : {},
                 "AlleleCall" : {},
+                "RamUsage" : {},
                 "Total" : {}
         }
 
@@ -366,11 +372,11 @@ class main_window(ctk.CTkFrame):
 
 
 
-        runTrimomatic_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, rawsamplenames, self.performance, int(self.paramsdict["NumberCores"]))
+        runTrimomatic_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, rawsamplenames, self.performance, int(self.paramsdict["NumberCores"]), self.zipping)
         logs["QualityTrimmimg"]["Time"] = t.lap()
         self.textbox_pipeline.insert("end", f"\nTime spent: {logs['QualityTrimmimg']['Time']:.4g}.\n")
 
-        runUsearch_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, self.performance, int(self.paramsdict["NumberCores"]))
+        runUsearch_GUI(self.textbox_pipeline, self.paramsdict, self.executablesdict, self.performance, int(self.paramsdict["NumberCores"]), self.zipping)
         logs["Merging"]["Time"] = t.lap()
         self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Merging']['Time']) + ".\n")
 
@@ -382,11 +388,11 @@ class main_window(ctk.CTkFrame):
         logs["LengthCounts"]["Time"] = t.lap()
         self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['LengthCounts']['Time']) + ".\n")
 
-        runMarkerplots_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, samples_dict)
+        runMarkerplots_GUI(self.textbox_pipeline, self.paramsdict, primers_dict, samples_dict, float(self.paramsdict["Filtering"]))
         logs["Markerplots"]["Time"] = t.lap()
         self.textbox_pipeline.insert("end", "\nTime spent: " + str(logs['Markerplots']['Time']) + ".\n")
 
-
+        
 
 
         self.add_dots_pipelinetextbox = False
@@ -424,7 +430,8 @@ class main_window(ctk.CTkFrame):
                 "ConsensusSeqs" : {},
                 "NCorrection" : {},
                 "AlleleCall" : {},
-                "Total" : {}
+                "Total" : {},
+                "RamUsage" : { }
         }
 
         make_output_folders(Path(self.paramsdict["Outputfolder"]), self.outputfolders_list2)
@@ -466,13 +473,13 @@ class main_window(ctk.CTkFrame):
     def PIC_calculation(self):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert('end-1c', "Show PIC Calculation Window \n")
-        PIC_calculation_window(self, self.current_workspace, self.paramsdict, on_done=self.update_textbox)
-
+        PIC_calculation_window(self, self.current_workspace, self.paramsdict, float(self.paramsdict["Filtering"]), on_done=self.update_textbox)
+    
     def run_individual_pipeline_parts(self):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert('end-1c', "Show Advanced Pipeline Options Window \n")
         self.parse_parameterfile()
-        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]), self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, on_done=self.update_advanced)
+        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, self.zipping, int(self.paramsdict["NumberCores"]), self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, float(self.paramsdict["Filtering"]), on_done=self.update_advanced)
 
     def adding_dataset(self):
         self.textbox_pipeline.delete(0.0, 'end')
@@ -504,32 +511,22 @@ class main_window(ctk.CTkFrame):
 
         extract_subset_window(self, self.current_workspace, self.paramsdict, self.checkbox_include_dict, self.checkbox_states_dict2, self.textbox_pipeline, on_done=self.update_extract)
 
+    def allelelist_comparison(self):
+        self.textbox_pipeline.delete(0.0, 'end')
+        self.textbox_pipeline.insert('end-1c', "Show Allele Comparison Window \n")
+        allele_comparison_window(self, self.current_workspace, self.paramsdict, on_done=self.update_textbox)
 
     def get_instructions(self):
         print("Get Instructions:")
         
-        #["ColumnNrSample", "ColumnNrIndexComb", "ColumnNrOrganism", "ColumnNrProject", "ColumnNrCountry", "ColumnNrLocality"]
-        
         with open("Instructions.txt", 'w') as file:
-            file.write("###Instructions for handling the process of using the SSR-GBAS Pipeline and storing them into a local database: \n\n")
-            file.write("#The GUI is separated into 3 columns. We prepare our workspace through the left column. \n\n")
-            file.write("We need a reference (csv format with columns separated by semicolons (;) \n \n")
-            file.write("Click on the first button 'Reference Parameters'. There first set the path to the reference file. \n")
-            file.write("Afterwards add the columNumbers for the relevant parameters (SampleID, Indexcombination, etc.) Only positive integer numbers are allowed! \n")
-            file.write("Add the number or rows you want to use for the pipeline (number of rows indicates number of samples) \n")
-            file.write("Update the numbers and now create your samplesheet which stores the Information Indexcombo - SampleID \n\n")
-            file.write("Click on the button Pipeline Parameters to set the path for all other folders and files (Primers, Samplesheet, rawfastq folder, etc.): \n")
-            file.write("Important: Inputfiles like above mentioned must be manually added into the workspace! (Same location where the GUI script/exe is located)")
-            file.write("When using Windows you need to set the path to the Rexecutable which is called Rscript.exe \n\n")
-            file.write("#The Genalex Parameters lets you choose through which parameter the genalex output is generated. Only one at the same time possible! \n\n")
-            file.write("The button 'Workspace Status' you can check if all input files and paths have been correctly set up. \n\n\n")
-            file.write("Start the pipeline process in the middle column by first choosing a projectname for your folder where all your pipeline outputs will be stored. \n")
-            file.write("The following 2 buttons run the pipeline. \n")
-            file.write("(1st part handles the trimming, merging, demultiplexing and genotypelengthsearch of most likely alleles")
-            file.write("(2nd part handles the search for SNPs based (denovo or based on a previously produced AlleleList) \n\n\n")
-            file.write("The third column included the storing of output data into a local database and extracting a genalex output based on various parameters. \n\n\n")
+            file.write("###Instructions for using the GBAS-GUI: \n\n")
+            file.write("#The GUI is separated into 3 columns: Preparation, Pipeline and Database. \n\n")
+            file.write("Preparation handles the setup of all necessary inputs and the validity. \n\n")
+            file.write("Pipeline handles the usage of the pipeline in normal and advanced mode. \n")
+            file.write("Database section handles the insertion of datasets produced by the pipeline into the local database as well as PIC calculation. \n\n\n")
+            file.write("For more information on the GUI please visit the official documentation at https://github.com/sonnenbe-dot/GUI-GBAS-2\n")
             
-        
         if (self.paramsdict["Operatingsystem"].lower() == "windows"):
             os.startfile("Instructions.txt")
         elif (self.paramsdict["Operatingsystem"].lower() == "linux"):

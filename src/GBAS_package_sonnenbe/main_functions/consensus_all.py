@@ -29,6 +29,21 @@ def RunConsensusAll_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, pe
     textbox_pipeline.insert('end-1c', "\nFinished Adding all ConsensusSequences per Marker into 1 file! \n")
 
 
+def RunConsensusAll_CLI(paramsdict : dict, performance : bool, number_cores : int):
+    allelesout_path = Path(paramsdict["Outputfolder"] + '/AllelesOut')
+    consensusout_path = Path(paramsdict["Outputfolder"] + '/ConsensusOut')
+    print("\nStarting Building ConsensusSequences! \n")
+    RunConsensusAll(allelesout_path, consensusout_path, float(paramsdict["Consensusthreshold"]), performance, number_cores)
+    print("\nFinished Building ConsensusSequences! \n")
+
+    consensustogetherpath = Path(paramsdict["Outputfolder"] + "/ConsensusTogether")
+    length_matrix_json_path = Path(paramsdict["Outputfolder"] + '/MarkerPlots/markermatrix.json')
+    loci_list = extract_locinames_from_matrix(length_matrix_json_path)
+    print("\nStarting Adding all ConsensusSequences per Marker into 1 file! \n")
+    joinSamplesSameMarker(consensusout_path, consensustogetherpath, loci_list)
+    print("\nFinished Adding all ConsensusSequences per Marker into 1 file! \n")
+
+
 def joinSamplesSameMarker(consensusout_path : Path, consensustogetherpath : Path, loci_list : list):
     for locus in loci_list:
         print(f"Adding all Consensussequences for Locus {locus} into one file. \n")

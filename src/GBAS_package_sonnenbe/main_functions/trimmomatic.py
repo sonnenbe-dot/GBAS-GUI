@@ -9,6 +9,8 @@ import os, re, multiprocessing, subprocess
 from pathlib import Path
 import customtkinter as ctk
 
+from GBAS_package_sonnenbe.helper_functions.zip_unzip_file import zip_file
+
 def main():
     
     return 0
@@ -28,31 +30,38 @@ def checkInputDir(rawdatafolderpath : str, indexcombolist : list, indexcomboposi
     return FilesData
 
 
-def runTrimomatic_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, executablesdict : dict, rawsamplenames : list, performance : bool, number_cores : int):
+def runTrimomatic_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, executablesdict : dict, rawsamplenames : list, performance : bool, number_cores : int, zipping : bool):
     QC_folder = Path(paramsdict["Outputfolder"] + '/QC')
     FilesData = checkInputDir(paramsdict["Rawdata"], rawsamplenames, int(paramsdict["Indexcomboposition"]))
     textbox_pipeline.insert("end", "\nStarting Quality Trimming.\n")
-    runTrimomatic(FilesData, paramsdict, executablesdict, str(QC_folder), performance, number_cores)
+    runTrimomatic(FilesData, paramsdict, executablesdict, str(QC_folder), performance, number_cores, zipping)
     textbox_pipeline.insert("end", "Finished Quality Trimming.\n")
 
-def runTrimomatic(FilesData : dict, paramsdict : dict, executablesdict : dict, outputpath : str, performance : bool, number_cores : int):
+def runTrimomatic_CLI(paramsdict : dict, executablesdict : dict, rawsamplenames : list, performance : bool, number_cores : int, zipping : bool):
+    QC_folder = Path(paramsdict["Outputfolder"] + '/QC')
+    FilesData = checkInputDir(paramsdict["Rawdata"], rawsamplenames, int(paramsdict["Indexcomboposition"]))
+    print("\n\nStarting Quality Trimming.\n\n")
+    runTrimomatic(FilesData, paramsdict, executablesdict, str(QC_folder), performance, number_cores, zipping)
+    print("end", "\n\nFinished Quality Trimming.\n\n")
+
+def runTrimomatic(FilesData : dict, paramsdict : dict, executablesdict : dict, outputpath : str, performance : bool, number_cores : int, zipping : bool):
     binpath = paramsdict["Bin"]
     try:
         if (performance):
             with multiprocessing.Pool(processes = number_cores) as pool:
                 processes = []
-                args_list = [(indexcombo, files, outputpath, paramsdict, executablesdict) for indexcombo, files in FilesData.items()]
+                args_list = [(indexcombo, files, outputpath, paramsdict, executablesdict, zipping) for indexcombo, files in FilesData.items()]
                 results = pool.starmap_async(trimmo_per_file, args_list) #chunksize=chunk_size
                 processes = results.get()
         else:
             for indexcombo, files in FilesData.items():
-                trimmo_per_file(indexcombo, files, outputpath, paramsdict, executablesdict)
+                trimmo_per_file(indexcombo, files, outputpath, paramsdict, executablesdict, zipping)
     except Exception as e:
         print(f"Error when trying to run Trimmomatic ! \nException: {e} \n")
 
 
 
-def trimmo_per_file(indexcombo : str, files : list, outputpath : str, paramsdict : dict, executablesdict : dict):
+def trimmo_per_file(indexcombo : str, files : list, outputpath : str, paramsdict : dict, executablesdict : dict, zipping):
     files.sort() # get R1 and R2 list and sort them to make sure that R1 always shows first
     R1 = files[0] # get path of R1 input file
     R2 = files[1]
@@ -76,6 +85,12 @@ def trimmo_per_file(indexcombo : str, files : list, outputpath : str, paramsdict
     code = 'java -jar ' + exe + ' PE ' + R1 + ' ' + R2 + ' ' + R1paired + ' ' + R1unpaired + ' ' + R2paired + ' ' + R2unpaired + ' ILLUMINACLIP:' + adapterpath + ':2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20'
     print('running: ' + code)
     subprocess.call(code, shell=True)
+
+    if (zipping):
+        zip_file(Path(R1unpaired))
+        zip_file(Path(R1paired))
+        zip_file(Path(R2unpaired))
+        zip_file(Path(R2paired))
 
 
 if __name__ == "__main__":

@@ -17,6 +17,16 @@ def runLengthstatistics_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict
     dict_path = Path(markerstatistics_path / "markerstatistics.json")
     runLengthstatistics_duplicates(dict_path, markerstatistics_path)
     textbox_pipeline.insert('end-1c', "\nFinished Markerstatistics! \n")
+    
+
+def runLengthstatistics_CLI(paramsdict : dict, primersdict : dict, performance : bool, number_cores : int):
+    separatout_path = Path(paramsdict["Outputfolder"] + '/SeparatOut')
+    markerstatistics_path = Path(paramsdict["Outputfolder"] + '/MarkerStatistics')
+    print("\n\nStarting Markerstatistics! \n\n")
+    runLengthstatistics(separatout_path, markerstatistics_path, primersdict, performance, number_cores)
+    dict_path = Path(markerstatistics_path / "markerstatistics.json")
+    runLengthstatistics_duplicates(dict_path, markerstatistics_path)
+    print("\n\nFinished Markerstatistics! \n\n")
 
 def runLengthstatistics_duplicates(dict_path_input : Path, outputpath : Path):
     markerstatistics_dict = {}

@@ -4,6 +4,10 @@ import json, csv, subprocess, os, sys
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib
+matplotlib.use("Agg")
+
+from GBAS_package_sonnenbe.helper_functions.filter_matrix import filtering
 
 
 def main():
@@ -11,7 +15,7 @@ def main():
     return 0
 
 
-def runMarkerplots_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, primers_dict : dict, samples_dict : dict):
+def runMarkerplots_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, primers_dict : dict, samples_dict : dict, filtering_param : float):
     markerstatistics_path = Path(paramsdict["Outputfolder"] + '/MarkerStatistics')
     markerstatistics_path_json = Path(paramsdict["Outputfolder"] + '/MarkerStatistics/markerstatistics.json')
     markerplots_path = Path(paramsdict["Outputfolder"] + '/Markerplots')
@@ -22,17 +26,48 @@ def runMarkerplots_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, pri
     lengthwindow = paramsdict["Lengthwindow"]
     textbox_pipeline.insert('end-1c', "\nStarting Markerplots! \n")
     if (paramsdict["Ploidy"] == "diploid"):
-        runMarkerplots_diploid(markerstatistics_path_json, markerplots_path, primers_dict, min_count, consensusthreshold, lengthwindow)
-        runMarkerplots_diploid(markerstatistics_path_dupl_json, markerplots_dupl_path, primers_dict, min_count, consensusthreshold, lengthwindow)
+        runMarkerplots_diploid(markerstatistics_path_json, markerplots_path, "markerplots", primers_dict, min_count, consensusthreshold, lengthwindow)
+        if (primers_dict["primersboundaries"]):
+            runMarkerplots_diploid(markerstatistics_path_dupl_json, markerplots_dupl_path, "markerplots_dupl", primers_dict, min_count, consensusthreshold, lengthwindow)
     elif (paramsdict["Ploidy"] == "haploid"):
-        runMarkerplots_haploid(markerstatistics_path_json, markerplots_path, primers_dict, min_count, consensusthreshold, lengthwindow)
+        runMarkerplots_haploid(markerstatistics_path_json, markerplots_path, "markerplots", primers_dict, min_count, consensusthreshold, lengthwindow)
     
     markerplots_path_json = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix.json')
     markerplots_path_excel = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix.csv')
     markerplots_path_excel_cleaned = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix_cleaned.csv')
+    markerplots_path_excel_filtered = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix_cleaned_filtered.csv')
     makematrix(markerplots_path_json, markerplots_path_excel, paramsdict["Ploidy"], primers_dict, samples_dict)
     makematrix_cleaned(markerplots_path_json, markerplots_path_excel_cleaned, paramsdict["Ploidy"], primers_dict, samples_dict)
+    filtering(markerplots_path_excel_cleaned, markerplots_path_excel_filtered, filtering_param)
     textbox_pipeline.insert('end-1c', "\n Markerplots finished! \n")
+
+
+
+def runMarkerplots_CLI(paramsdict : dict, primers_dict : dict, samples_dict : dict, filtering_param : float):
+    markerstatistics_path = Path(paramsdict["Outputfolder"] + '/MarkerStatistics')
+    markerstatistics_path_json = Path(paramsdict["Outputfolder"] + '/MarkerStatistics/markerstatistics.json')
+    markerplots_path = Path(paramsdict["Outputfolder"] + '/Markerplots')
+    markerstatistics_path_dupl_json = Path(paramsdict["Outputfolder"] + '/MarkerStatistics/markerstatistics_dupl.json')
+    markerplots_dupl_path = Path(paramsdict["Outputfolder"] + '/Markerplots_dupl')
+    min_count = int(paramsdict["Mincount"])
+    consensusthreshold = float(paramsdict["Consensusthreshold"])
+    lengthwindow = paramsdict["Lengthwindow"]
+    print("\nStarting Markerplots! \n")
+    if (paramsdict["Ploidy"] == "diploid"):
+        runMarkerplots_diploid(markerstatistics_path_json, markerplots_path, "markerplots", primers_dict, min_count, consensusthreshold, lengthwindow)
+        if (primers_dict["primersboundaries"]):
+            runMarkerplots_diploid(markerstatistics_path_dupl_json, markerplots_dupl_path, "markerplots_dupl", primers_dict, min_count, consensusthreshold, lengthwindow)
+    elif (paramsdict["Ploidy"] == "haploid"):
+        runMarkerplots_haploid(markerstatistics_path_json, markerplots_path, "markerplots", primers_dict, min_count, consensusthreshold, lengthwindow)
+    
+    markerplots_path_json = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix.json')
+    markerplots_path_excel = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix.csv')
+    markerplots_path_excel_cleaned = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix_cleaned.csv')
+    markerplots_path_excel_filtered = Path(paramsdict["Outputfolder"] + '/Markerplots/markermatrix_cleaned_filtered.csv')
+    makematrix(markerplots_path_json, markerplots_path_excel, paramsdict["Ploidy"], primers_dict, samples_dict)
+    makematrix_cleaned(markerplots_path_json, markerplots_path_excel_cleaned, paramsdict["Ploidy"], primers_dict, samples_dict)
+    filtering(markerplots_path_excel_cleaned, markerplots_path_excel_filtered, filtering_param)
+    print("\n Markerplots finished! \n")
 
 def makematrix_cleaned(lengthmatrixjsonpath : Path, markerplots_path_excel : Path, ploidy : str, primersdict : dict, samples_dict : dict):
     markermatrix_dict = {}
@@ -117,30 +152,20 @@ def makematrix(lengthmatrixjsonpath : Path, markerplots_path_excel : Path, ploid
                                 row.append(str(length))
                 csvwriter.writerow(row)
 
-        # for locus in markermatrix_dict.keys():
-        #     row = []
-        #     for sample in markermatrix_dict[locus]["Samples"].keys():
-        #         row.append(sample)
-        #         for length, count in markermatrix_dict[locus]["Samples"][sample]["LengthAlleles"].items():
-        #             row.append(length)
-        #             if (ploidy == "diploid"):
-        #                 if (len(markermatrix_dict[locus]["Samples"][sample]["LengthAlleles"]) == 1):
-        #                     row.append(length)
-        #     csvwriter.writerow(row)
-
 
 
 
 def runMarkerplots_haploid():
     pass    
 
-def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path : Path, primersdict : dict, min_count : int, consensusthreshold : float, lengthwindow : str):
+def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path : Path, markerplots_name : str, primersdict : dict, min_count : int, consensusthreshold : float, lengthwindow : str):
     statistics_dict = {}
     with open(markerstatistics_path_json) as json_file:
         statistics_dict = json.load(json_file)
 
     plots_per_page = 6
-    markerplots_path_pdf = Path(markerplots_path / "markerplots.pdf")
+    markerplots_path_pdf = Path(markerplots_path / (markerplots_name + ".pdf"))
+    #markerplots_path_pdf = Path(markerplots_path / "markerplots.pdf")
     markerplots_json = Path(markerplots_path / "markermatrix.json")
     counter = 1
 
@@ -241,7 +266,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                     if ((b1 >= b2) & (b1 >= b3)):
                         length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                         length_matrix_dict[primer]["Samples"][sample]["Information"] = "Homozygous"
-                        print("Reached1")
+                        #print("Reached1")
                         ax.text(0.5, 1.02, "Homozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + " Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="blue")
                         ax.bar(max_length, max_count_relative, width=0.1, color="blue", edgecolor="blue")
                         ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
@@ -251,13 +276,13 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                                 text_to_add += "[" + str(boundary[0]) + "," + str(boundary[1]) + "], "
                             ax.text(0.5, -0.3, text_to_add, transform=ax.transAxes, ha="center", va="top", fontsize=9, color="black")
                     elif (repsiz != 0):
-                        print("Reached2")
+                        #print("Reached2")
                         #second case: heterozygous, most abundant and second most abundant larger than b1 and b3, difference in length according to repeat length, second highest allele longer than highest
                         if ((b2 >= b1) and (b2 >= b3) and ((abs(max_length2-max_length)) >= repsiz) and ((max_length2-max_length) > 0) and ((abs(max_length2-max_length)) % repsiz == 0)):
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Heterozygous"
-                            print("Reached3")
+                            #print("Reached3")
                             ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="green")
                             ax.bar(max_length, max_count_relative, width=0.1, color="green", edgecolor="green")
                             ax.bar(max_length2, max_count2_relative, width=0.1, color="green", edgecolor="green")
@@ -273,7 +298,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Heterozygous"
-                            print("Reached4")
+                            #print("Reached4")
                             ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="red")
                             ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
                             ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
@@ -289,7 +314,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Possibly heterozygous point mutation"
-                            print("Reached5")
+                            #print("Reached5")
                             ax.text(0.5, 1.02, "Possibly heterozygous point mutation, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="green")
                             ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
                             ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
@@ -302,7 +327,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                                 ax.text(0.5, -0.3, text_to_add, transform=ax.transAxes, ha="center", va="top", fontsize=9, color="black")
                         # fifth case - only one repeat size difference but second largest peak is minimum size of 0.75 % of the largest one, 
                         elif ((b2 >= b1) and (b2 >= b3) and ((max_count2/total_count) > (0.75*max_count/total_count)) and (abs(max_length2-max_length) == repsiz)):
-                            print("Reached6")
+                            #print("Reached6")
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Heterozygous"
@@ -317,7 +342,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                                     text_to_add += "[" + str(boundary[0]) + "," + str(boundary[1]) + "], "
                                 ax.text(0.5, -0.3, text_to_add, transform=ax.transAxes, ha="center", va="top", fontsize=9, color="black")
                         else:
-                            print("Reached6")
+                            #print("Reached6")
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Needs manual check"
@@ -333,7 +358,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                                 ax.text(0.5, -0.3, text_to_add, transform=ax.transAxes, ha="center", va="top", fontsize=9, color="black")
                     elif (repsiz == 0):
                         if ((b2 >= b1) and (b2 >= b3) and ((max_count2/total_count) > ((0.6 * max_count2)/total_count))):
-                            print("Reached7")
+                            #print("Reached7")
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Possibly heterozygous point mutation"
@@ -348,7 +373,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                                     text_to_add += "[" + str(boundary[0]) + "," + str(boundary[1]) + "], "
                                 ax.text(0.5, -0.3, text_to_add, transform=ax.transAxes, ha="center", va="top", fontsize=9, color="black")
                         else:
-                            print("Reached8")
+                            #print("Reached8")
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Needs Manual Check"
@@ -364,7 +389,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                                 ax.text(0.5, -0.3, text_to_add, transform=ax.transAxes, ha="center", va="top", fontsize=9, color="black")
 
                 elif ((max_count > min_count) and (number_counts == 1)):
-                    print("Reached10")
+                    #print("Reached10")
                     length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                     length_matrix_dict[primer]["Samples"][sample]["Information"] = "Homozygous, only one read length present"
                     ax.text(0.5, 1.02, "Homozygous, only one read length present: " + str(max_length) + ": " + str(max_count) + " Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="black")

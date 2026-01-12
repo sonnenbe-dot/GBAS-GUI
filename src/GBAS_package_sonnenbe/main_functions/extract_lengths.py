@@ -18,6 +18,14 @@ def run_Length_Extraction_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : di
     run_Length_Extraction(length_matrix_json, separatoutpath, allelesout_path)
     textbox_pipeline.insert('end-1c', "\nFinished Length Extraction! \n")
 
+def run_Length_Extraction_CLI(paramsdict : dict):
+    length_matrix_json = Path(paramsdict["Outputfolder"] + '/MarkerPlots/markermatrix.json')
+    separatoutpath = Path(paramsdict["Outputfolder"] + '/SeparatOut')
+    allelesout_path = Path(paramsdict["Outputfolder"] + '/AllelesOut')
+    print("\n\nStarting Length Extraction! \n\n")
+    run_Length_Extraction(length_matrix_json, separatoutpath, allelesout_path)
+    print("\n\nFinished Length Extraction! \n\n")
+
 def extract_locinames_from_matrix(length_matrix_path_json : Path) -> list:
     markermatrix_dict = {}
     with open(length_matrix_path_json) as json_file:
@@ -44,6 +52,9 @@ def run_Length_Extraction(length_matrix_json : Path, separatoutpath : Path, alle
             print("Lengths: \n")
             separatout_filepath = Path(separatoutpath / (sample + "_" + locus + ".fasta"))
             #print(separatout_filepath)
+            print("Locus: " + str(locus) + " \n")
+            # if (not(sample in markermatrix_dict[locus]["Samples"])):
+            #     continue
             if (markermatrix_dict[locus]["Samples"][sample]["LengthAlleles"]):
                 print('......genotype:')
                 for length, count in markermatrix_dict[locus]["Samples"][sample]["LengthAlleles"].items():
