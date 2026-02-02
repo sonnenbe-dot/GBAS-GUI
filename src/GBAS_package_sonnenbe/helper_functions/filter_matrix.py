@@ -8,6 +8,7 @@ def main():
 
 
 def filtering(matrixpath : Path, outputpath : Path, filtering_param : float):
+    print(matrixpath.suffix)
     if (matrixpath.suffix == ".csv"):
         df = pd.read_csv(matrixpath, sep=r"[;,|\t]", engine="python")
     elif (matrixpath.suffix == ".xlsx"):

@@ -16,6 +16,9 @@
 # Ignore output folders 
 **/testfolder/
 
+# Ignore output folders 
+**/testfiles/
+
 #ignore parameter files
 *parameters*.txt
 
@@ -23,7 +26,7 @@
 *.db
 
 #ignore running main files
-**/run_gbas_gui.py
+#**/run_gbas_gui.py
 
 #ignore toml files for building
 **/pyproject.toml

@@ -19,6 +19,10 @@ def main():
     return 0
 
 
+def calculate_PIC_webbased(dict_projects : dict):
+    pass
+
+
 def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_param : float):
     PIC_dict = {}
     for folderpath in inputfolderpath.iterdir():
@@ -52,6 +56,11 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
 
             for allele_matrix_path in allele_matrices_path.iterdir():
                 filtered_matrix_path = allele_matrices_path / (allele_matrix_path.stem + "_filtered.csv")
+                # print(allele_matrix_path.name)
+                # print("\nCHECK HERE!!\n")
+                # print(allele_matrix_path.suffix)
+                if(allele_matrix_path.name.startswith("~$")):
+                   continue
                 filtering(allele_matrix_path, filtered_matrix_path, filtering_param)
 
                 if (filtered_matrix_path.suffix == ".csv"):
@@ -97,6 +106,8 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
 
             for length_matrix_path in length_matrices_path.iterdir():
                 filtered_matrix_path = length_matrices_path / (length_matrix_path.stem + "_filtered.csv")
+                if(length_matrix_path.name.startswith("~$")):
+                   continue
                 filtering(length_matrix_path, filtered_matrix_path, filtering_param)
 
                 if (filtered_matrix_path.suffix == ".csv"):

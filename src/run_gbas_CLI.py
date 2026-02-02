@@ -10,28 +10,35 @@ from GBAS_package_sonnenbe.main_CLI import prepare_params, prepare_executables, 
 
 def main():
 
-    performance = False
+    performance = True
     zipping = False
     
     ###Micromeria###
 
     # current_workspace = Path.cwd()
     # workspace = Path("E:\\Work_Paper_GUI\\runs\\Micromeria")
-    # parameters = [("Outputfolder", str(workspace  / "output_parallel")), ("Bin", str(current_workspace / "bin")), ("Rawdata", str(workspace/ ("inputs/rawdata"))), ("Primerfile", str(workspace / ("inputs/PrimerFileEPICMicromeria.txt"))), ("Samplefile", str(workspace / ("inputs/Sample_file.csv"))), ("Metadata", str(workspace / ("inputs/Metadata.xlsx"))), ("Allelelist", "None"), ("Database", "database.db"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Filtering", 0.8), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
+    # parameters = [("Outputfolder", str(workspace  / "output_parallel")), ("Bin", str(current_workspace / "bin")), ("Rawdata", str(workspace/ ("inputs/rawdata"))), ("Primerfile", str(workspace / ("input/PrimerFileEPICMicromeria.txt"))), ("Samplefile", str(workspace / ("input/Sample_file.csv"))), ("Metadata", str(workspace / ("inputs/Metadata.xlsx"))), ("Allelelist", "None"), ("Database", "database.db"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Filtering", 0.8), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
     # parameters_list = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Metadata", "Allelelist", "Database", "Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Filtering", "Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
     # list_mandatory = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile"]
     # list_not_mandatory = ["Metadata", "Allelelist", "Database"]
 
 
     ###Buvi###
+    # current_workspace = Path.cwd()
+    # #workspace = Path("E:\\Yoko_Buvi_2025_all")
+    # workspace = Path("E:\\Work_Paper_GUI\\runs\\GreenToad")
+    # parameters = [("Outputfolder", str(workspace  / "output_sequential")), ("Bin", str(current_workspace / "bin")), ("Rawdata", str(workspace/ ("inputs/rawfiles_run3_required"))), ("Primerfile", str(workspace / ("inputs/primerfile_Buvi_SSR_EPIC.txt"))), ("Samplefile", str(workspace / ("inputs/samplesheet_run3_SSR_EPIC.txt"))), ("Metadata", "None"), ("Allelelist", str(workspace / ("inputs/allelle_list_Vincent.txt"))), ("Database", "database.db"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Filtering", 0.8), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
+    # parameters_list = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Metadata", "Allelelist", "Database", "Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Filtering", "Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
+    # list_mandatory = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile"]
+    # list_not_mandatory = ["Metadata", "Allelelist", "Database"]
+
+    ###Spruce###
     current_workspace = Path.cwd()
-    #workspace = Path("E:\\Yoko_Buvi_2025_all")
-    workspace = Path("E:\\Work_Paper_GUI\\runs\\GreenToad")
-    parameters = [("Outputfolder", str(workspace  / "output_sequential")), ("Bin", str(current_workspace / "bin")), ("Rawdata", str(workspace/ ("inputs/rawfiles_run3_required"))), ("Primerfile", str(workspace / ("inputs/primerfile_Buvi_SSR_EPIC.txt"))), ("Samplefile", str(workspace / ("inputs/samplesheet_run3_SSR_EPIC.txt"))), ("Metadata", "None"), ("Allelelist", str(workspace / ("inputs/allelle_list_Vincent.txt"))), ("Database", "database.db"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Filtering", 0.8), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
+    workspace = Path("E:\\Work_Paper_GUI\\runs\\Spruce")
+    parameters = [("Outputfolder", str(workspace  / "output_duplicates")), ("Bin", str(current_workspace / "bin")), ("Rawdata", str(workspace/ ("input/rawdata"))), ("Primerfile", str(workspace / ("input/primers_EPIC_and_SSR.txt"))), ("Samplefile", str(workspace / ("input/samplesheet.txt"))), ("Metadata", str(current_workspace / ("input/metadata.xlsx"))), ("Allelelist", "None"), ("Database", "database.db"), ("Maxmismatch", 2), ("Mincount", 20), ("Minlength", 290), ("Consensusthreshold", 0.7), ("Lengthwindow", "310, 600"), ("Filtering", 0.8), ("Ploidy", "diploid"), ("Operatingsystem", platform.system()), ("Uniqueidentifier", "default"), ("Indexcomboposition", 1), ("NumberCores", multiprocessing.cpu_count()-1)]
     parameters_list = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile", "Metadata", "Allelelist", "Database", "Maxmismatch", "Mincount", "Minlength", "Consensusthreshold", "Lengthwindow", "Filtering", "Ploidy", "Operatingsystem", "Uniqueidentifier", "Indexcomboposition", "NumberCores"]
     list_mandatory = ["Outputfolder", "Bin", "Rawdata", "Primerfile", "Samplefile"]
     list_not_mandatory = ["Metadata", "Allelelist", "Database"]
-
 
 
     # current_workspace = Path.cwd()
