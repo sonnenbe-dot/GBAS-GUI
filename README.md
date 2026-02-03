@@ -290,5 +290,10 @@ After adding the projects Spruce, Oak, Micromeria and Green Toad (for each proje
 <br>
 
 <h3 align="center"> Extract subset </h3>
-The Extract Subset feature can be used to filter final results. It is separated into 3 columns. Each column represents a different parameter for which we can filter our saved data. For now these parameters are the metadata field Project, the second metadata column (depending what the user put as the second metadata column in the metadata file)  Locus name taken from the primer file. In the future more parameters will be included to enhance the filtering options.
+The Extract Subset feature can be used to filter final results. It is separated into 3 columns. Each column represents a different parameter for which we can filter our saved data. For now these parameters are the metadata field Project, the second metadata column (depending what the user put as the second metadata column in the metadata file)  Locus name taken from the primer file. In the future more parameters will be included to enhance the filtering options.<br>
+<p align="center">
+ <img width="653" height="407" alt="extract_subset_4projects" src="https://github.com/user-attachments/assets/062df2e8-6832-4b3d-add7-bdd4abcf025f" />
+ </p>
+<br>
+
 
