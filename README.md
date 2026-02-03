@@ -165,6 +165,8 @@ In order to run the pipeline in normal mode the user can click on the Run Length
 The folders  **QC**, **MergedOut**, **SeparatOut**, **MarkerStatistics** and **MarkerPlots** are created when running Length Detection while the folders **AllelesOut**, **ConsensusOut**, **ConsensusTogether**, **Corrected** and **AlleleCall** when running SNP Detection. These are subfolders of the Outputfolder and will contain all outputs and intermediate files.
 The following section explains in detail the main functions and parts of the pipeline.<br><br><br>
 
+<h3 align="center"> Length Detection </h3>
+
 The first part of the pipeline runs in five steps: 1st raw reads are quality controlled, 2nd paired reads are merged, 3rd sequences are sorted according to maker, 4th amplicon lengths are counted per individual and marker, and 5th genotypes are defined based on amplicon length.<br><br> 
 
 **Read quality control**:
@@ -183,6 +185,42 @@ In a second step paired reads are merged into a consensus read covering the tota
 **Demultiplexing**:
 The Demultiplexing process sorts reads into different markers defined according to the sequences of the amplification primers. Merged amplicon sequences should start and end with the sequences of the forward and reverse primers, respectively. The pipeline compares these parts of the merged read with the primer sequences provided by the user. If the number of mismatches between them is bellow the user defined threshold the read is saved into a new file for the matching marker. The mismatch threshold can be set in the Calculation Params subwindow of the Pipeline Parameters window. By default the mismatch parameter is set to 2.<br>
 The pipeline takes the  FASTQ files from the MergedOut folder and saves reads into a FASTA file per marker within the SeparatOut folder. The FASTA files will have the following name structure: _samplename_primername_motif_ (FASTA). Demultiplexing yields a large number of fasta files (number of fasta files = number of primers*number of samples). The advanced pipeline mode (which will be described more in detail later) allows the user to start running the GBAS pipeline from this step if files are already trimmed and merged with other tools.<br><br>
+
+
+**Calculating read counts per length**:
+In the next step the number of reads per amplicon length per sample and marker are counted. The pipeline uses the FASTA files from the SeparatOut folder and saves this information into a STATISTICS file (JSON). This file contains all unique lengths and corresponding counts. This file is stored in the MarkerStatistics folder.
+
+**Length allele call**:
+The last step for the first part involves calling alleles based on the length count information saved previously generated STATISTICS file. The corresponding python function calls either diploid or haploid genotypes. The diploid genotype calling picks up to two different lengths as the potential alleles. The criteria is described in detail in Curto et al. (2019).  For haploid mode the most abundant length is chosen as the final allele. 
+The resulting lengths are saved in matrix form in a CSV file (column headers representing the primers while row headers representing different individuals ). Alongside a markerplots.pdf is generated plotting amplicon length distribution per sample per marker. The x-axis stands for the length while the y-axis is the relative frequency of said length appearing in the STATISTICS file. The user can use the marker plots to manually control the automatic genotype calling and make changes in the matrix file accordingly. Both the matrix and markerplots files are stored in the Markerplots folder.
+
+
+<h3 align="center"> SNP Detection </h3>
+
+The second part of the pipeline script handles calls to genotypes based on whole sequence information. To make this, possible potential SNP variants within each amplicon length are identified and if verified these are used to phase the data into two alleles per length. Finally, the resulting sequences are used to call alleles. This part runs in four steps.  
+
+**Extracting sequences per length**:
+Sequences for  all amplicon lengths used as alleles in the previously generated matrix are extracted from the FASTA files saved in the Separatout folder. Kept reads are saved into a FASTA file per length, sample and marker in the  AllelesOut folder. The output file names contain the same structure as the files from Separatout with the added substring of "Al_Allelelength".
+
+**Making a consensus sequence per length**:
+All sequences from each FASTA file in AllelesOut are summarized into a single Consensus sequence. Because all sequences of each AllelesOUT file are now of the same length we can look at each position and determine the frequency for each four possible nucleotides ( 'A', 'C', 'G', 'T'). If one of these reaches a frequency above the Consensus threshold, it is chosen as the most likely option for that position.  If no nucleotide meets this criterion, an “N” is output marking that position as a potential SNP. The consensus threshold is set by default to 0.7 (70%) and it can be changed in the Calculation Params subwindow. Afterwards all Consensus sequences from the same Locus will be grouped together and saved in a single file saved in the ConsensusTogether folder.
+
+**SNP calling**:
+The  N’ nucleotides in the consensus sequences are assumed to represent potential heterozygous SNPs. A single consensus sequence can contain multiple “N”s, indicating multiple SNPs. These SNPs are linked, meaning that phased sequences can be inferred based on the frequency of linked nucleotides at the positions marked as “N” 
+For example, considering two hypothetical SNPs, A/C and G/T, in different positions of an amplicon, the possible linked nucleotide variants would be AG, AT, CG, and CT. The two most abundant combinations are more likely to represent real variation. This step counts the occurrences of linked nucleotide variants and selects the two most frequent combinations to determine diploid genotypes. If an heterozygote length genotype was called in the first part of the pipeline only the most abundant linked nucleotide variant. The same is done for the haploid mode.
+The chosen linked nucleotide variants are used to produce two sequences by replacing the “N” positions with the respective nucleotide combinations. In some cases, more than two (in case of diploid mode) or one (for haloid mode and length heterozygous genotypes) equally frequent most abundant variants are found making this process ambiguous. In this case the genotype is excluded.
+The positions containing “N” nucleotides are extracted from the consensus sequences stored at the ConsensusTogether folder. The frequency of  linked nucleotide variants for each length, individual and marker is taken from the FASTA files in the AllelesOut folder. 
+If the Consensus sequence contains no ‘N’ it will be considered the final variant.  This process is done for every Consensus sequence from the ConsensusTogether folder and results are saved in the Corrected folder.
+
+**Whole sequence information allele calling**:
+The final step involves calling alleles based on whole sequence information. In short,  all sequence variants saved in the Corrected folder are compared with the sequences from the Allelelist, if available. If a match is found, the corresponding index is assigned to that variant. Otherwise, a new index is created and added to the Allelelist.
+If an Allelelist is not available, a new index is assigned to every unique sequence while processing all sequence variants across all individuals. The final genotypes are determined based on the indices from the Allelelist. If two different sequence variants are found for a particular individual, the output genotype is a heterozygote, coded with the two different indices of the corresponding sequences. If only one variant is found, the genotype is homozygous and coded with a duplicate of the same index.
+
+ All output files are saved in both TXT and JSON format with the Allelelist also being additionally saved in the FASTA format. If the user has chosen a previous Allelelist as an input, then new alleles will be saved into that Allelelist and the result is an updated Allelelist with both old and new results. 
+All final results will be saved in the AlleleCall folder.
+
+
+
 
 <h2 align="center"> Database </h2>
 Each full run of the pipeline results in an Allelematrix (TXT), an Allelelist (TXT, JSON, FASTA), and their combined output (JSON). The Allelelist contains all found sequence variants while the Allelematrix contains the final genotype table with allele call based on whole sequence information. The user can choose to use the obtained Allelelist as an input in a future run. The Allelelist will be  extended with newly found variants and data from additional individuals and markers. The combined output contains all found allele sequences per marker and per SampleID as well as Metadata information per sample if a metadata filepath has been given. The figure below shows an example for a combined output in JSON format. <br>
