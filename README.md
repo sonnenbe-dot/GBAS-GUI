@@ -247,11 +247,12 @@ The inputfolder contains a subfolder per project. Each project folder must conta
 3 output files will be generated once the calculation is done:<br>
 * _PIC_results.json_ contains the absolute PIC value (both length- and sequence based) for each marker per project, the absolute PIC difference as well as the individual frequencies of each allele appearing per marker (both length- and sequence based). A positive PIC difference indicates indicates an increase in the PIC value when identifying alleles from the length-based allele-matrix to identifying alles from the sequence-based allele-matrix.
 * _PIC_additional_info.json_ shows for each project the 5 best performing markers based on absolute length-based and sequence-based PIC values as well as on absolute PIC increase from length-based to sequence-based.
+* 1 plot (PNG) containing the boxplots for each project. Each project has 2 boxplots, one representing the PIC values calculated from amplicon-length–based genotypes (AL) and one representing the PIC values calculated from sequence-based genotypes derived from whole amplicon information (WAI).
+* 1 plot (PNG) per project showing a histogramm for each marker representing the PIC value differences from length-based to sequence-based values.<br><br>
 * 1 plot (PNG) showing for each marker per project a bar representing the PIC value difference from length-based to sequence-based value and 1 plot (PNG) showing the same for the best 5 performing markers for each project based on the PIC value increase. A bar to the right indicates an increase from length-based to sequence-based while a bar going to the left indicates a PIC drop.<br><br>
-Below is a figure showcasing the Allele frequencies, PIC values and PIC differences for the Marker Bv1_AATA for the project Buvi.<br>
-<p align="center">
- <img width="457" height="455" alt="PIC_values_example" src="https://github.com/user-attachments/assets/7457c2a4-8278-4928-9ff2-e6d109871449" />
-</p>
+
+Below is a figure showcasing the boxplots for the projects Spruce, Oak, Green Toad and Micromeria.<br>
+
 <br>
 Below is a plot showcasing the PIC value differences for the best 5 performing markers for each of the 3 above mentioned projects.<br>
 <p align="center">
