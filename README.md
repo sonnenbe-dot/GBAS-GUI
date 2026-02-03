@@ -283,6 +283,11 @@ Each rectangle represents a tabular table (entity) and the connected oval forms 
 
 If it is the first time adding data then a new SQlite database file will be created with the filename given in the databasefilepath field.<br>
 Afterwards the content from the input filepaths will be parsed and correctly added to the respective tables of the database. With the _Check Status_ Button the current status of the database will be updated and the current number of alleles will be displayed.<br><br>
+After adding the projects Spruce, Oak, Micromeria and Green Toad (for each project the respective matrix, primerlist and metadata) the window will show the number of stored alleles and loci.<br>
+<p align="center">
+<img width="313" height="436" alt="add_to_database_window_4projects_added" src="https://github.com/user-attachments/assets/d1630d01-8136-4f1b-9cb0-4baef64f7916" />
+</p>
+<br>
 
 <h3 align="center"> Extract subset </h3>
 The Extract Subset feature can be used to filter final results. It is separated into 3 columns. Each column represents a different parameter for which we can filter our saved data. For now these parameters are the metadata field Project, the second metadata column (depending what the user put as the second metadata column in the metadata file)  Locus name taken from the primer file. In the future more parameters will be included to enhance the filtering options.
