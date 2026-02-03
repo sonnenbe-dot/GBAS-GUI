@@ -199,7 +199,7 @@ The resulting lengths are saved in matrix form in a CSV file (column headers rep
 
 The second part of the pipeline script handles calls to genotypes based on whole sequence information. To make this, possible potential SNP variants within each amplicon length are identified and if verified these are used to phase the data into two alleles per length. Finally, the resulting sequences are used to call alleles. This part runs in four steps.  
 
-**Extracting sequences per length**:
+**Extracting sequences per length**:</p>
 Sequences for  all amplicon lengths used as alleles in the previously generated matrix are extracted from the FASTA files saved in the Separatout folder. Kept reads are saved into a FASTA file per length, sample and marker in the  AllelesOut folder. The output file names contain the same structure as the files from Separatout with the added substring of "Al_Allelelength".
 
 **Making a consensus sequence per length**:
