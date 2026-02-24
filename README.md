@@ -13,7 +13,7 @@ This manual refers to an updated version of the GBAS pipeline integrating a GUI.
 
 For anyone wanting to get a quick hands-on rundown of the process there is a step-by-step tutorial using a test folder containing Micromeria data.<br>
 
-<h2 align="center"> Installation</h2>
+<h2 align="center">Installation</h2>
 Users can install the GUI application using PIP with the following command:
 <br><br>
 pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade GBAS-package-sonnenbe-vers2
