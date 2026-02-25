@@ -6,6 +6,10 @@ A local graphical user interface (GUI) application which enables a user-friendly
 * [Installation](#installation)
 * [Bin](#bin)
 * [GUI overview](#gui-overview)
+  * [Preparation](#preparation)
+    * [Pipeline Parameters](#pipeline-parameters)
+    * [Workspace Status](#workspace-status)
+    * [Data Preparation](#data-preparation)
 
 
 <h2 align="center">Introduction</h2>
