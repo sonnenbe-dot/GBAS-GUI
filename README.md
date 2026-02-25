@@ -10,6 +10,8 @@ A local graphical user interface (GUI) application which enables a user-friendly
     * [Pipeline Parameters](#pipeline-parameters)
     * [Workspace Status](#workspace-status)
     * [Data Preparation](#data-preparation)
+    * [Instructions](#instructions)
+  * [Pipeline](#pipeline)
 
 
 <h2 align="center">Introduction</h2>
@@ -84,8 +86,8 @@ _Add to Database_: Adding genotyping results into a local database incorporating
 _Database Status_: Shows all alleles currently stored in the local database.<br>
 _Extract Subset_: Filtering the stored genotypes and corresponding allele information according to the metadata parameters Project, the metadata parameter and Loci used. Users can generate the matrix output in both CSV and JSON format based on the filtering parameters.<br><br>
 
-<h2 align="center"> Preparation</h2>
-<h3 align="center"> Pipeline Parameters</h3>
+<h2 align="center">Preparation</h2>
+<h3 align="center">Pipeline Parameters</h3>
 
 The **Pipeline Parameters** button opens a window separated into 4 subwindows: **Folders**, **Files**, **Calculation Params** and **Additional Params**. <br>
 
@@ -139,7 +141,7 @@ A test dataset for the GBAS pipeline for a small set of individuals from oak spe
 This consists in a folder containing a samplefile, a primerfile, and the rawdata folder with the gunzipped FASTQ files.
 <br><br>
 
-<h3 align="center"> Workspace Status </h3>
+<h3 align="center">Workspace Status </h3>
 Clicking on the Workspace Status button allows the user to check if parameters were correctly set preventing to start runs with empty parameters or invalid paths.<br>
 The user should also see if the bin folder has been correctly placed and if it contains all necessary executables and adapter files that are needed for parts of the pipeline to execute.<br>
 The contents of the samplefile are checked for possible duplicates in both columns (sample identifiers and final sample names), which the user must eliminate or change the FASTQ file names to ensure they are different. Otherwise the GBAS pipeline will  overwrite the  results of the first duplicated entry with the results of the latter duplicate entry. The correct delimiter usage is ("," or ";").
@@ -149,17 +151,17 @@ The use of underscore as a delimiter plays an important role in the identificati
 If the user unknowingly used repeated sample names, the pipeline produces a  warning message. 
 At the end of the Workspace Window a message will display if the pipeline is safe to start or not. If it is safe to start (no duplicates in sample file, there are no  missing files in bin, etc.) then the number of input FASTQ files is shown.<br><br>
 
-<h3 align="center"> Data Preparation </h3>
+<h3 align="center">Data Preparation </h3>
 In many cases the raw gunzipped FASTQ files will be in an external folder. Copy pasting them all into local machine when the user plans to run the GBAS pipeline locally can be memory- and time intensive, especially since most of the time the user only requires the raw gunzipped FASTQ files corresponding to the Sample Identifiers in the samplesheet. Data Preparation will open a window with the input fields Rawdata, Samplesheet and Output.<br>
 <p align="center">
  <img width="265" height="193" alt="data_preparation_window" src="https://github.com/user-attachments/assets/b48c400c-3b05-40d7-be73-698ad47d4ec7" />
 </p>
 Choosing the paths for Rawdata, Samplesheet and Output the user can import from Rawdata only the FASTQ files which correspond to the Sample Identifiers from the samplesheet into Output, saving memory and time.<br><br>
 
-<h3 align="center"> Instructions </h3>
+<h3 align="center">Instructions</h3>
 Here the user has the option to see a shortened version of the manual and most important points summarized in a new window. <br><br>
 
-<h2 align="center"> Pipeline </h2>
+<h2 align="center">Pipeline</h2>
 If all input parameters are set to valid values and no errors are detected by workspace status the GBAS pipeline can start. The middle column of the GUI allows the user to do so in three modes: default mode (each pipeline part runs sequentially one after the other), Advanced Mode (combinations of individual components of the pipeline) and Individual Run mode (run a specific part of the pipeline). The figure showcases the pipeline process.<br>
 
 <p align="center">
