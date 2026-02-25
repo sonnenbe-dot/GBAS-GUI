@@ -5,6 +5,7 @@ A local graphical user interface (GUI) application which enables a user-friendly
 * [Introduction](#introduction)
 * [Installation](#installation)
 * [Bin](#bin)
+* [GUI overview](#gUI overview)
 
 
 <h2 align="center">Introduction</h2>
@@ -49,7 +50,7 @@ If users however wish to set up their own bin folder they can follow the next fe
 
 Once the bin folder is ready the user can proceed with starting the GUI as described above. <br><br>
 
-<h2 align="center"> GUI overview</h2>
+<h2 align="center">GUI overview</h2>
 
 When first executing the GUI a main window separated into 3 columns will pop up:
 **Preparation**, **Pipeline** and **Database**
