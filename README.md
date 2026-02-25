@@ -5,7 +5,7 @@ A local graphical user interface (GUI) application which enables a user-friendly
 * [Introduction](#introduction)
 * [Installation](#installation)
 * [Bin](#bin)
-* [GUI overview](#gui overview)
+* [GUI overview](#GUI overview)
 
 
 <h2 align="center">Introduction</h2>
