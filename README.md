@@ -15,6 +15,8 @@ A local graphical user interface (GUI) application which enables a user-friendly
     * [Pipeline Details](#pipeline-details)
     * [Length Detection](#length-detection)
     * [SNP Detection](#snp-detection)
+  * [Database](#database)
+* [Tutorial](#tutorial)
 
 
 <h2 align="center">Introduction</h2>
