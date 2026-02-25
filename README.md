@@ -165,6 +165,7 @@ Choosing the paths for Rawdata, Samplesheet and Output the user can import from 
 Here the user has the option to see a shortened version of the manual and most important points summarized in a new window. <br><br>
 
 <h2 align="center">Pipeline</h2>
+<h3 align="center">Pipeline details</h3>
 If all input parameters are set to valid values and no errors are detected by workspace status the GBAS pipeline can start. The middle column of the GUI allows the user to do so in three modes: default mode (each pipeline part runs sequentially one after the other), Advanced Mode (combinations of individual components of the pipeline) and Individual Run mode (run a specific part of the pipeline). The figure showcases the pipeline process.<br>
 
 <p align="center">
@@ -179,13 +180,12 @@ The pipeline produces multiple outputs:
 * Allelematrix in TXT format containing diploid genotype information where each row represents an individual and each pair of columns a marker. The genotypes are coded in two consecutive cells.  Each cell contains an Integer which represents an the Alleleindex whose sequence can be found in the Allele list. Thus the matrix assigns all found alleles to the corresponding samples and markers.
 * A Combined Output in JSON format merging information from both Allelelist and Allelematrix. If a valid metadata filepath has been set in _Pipeline Parameters_ then the metadata (Project, etc.) will be added for each SampleID in the JSON output. If no valid metadata filepath has been set then the _Metadata_ field of the combined output will be empty.<br><br>
 
-<h3 align="center"> Pipeline details </h3>
 In order to run the pipeline in normal mode the user can click on the Run Length Detection button to start the first part of the pipeline getting the genotypes based on allele length.  Afterwards the Run SNP Detection can be run for the final allele call.<br><br>
 
 The folders  **QC**, **MergedOut**, **SeparatOut**, **MarkerStatistics** and **MarkerPlots** are created when running Length Detection while the folders **AllelesOut**, **ConsensusOut**, **ConsensusTogether**, **Corrected** and **AlleleCall** when running SNP Detection. These are subfolders of the Outputfolder and will contain all outputs and intermediate files.
 The following section explains in detail the main functions and parts of the pipeline.<br><br><br>
 
-<h3 align="center"> Length Detection </h3>
+<h3 align="center">Length Detection</h3>
 
 The first part of the pipeline runs in five steps: 1st raw reads are quality controlled, 2nd paired reads are merged, 3rd sequences are sorted according to maker, 4th amplicon lengths are counted per individual and marker, and 5th genotypes are defined based on amplicon length.<br><br> 
 
@@ -215,7 +215,7 @@ The last step for the first part involves calling alleles based on the length co
 The resulting lengths are saved in matrix form in a CSV file (column headers representing the primers while row headers representing different individuals ). Alongside a markerplots.pdf is generated plotting amplicon length distribution per sample per marker. The x-axis stands for the length while the y-axis is the relative frequency of said length appearing in the STATISTICS file. The user can use the marker plots to manually control the automatic genotype calling and make changes in the matrix file accordingly. Both the matrix and markerplots files are stored in the Markerplots folder.
 
 
-<h3 align="center"> SNP Detection </h3>
+<h3 align="center">SNP Detection</h3>
 
 The second part of the pipeline script handles calls to genotypes based on whole sequence information. To make this, possible potential SNP variants within each amplicon length are identified and if verified these are used to phase the data into two alleles per length. Finally, the resulting sequences are used to call alleles. This part runs in four steps.  
 
