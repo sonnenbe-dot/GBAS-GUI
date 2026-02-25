@@ -12,6 +12,9 @@ A local graphical user interface (GUI) application which enables a user-friendly
     * [Data Preparation](#data-preparation)
     * [Instructions](#instructions)
   * [Pipeline](#pipeline)
+    * [Pipeline Details](#pipeline-details)
+    * [Length Detection](#length-detection)
+    * [SNP Detection](#snp-detection)
 
 
 <h2 align="center">Introduction</h2>
