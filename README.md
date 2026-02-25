@@ -21,6 +21,11 @@ A local graphical user interface (GUI) application which enables a user-friendly
     * [Add to Database](#add-to-database)
     * [Extract subset](#extract-subset)
 * [Tutorial](#tutorial)
+  * [Preparation](#preparation)
+  * [Running the pipeline](#running-the-pipeline)
+  * [Adding output to database](#add-to-database)
+  * [Extracting subset from Database](#extract-from-database)
+  * [PIC-Calculation](#pic-calculation)
 
 
 <h2 align="center">Introduction</h2>
