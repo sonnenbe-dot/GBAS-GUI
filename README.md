@@ -16,6 +16,8 @@ A local graphical user interface (GUI) application which enables a user-friendly
     * [Length Detection](#length-detection)
     * [SNP Detection](#snp-detection)
   * [Database](#database)
+    * [Allelelist Comparison](#allelelist-comparison)
+    * [PIC Calculation](#pic-calculation)
 * [Tutorial](#tutorial)
 
 
@@ -251,9 +253,9 @@ Each full run of the pipeline results in an Allelematrix (TXT), an Allelelist (T
 </p>
 If no alleles are found per sample locus the _Alleles_ field will be left empty. This is to distinguish between loci which failed for a sample and those that did not. This combined output file can be stored in the local database which will be described in more detail down below. <br> <br>
 
-<h3 align="center"> Allelelist Comparison </h3>
+<h3 align="center">Allelelist Comparison</h3>
 
-<h3 align="center"> PIC Calculation </h3>
+<h3 align="center">PIC Calculation</h3>
 The GUI offers the option to determine the absolue PIC (Polymorphism Information Content) per Marker for each Project. The button opens a window with fields to enter the paths for Input and Outputfolder.<br>
 <p align="center">
  <img width="316" height="332" alt="PIC_calculation" src="https://github.com/user-attachments/assets/3d1d38e6-8047-4e97-9cca-e1f2eb23d9bf" />
