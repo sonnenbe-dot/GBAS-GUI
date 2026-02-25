@@ -47,6 +47,7 @@ gbas_get_bin_vers2
 
 This will copy the folders and files of the bin into a local bin directory at the same location from where the GUI has been installed.
 <br><br>
+
 The GUI can be started with the command:
 
 ```
