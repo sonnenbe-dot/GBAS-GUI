@@ -162,7 +162,7 @@ A test dataset for the GBAS pipeline for a small set of individuals from oak spe
 This consists in a folder containing a samplefile, a primerfile, and the rawdata folder with the gunzipped FASTQ files.
 <br><br>
 
-<h3 align="center">Workspace Status </h3>
+<h3 align="center">Workspace Status</h3>
 Clicking on the Workspace Status button allows the user to check if parameters were correctly set preventing to start runs with empty parameters or invalid paths.<br>
 The user should also see if the bin folder has been correctly placed and if it contains all necessary executables and adapter files that are needed for parts of the pipeline to execute.<br>
 The contents of the samplefile are checked for possible duplicates in both columns (sample identifiers and final sample names), which the user must eliminate or change the FASTQ file names to ensure they are different. Otherwise the GBAS pipeline will  overwrite the  results of the first duplicated entry with the results of the latter duplicate entry. The correct delimiter usage is ("," or ";").
@@ -172,7 +172,7 @@ The use of underscore as a delimiter plays an important role in the identificati
 If the user unknowingly used repeated sample names, the pipeline produces a  warning message. 
 At the end of the Workspace Window a message will display if the pipeline is safe to start or not. If it is safe to start (no duplicates in sample file, there are no  missing files in bin, etc.) then the number of input FASTQ files is shown.<br><br>
 
-<h3 align="center">Data Preparation </h3>
+<h3 align="center">Data Preparation</h3>
 In many cases the raw gunzipped FASTQ files will be in an external folder. Copy pasting them all into local machine when the user plans to run the GBAS pipeline locally can be memory- and time intensive, especially since most of the time the user only requires the raw gunzipped FASTQ files corresponding to the Sample Identifiers in the samplesheet. Data Preparation will open a window with the input fields Rawdata, Samplesheet and Output.<br>
 <p align="center">
  <img width="265" height="193" alt="data_preparation_window" src="https://github.com/user-attachments/assets/b48c400c-3b05-40d7-be73-698ad47d4ec7" />
@@ -335,5 +335,7 @@ The Extract Subset feature can be used to filter final results. It is separated 
 <br>
 
 <h2 align="center">Tutorial</h2>
-To gain a quick overview of a typical GBAS run using the GUI this section presents a tutorial using a set folder containing Micromeria data. Download the test_folder from the
+To gain a quick overview of a typical GBAS run using the GUI this section presents a tutorial using a set folder containing Micromeria data. Download the content from test_folder which contains inputs for Micromeria, namely 1 samplesheet, 1 primerfile and 8 zipped FASTQ files containing the Micromeria sequences.<br><br>
+
+As described in the Pipeline Paramters Section the samplesheet contains the link between the names of the zipped FASTQ files and the actual sample names. 
 
