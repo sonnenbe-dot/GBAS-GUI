@@ -463,7 +463,7 @@ def calculate_PIC(inputfolderpath : Path, outputfolderpath : Path, filtering_par
 
     plt.tight_layout()
 
-    savepath = outputfolderpath / "ALL_PROJECTS_PIC_boxplot.png"
+    savepath = outputfolderpath / "all_projects_PIC_boxplot.png"
     plt.savefig(savepath, dpi=200)
     plt.close(fig)
 
