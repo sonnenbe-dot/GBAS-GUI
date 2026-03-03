@@ -483,3 +483,13 @@ Keep in mind that outputs are directly linked to project metadata. Meaning if I 
 The output will then be an empty matrix since by unclicking the Micromeria field we keep all genotype outputs from Micromeria out from our subset. Remember that the metadata has each sample linked with a certain project name. Unclicking said project name eliminates all the samples from the subset output.<br><br>
 
 <h2 align="center">Calculating PIC values for all 4 markers</h2>
+To get a first overview for the performance of all 4 markers (which have the same name as the primers in the primerlist) we can calculate the absolute PIC values and gain some plots for them.<br><br>
+
+First of all is to manually built a workspace with the following structure.<br>
+<p align="center">
+<img width="211" height="134" alt="image" src="https://github.com/user-attachments/assets/4de4b08b-184e-4412-937c-ed5ed52d2e9b" />
+</p>
+<br>
+
+The outer foldername is the name of the project, here Micromeria. Then the 2 subfolders must be named _allele_matrices_ and _length_matrices_ . Subfolder _length_matrices_ contains the matrix results from the first part of the script in EXCEL format. This could be multiple matrices depending how many runs we have per project but for the test folder our project only contains 1 length-based matrix. Copy paste the matrix in excel format from the output folder Markerplots into _length_matrices_. We also added the substring "_AL" (Amplicon Length) to it's name to make identify it quickly as a length based allele matrix. Subfolder _allele_matrices_ contains the matrices from the second part of the pipeline in EXCEL format. Since the second part of the pipeline does so far not automatically output the matrix in EXCEL you have to do it manually. Here we also added a "_WAI" (Whole Amplicon Information) substring to the filename to clearly identify it as a matrix based on the whole Sequence Information. <br><br>
+Of course the above naming conventions can be changed and are just a suggestion. Most important is that all matrices are in EXCEL format and that subfolder _length_matrices_ contains only length-based matrices and that subfolder _allele_matrices_ only contains allele matrices based on whole sequence information.
