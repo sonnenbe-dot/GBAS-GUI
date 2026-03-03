@@ -411,3 +411,18 @@ Once the second part finished a new file (TXT) containing the allele matrix will
 <img width="427" height="70" alt="image" src="https://github.com/user-attachments/assets/b14ed42d-a68c-43b8-956d-31677f572332" />
 </p>
 <br><br>
+
+Along with this an allelelist is produced which shows the actual allele sequences for each number per marker.
+<p align="center">
+<img width="689" height="266" alt="image" src="https://github.com/user-attachments/assets/2e66aa78-bba5-4bc3-ae28-e02e5f6d895f" />
+</p>
+<br><br>
+
+Furtheremore a combination of matrix and allelelist will be outputted in a JSON file. 
+<p align="center">
+<img width="521" height="398" alt="image" src="https://github.com/user-attachments/assets/9767772d-f4dc-41eb-b1be-c81bf9c06249" />
+</p>
+<br>
+Since we previously added a path to a medatafile file the medata information will be included here. Otherwise it will be left empty.
+<br><br>
+
