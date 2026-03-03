@@ -501,4 +501,15 @@ Click on the **PIC Calculation** button in the GUI to open the window for the PI
 </p>
 <br>
 
-Next click on the **Calculate PIC** button to start the PIC calculation process.
+Next click on the **Calculate PIC** button to start the PIC calculation process. The chosen output folder will contain multiple files.
+<p align="center">
+<img width="604" height="115" alt="image" src="https://github.com/user-attachments/assets/e65e0afb-c713-41a5-9cc6-5b9321fb63cc" />
+</p>
+<br>
+
+The main file will be the boxplot with the name _all_projects_PIC_boxplot_. The plot shows 2 boxplots representing the absolute PIC values of all 4 markers. 1 boxplot represents the PIC values calculated from amplicon-length–based genotypes (AL) and the second boxplot represents the PIC values calculated from sequence-based genotypes derived from whole amplicon information (WAI). 
+<p align="center">
+<img width="545" height="325" alt="image" src="https://github.com/user-attachments/assets/e01dc0e6-8fa5-409d-b587-d2ade374b381" />
+</p>
+<br><br>
+We can see from the boxplot the increase of PIC values from AL genotypes to WAI genotypes.
