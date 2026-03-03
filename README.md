@@ -431,3 +431,15 @@ In the next part lets add this output along with the medata into a local SQLite 
 <img width="355" height="448" alt="image" src="https://github.com/user-attachments/assets/8f004cf2-c67e-4893-baae-47b641e942e0" />
 </p>
 <br>
+
+The button **Add to local Database** will generate a new SQLITE file (DB) with the name choosen in the Pipeline Parameters window. By default this name will just be database. After clicking the button we should see the confirmation that all alleles have been stored.
+<p align="center">
+<img width="355" height="450" alt="image" src="https://github.com/user-attachments/assets/b77ddfe0-57e6-4436-a9b2-d923103b29bc" />
+</p>
+<br>
+Because the allelelist contains 26 unique alleles we will get the message that all 26 alleles have been stored.<br>
+Click on the **Update Database Status** to make sure that these database changes are now properly reflected.
+<p align="center">
+<img width="358" height="446" alt="image" src="https://github.com/user-attachments/assets/9fbe8b8c-8c94-401f-89aa-65cc1e7e7e80" />
+</p>
+<br>
