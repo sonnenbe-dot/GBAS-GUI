@@ -465,7 +465,7 @@ By default all fields are clicked and thus when using the **Download Subset** bu
 <br>
 
 Since we only have the project Micromeria our outpit will naturally also be a single matrix and in both EXCEL and JSON format. 
-Keep in mind that outputs are directly linked to project metadata. Meaning if I were to unblick Micromeria in the Include Project column:
+Keep in mind that outputs are directly linked to project metadata. Meaning if I were to unclick Micromeria in the Include Project column:
 <p align="center">
 <img width="521" height="313" alt="image" src="https://github.com/user-attachments/assets/1aa94f79-366b-4da1-b47c-7a8f97ca1a63" />
 </p>
