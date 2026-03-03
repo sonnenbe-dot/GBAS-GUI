@@ -418,7 +418,7 @@ Along with this an allelelist is produced which shows the actual allele sequence
 </p>
 <br><br>
 
-Furtheremore a combination of matrix and allelelist will be outputted in a JSON file. 
+Furtheremore a combination of matrix and allelelist will be outputted in a JSON file matrix.json. 
 <p align="center">
 <img width="521" height="398" alt="image" src="https://github.com/user-attachments/assets/9767772d-f4dc-41eb-b1be-c81bf9c06249" />
 </p>
@@ -426,3 +426,8 @@ Furtheremore a combination of matrix and allelelist will be outputted in a JSON 
 Since we previously added a path to a medatafile file the medata information will be included here. Otherwise it will be left empty.
 <br><br>
 
+In the next part lets add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.
+<p align="center">
+<img width="355" height="448" alt="image" src="https://github.com/user-attachments/assets/8f004cf2-c67e-4893-baae-47b641e942e0" />
+</p>
+<br>
