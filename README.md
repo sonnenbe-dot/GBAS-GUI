@@ -377,3 +377,7 @@ Next click on the **Workspace Status** button to make sure inputs are correctly 
 **Mandatory Inputfiles correctly set!** 
 <br>
 Only then the pipeline will be ready to start.<br><br>
+
+Many processes in the pipeline by default run in parallel and will use all available cores on the system except for 1. We can change the number of cores in the Pipeline Parameters window in the NumberCores entry field in case we want to leave more CPU processing power for other processes in the background.<br><br>
+
+Start the first part of pipeline using the **Run Length Detection** button in the middle column.<br><br>
