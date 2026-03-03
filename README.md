@@ -372,3 +372,8 @@ gbas_gui_vers2_start
 
 The GUI must be started from the same location as the Bin folder in order for the Bin's contents to be recognized by the GUI!<br><br>
 Click on the **Pipeline Parameters** button and set up the mandatory input paths for Rawdata, Primerfile and Samplefile. Furthermore add the path to the Metadata file. After this is done choose a name or path for the field Parameterfilepath. The input settings will be saved in a TXT parameterfile with your choosen name.<br><br>
+
+Next click on the **Workspace Status** button to make sure inputs are correctly set. The window has to show the message: <br>
+**Mandatory Inputfiles correctly set!** 
+<br>
+Only then the pipeline will be ready to start.<br><br>
