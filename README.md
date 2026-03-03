@@ -33,7 +33,7 @@ The GBAS pipeline as described in Curto et al. (2019) and Tibihika et al (2019) 
 
 This manual refers to an updated version of the GBAS pipeline integrating a GUI. The GUI allows easy usage of the GBAS pipeline by detecting errors in the necessary inputs, the possibility of running individual pipeline parts on their own and the option to store detected alleles in a local database using the SQLite3 module. Furthermore in the process of integrating the SSR-GBAS pipeline into the GUI application parts of the original scripts have been rewritten and enhanced to give the user more insight into the intermediate results of pipeline parts and allow a faster processing time while not changing the basic procedure and goal of each script part.<br><br>
 
-For anyone wanting to get a quick hands-on rundown of the process there is a step-by-step tutorial using a test folder containing Micromeria data.<br>
+To get a quick hands-on overview we refer to the step-by-step tutorial in the [Tutorial](#tutorial) section.<br>
 
 <h2 align="center">Installation</h2>
 Users can install the GUI application using Pip with the following command:
