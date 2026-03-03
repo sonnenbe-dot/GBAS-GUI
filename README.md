@@ -337,13 +337,29 @@ The Extract Subset feature can be used to filter final results. It is separated 
 <h2 align="center">Tutorial</h2>
 This section gives the user a direct and quick hands-on rundown of a typical GBAS process using the GUI. This includes running the GBAS pipeline, adding the results into a local database and calculating PIC values.
 For this a test folder containing data for Micromeria. First step is to download the content of this folder.<br>
-The test folder has data for 4 samples and 4 primers and contains the following:
+The test folder has data for 4 samples and 4 primers and contains the following:<br>
 
 - 1 samplefile containing the links between between the names of the zipped FASTQ files and the actual sample names
 - 1 primerfile giving all the names of the primers used for the sequencing process along with the forward and reverse primer sequences
 - 1 metadata file giving meta information (Project, Species, Island) for each sample
 - 1 folder containing the raw zipped FASTQ files containing Micromeria sequences for each sample
 
-1 samplefile containing the links between between the names of the zipped FASTQ files and the actual sample names, 1 primerfile giving all the names of the primers used for the sequencing process along with the forward and reverse primers.
-To gain a quick overview of a typical GBAS run using the GUI this section presents a tutorial using a set folder containing Micromeria data. Download the content from test_folder which contains inputs for Micromeria, namely 1 samplesheet, 1 primerfile and 8 zipped FASTQ files containing the Micromeria sequences.<br><br>
+Because the GBAS process is designed for processing pair-end amplicons each each sample has 2 raw zipped FASTQ files, one containing forward sequences (R1) and one containing reverse sequences (R2), thus in total 8 raw zipped FASTQ files.<br><br>
 
+As a suggestion keep the following workspace structure as below.<br><br>
+
+Next install the GUI application as described in the [Installation](#installation) section. For that make sure to have python (>=3.8) and Pip installed on your system. Furthermore make sure Java is installed.
+
+In Bash
+
+```
+java -version
+```
+
+Next prepare the bin folder as described in the [Bin](#bin) section. <br><br>
+
+In the end your workspace should have the following structure:<br>
+<p align="center">
+ <img width="543" height="494" alt="image" src="https://github.com/user-attachments/assets/e87a5248-7b0d-4912-a159-7b145edcc4d6" />
+ </p>
+<br>
