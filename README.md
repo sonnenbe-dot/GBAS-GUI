@@ -362,4 +362,13 @@ In the end your workspace should have the following structure:<br>
 <p align="center">
  <img width="331" height="468" alt="image" src="https://github.com/user-attachments/assets/97deaecd-277b-416c-bdb4-f410b18bb992" />
  </p>
-<br>
+<br><br>
+
+Now that the workspace is ready we can start the GUI with the command:
+
+```
+gbas_gui_vers2_start
+```
+
+The GUI must be started from the same location as the Bin folder in order for the Bin's contents to be recognized by the GUI!<br><br>
+Click on the **Pipeline Parameters** button and set up the mandatory input paths for Rawdata, Primerfile and Samplefile. Furthermore add the path to the Metadata file. After this is done choose a name or path for the field Parameterfilepath. The input settings will be saved in a TXT parameterfile with your choosen name.<br><br>
