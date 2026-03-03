@@ -335,7 +335,14 @@ The Extract Subset feature can be used to filter final results. It is separated 
 <br>
 
 <h2 align="center">Tutorial</h2>
-To gain a quick overview of a typical GBAS run using the GUI this section presents a tutorial using a set folder containing Micromeria data. Download the content from test_folder which contains inputs for Micromeria, namely 1 samplesheet, 1 primerfile and 8 zipped FASTQ files containing the Micromeria sequences.<br><br>
+This section gives the user a direct and quick hands-on rundown of a typical GBAS process using the GUI. This includes running the GBAS pipeline, adding the results into a local database and calculating PIC values.
+For this a test folder containing data for Micromeria. First step is to download the content of this folder.<br>
+The test folder has data for 4 samples and 4 primers and contains the following:
+- 1 samplefile containing the links between between the names of the zipped FASTQ files and the actual sample names
+- 1 primerfile giving all the names of the primers used for the sequencing process along with the forward and reverse primer sequences
+- 1 metadata file giving meta information (Project, Species, Island) for each sample
+- 1 folder containing the raw zipped FASTQ files containing Micromeria sequences for each sample<br>
 
-As described in the Pipeline Paramters Section the samplesheet contains the link between the names of the zipped FASTQ files and the actual sample names. 
+1 samplefile containing the links between between the names of the zipped FASTQ files and the actual sample names, 1 primerfile giving all the names of the primers used for the sequencing process along with the forward and reverse primers.
+To gain a quick overview of a typical GBAS run using the GUI this section presents a tutorial using a set folder containing Micromeria data. Download the content from test_folder which contains inputs for Micromeria, namely 1 samplesheet, 1 primerfile and 8 zipped FASTQ files containing the Micromeria sequences.<br><br>
 
