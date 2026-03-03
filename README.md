@@ -399,4 +399,15 @@ Since we use 4 samples and 4 primers the resulting matrix will of dimension 4x4.
 <img width="569" height="94" alt="image" src="https://github.com/user-attachments/assets/0ef1f9a6-7b17-427a-b64c-7b04e047ee22" />
 </p>
 <br><br>
-The first part of the pipeline will produce
+
+Next the second part of the pipeline can be started by clicking on the **Run SNP Detection** button.
+<p align="center">
+<img width="741" height="464" alt="image" src="https://github.com/user-attachments/assets/fd185d0d-1808-4f2a-9bb9-978b5a9e1cdb" />
+</p>
+<br><br>
+
+Once the second part finished a new file (TXT) containing the allele matrix will open. This will be again a 4x4 matrix.
+<p align="center">
+<img width="427" height="70" alt="image" src="https://github.com/user-attachments/assets/b14ed42d-a68c-43b8-956d-31677f572332" />
+</p>
+<br><br>
