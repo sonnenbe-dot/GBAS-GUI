@@ -387,8 +387,16 @@ Start the first part of pipeline using the **Run Length Detection** button in th
 </p>
 <br><br>
 
-After a few seconds the first part will be finished and a PDF representing the markerplots will open automatically. 
+The first part of the pipeline will produce markerplots (PDF) and the length matrix (in both EXCEL and JSON format). 
+The markerplots file will open automatically once the first part of the pipeline is finished.
 <p align="center">
 <img width="553" height="485" alt="image" src="https://github.com/user-attachments/assets/a5ba23b9-e3dc-4e94-ade8-9dbd4e64e87a" />
 </p>
 <br><br>
+
+Since we use 4 samples and 4 primers the resulting matrix will of dimension 4x4.
+<p align="center">
+<img width="569" height="94" alt="image" src="https://github.com/user-attachments/assets/0ef1f9a6-7b17-427a-b64c-7b04e047ee22" />
+</p>
+<br><br>
+The first part of the pipeline will produce
