@@ -381,3 +381,14 @@ Only then the pipeline will be ready to start.<br><br>
 Many processes in the pipeline by default run in parallel and will use all available cores on the system except for 1. We can change the number of cores in the Pipeline Parameters window in the NumberCores entry field in case we want to leave more CPU processing power for other processes in the background.<br><br>
 
 Start the first part of pipeline using the **Run Length Detection** button in the middle column.<br><br>
+
+<p align="center">
+<img width="738" height="463" alt="image" src="https://github.com/user-attachments/assets/9b9a7492-1ef4-4493-ac39-035fc89856b9" />
+</p>
+<br><br>
+
+After a few seconds the first part will be finished and a PDF representing the markerplots will open automatically. 
+<p align="center">
+<img width="553" height="485" alt="image" src="https://github.com/user-attachments/assets/a5ba23b9-e3dc-4e94-ade8-9dbd4e64e87a" />
+</p>
+<br><br>
