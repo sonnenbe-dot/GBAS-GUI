@@ -360,6 +360,6 @@ Next prepare the bin folder as described in the [Bin](#bin) section. <br><br>
 
 In the end your workspace should have the following structure:<br>
 <p align="center">
- <img width="543" height="494" alt="image" src="https://github.com/user-attachments/assets/e87a5248-7b0d-4912-a159-7b145edcc4d6" />
+ <img width="331" height="468" alt="image" src="https://github.com/user-attachments/assets/97deaecd-277b-416c-bdb4-f410b18bb992" />
  </p>
 <br>
