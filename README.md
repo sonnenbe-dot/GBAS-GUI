@@ -21,11 +21,10 @@ A local graphical user interface (GUI) application which enables a user-friendly
     * [Add to Database](#add-to-database)
     * [Extract subset](#extract-subset)
 * [Tutorial](#tutorial)
-  * [Preparation](#preparation)
+  * [Preparing the data](#preparing-the-data)
   * [Running the pipeline](#running-the-pipeline)
-  * [Adding output to database](#add-to-database)
-  * [Extracting subset from Database](#extract-from-database)
-  * [PIC-Calculation](#pic-calculation)
+  * [Adding and extracting from database](#add-to-database)
+  * [Calculating PIC values for all 4 markers](#pic-calculation)
 
 
 <h2 align="center">Introduction</h2>
@@ -260,7 +259,7 @@ All final results will be saved in the AlleleCall folder.
 
 
 
-<h2 align="center"> Database </h2>
+<h2 align="center">Database</h2>
 Each full run of the pipeline results in an Allelematrix (TXT), an Allelelist (TXT, JSON, FASTA), and their combined output (JSON). The Allelelist contains all found sequence variants while the Allelematrix contains the final genotype table with allele call based on whole sequence information. The user can choose to use the obtained Allelelist as an input in a future run. The Allelelist will be  extended with newly found variants and data from additional individuals and markers. The combined output contains all found allele sequences per marker and per SampleID as well as Metadata information per sample if a metadata filepath has been given. The figure below shows an example for a combined output in JSON format. <br>
 <p align="center">
 <img width="638" height="457" alt="combined_output_example_oak" src="https://github.com/user-attachments/assets/206ca101-da93-4719-907c-a8838698c527" />
@@ -336,7 +335,9 @@ The Extract Subset feature can be used to filter final results. It is separated 
 
 <h2 align="center">Tutorial</h2>
 This section gives the user a direct and quick hands-on rundown of a typical GBAS process using the GUI. This includes running the GBAS pipeline, adding the results into a local database and calculating PIC values.
-For this a test folder containing data for Micromeria. First step is to download the content of this folder.<br>
+For this a test folder containing data for Micromeria has been prepared in the repository.<br>
+<h2 align="center">Preparing the data</h2>
+First step is to download the content of this folder.<br>
 The test folder has data for 4 samples and 4 primers and contains the following:<br>
 
 - 1 samplefile containing the links between between the names of the zipped FASTQ files and the actual sample names
@@ -379,6 +380,8 @@ Next click on the **Workspace Status** button to make sure inputs are correctly 
 Only then the pipeline will be ready to start.<br><br>
 
 Many processes in the pipeline by default run in parallel and will use all available cores on the system except for 1. We can change the number of cores in the Pipeline Parameters window in the NumberCores entry field in case we want to leave more CPU processing power for other processes in the background.<br><br>
+
+<h2 align="center">Running the pipeline</h2>
 
 Start the first part of pipeline using the **Run Length Detection** button in the middle column.<br><br>
 
@@ -426,6 +429,8 @@ Furtheremore a combination of matrix and allelelist will be outputted in a JSON 
 Since we previously added a path to a medatafile file the medata information will be included here. Otherwise it will be left empty.
 <br><br>
 
+<h2 align="center">Adding and extracting from database</h2>
+
 In the next part lets add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.
 <p align="center">
 <img width="355" height="448" alt="image" src="https://github.com/user-attachments/assets/8f004cf2-c67e-4893-baae-47b641e942e0" />
@@ -472,3 +477,5 @@ Keep in mind that outputs are directly linked to project metadata. Meaning if I 
 <br>
 
 The output will then be an empty matrix since by unclicking the Micromeria field we keep all genotype outputs from Micromeria out from our subset. Remember that the metadata has each sample linked with a certain project name. Unclicking said project name eliminates all the samples from the subset output.<br><br>
+
+<h2 align="center">Calculating PIC values for all 4 markers</h2>
