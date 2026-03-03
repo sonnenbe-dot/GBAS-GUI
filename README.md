@@ -437,9 +437,25 @@ The button **Add to local Database** will generate a new SQLITE file (DB) with t
 <img width="355" height="450" alt="image" src="https://github.com/user-attachments/assets/b77ddfe0-57e6-4436-a9b2-d923103b29bc" />
 </p>
 <br>
-Because the allelelist contains 26 unique alleles we will get the message that all 26 alleles have been stored.<br>
-Click on the **Update Database Status** to make sure that these database changes are now properly reflected.
+Because the allelelist contains 26 unique alleles we will get the message that all 26 alleles have been stored.<br><br>
+
+Click on the **Update Database Status** to make sure that these database changes are now properly reflected.<br>
 <p align="center">
 <img width="358" height="446" alt="image" src="https://github.com/user-attachments/assets/9fbe8b8c-8c94-401f-89aa-65cc1e7e7e80" />
 </p>
 <br>
+All 4 Markers yield allele results and we go from 9 amplicon-length–based genotypes (AL) to 26 sequence-based genotypes derived from whole amplicon information (WAI).<br><br>
+
+Click next on the button **Database Status** to show a scrollable list of all currently stored WAI genotypes. 
+<p align="center">
+<img width="518" height="283" alt="image" src="https://github.com/user-attachments/assets/4ac47878-5f72-47fe-9f41-eaf48308c46d" />
+</p>
+<br>
+
+Now we can use the **Extract subset** button to extract either the full content of the database or a subset based on the Metadata parameters Project or Metadata2. Metadata2 is a variable paramerter but will always represent the third column of the metadata file which can represent any metadata depending on the individual user. The third subset parameter is the Locus which is represented by the primernames used.
+<p align="center">
+<img width="521" height="313" alt="image" src="https://github.com/user-attachments/assets/c38904ff-d42c-4860-8c5e-7e73c2e5ff55" />
+</p>
+<br>
+
+by default all fields are clicked and thus when using the **Download Subset** button the output will be the original matrix in both EXCEL and JSON format. 
