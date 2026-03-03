@@ -458,4 +458,17 @@ Now we can use the **Extract subset** button to extract either the full content 
 </p>
 <br>
 
-by default all fields are clicked and thus when using the **Download Subset** button the output will be the original matrix in both EXCEL and JSON format. 
+By default all fields are clicked and thus when using the **Download Subset** button the output will be the original matrix in both EXCEL and JSON format. Subset results will be stored in a folder called ***subset_output***.
+<p align="center">
+<img width="113" height="43" alt="image" src="https://github.com/user-attachments/assets/a7edd4f8-e957-4fc6-a4c6-59e83f59b3e7" />
+</p>
+<br>
+
+Since we only have the project Micromeria our outpit will naturally also be a single matrix and in both EXCEL and JSON format. 
+Keep in mind that outputs are directly linked to project metadata. Meaning if I were to unblick Micromeria in the Include Project column:
+<p align="center">
+<img width="521" height="313" alt="image" src="https://github.com/user-attachments/assets/1aa94f79-366b-4da1-b47c-7a8f97ca1a63" />
+</p>
+<br>
+
+The output will then be an empty matrix since by unclicking the Micromeria field we keep all genotype outputs from Micromeria out from our subset. Remember that the metadata has each sample linked with a certain project name. Unclicking said project name eliminates all the samples from the subset output.<br><br>
