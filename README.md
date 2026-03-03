@@ -492,4 +492,13 @@ First of all is to manually built a workspace with the following structure.<br>
 <br>
 
 The outer foldername is the name of the project, here Micromeria. Then the 2 subfolders must be named _allele_matrices_ and _length_matrices_ . Subfolder _length_matrices_ contains the matrix results from the first part of the script in EXCEL format. This could be multiple matrices depending how many runs we have per project but for the test folder our project only contains 1 length-based matrix. Copy paste the matrix in excel format from the output folder Markerplots into _length_matrices_. We also added the substring "_AL" (Amplicon Length) to it's name to make identify it quickly as a length based allele matrix. Subfolder _allele_matrices_ contains the matrices from the second part of the pipeline in EXCEL format. Since the second part of the pipeline does so far not automatically output the matrix in EXCEL you have to do it manually. Here we also added a "_WAI" (Whole Amplicon Information) substring to the filename to clearly identify it as a matrix based on the whole Sequence Information. <br><br>
-Of course the above naming conventions can be changed and are just a suggestion. Most important is that all matrices are in EXCEL format and that subfolder _length_matrices_ contains only length-based matrices and that subfolder _allele_matrices_ only contains allele matrices based on whole sequence information.
+Of course the above naming conventions can be changed and are just a suggestion. Most important is that all matrices are in EXCEL format and that subfolder _length_matrices_ contains only length-based matrices and that subfolder _allele_matrices_ only contains allele matrices based on whole sequence information.<br><br>
+
+Click on the **PIC Calculation** button in the GUI to open the window for the PIC calculation process. Set the Inputfolder entry field to the folder containing the above folder structure. Set the Outputfolder entry field to the output folder you wish to store the PIC calculation outputs into. Afterwards click on the **Check Inputs** button to make sure your folder structure is in the correct format. The window should show the message as below.
+
+<p align="center">
+<img width="335" height="362" alt="image" src="https://github.com/user-attachments/assets/d1b71037-9720-4900-8c23-41ff403607a7" />
+</p>
+<br>
+
+Next click on the **Calculate PIC** button to start the PIC calculation process.
