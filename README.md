@@ -374,7 +374,7 @@ gbas_gui_vers2_start
 ```
 
 The GUI must be started from the same location as the Bin folder in order for the Bin's contents to be recognized by the GUI!<br><br>
-Click on the **Pipeline Parameters** button and set up the mandatory input paths for Rawdata, Primerfile and Samplefile. Furthermore add the path to the Metadata file. After this is done choose a name or path for the field Parameterfilepath. The input settings will be saved in a TXT parameterfile with your choosen name.<br><br>
+Click on the **Pipeline Parameters** button and set up the mandatory input paths for Rawdata, Primerfile and Samplefile. Furthermore add the path to the Metadata file. All other parameters can be left at their default value. Since the samples are of diploid nature the ploidy entry field will also be left diploid. After this is done choose a name or path for the field Parameterfilepath. The input settings will be saved in a TXT parameterfile with your choosen name.<br><br>
 
 Next click on the **Workspace Status** button to make sure inputs are correctly set. The window has to show the message: <br>
 **Mandatory Inputfiles correctly set!** 
@@ -399,19 +399,19 @@ The markerplots file will open automatically once the first part of the pipeline
 </p>
 <br><br>
 
-Since we use 4 samples and 4 primers the resulting matrix will of dimension 4x4.
+Since we use 4 samples and 4 primers we expect the resulting matrix to be of dimension 4x4. However because of the diploid nature of the micromeria samples, each Locus can have a total of 2 alleles and thus the matrix will be of dimension 4x8. If the samples were of haploid nature then the resulting allele length matrix will of dimension 4x4.
 <p align="center">
 <img width="569" height="94" alt="image" src="https://github.com/user-attachments/assets/0ef1f9a6-7b17-427a-b64c-7b04e047ee22" />
 </p>
 <br><br>
 
-Next the second part of the pipeline can be started by clicking on the **Run SNP Detection** button.
+In the next step the second part of the pipeline can be started by clicking on the **Run SNP Detection** button.
 <p align="center">
 <img width="741" height="464" alt="image" src="https://github.com/user-attachments/assets/fd185d0d-1808-4f2a-9bb9-978b5a9e1cdb" />
 </p>
 <br><br>
 
-Once the second part finished a new file (TXT) containing the allele matrix will open. This will be again a 4x4 matrix.
+Once the second part finishes a new file (TXT) containing the allele matrix will open. This will be again a matrix of dimension 4x8. 
 <p align="center">
 <img width="427" height="70" alt="image" src="https://github.com/user-attachments/assets/b14ed42d-a68c-43b8-956d-31677f572332" />
 </p>
@@ -429,11 +429,13 @@ Furtheremore a combination of matrix and allelelist will be outputted in a JSON 
 </p>
 <br>
 Since we previously added a path to a medatafile file the medata information will be included here. Otherwise it will be left empty.
+<br>
+All final outputs will be stored in the folder AlleleCall in the output folder.
 <br><br>
 
 <h2 align="center">Adding and extracting from database</h2>
 
-In the next part lets add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.
+In the next part lwe will add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.
 <p align="center">
 <img width="355" height="448" alt="image" src="https://github.com/user-attachments/assets/8f004cf2-c67e-4893-baae-47b641e942e0" />
 </p>
