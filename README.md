@@ -381,7 +381,7 @@ Next click on the **Workspace Status** button to make sure inputs are correctly 
 <br>
 Only then the pipeline will be ready to start.<br><br>
 
-Many processes in the pipeline by default run in parallel and will use all available cores on the system except for 1. We can change the number of cores in the Pipeline Parameters window in the NumberCores entry field in case we want to leave more CPU processing power for other processes in the background.<br><br>
+Many processes in the pipeline by default run in parallel and will use all available cores on the system leaving one free. We can change the number of cores in the Pipeline Parameters window in the NumberCores entry field in case we want to leave more CPU processing power for other processes in the background.<br><br>
 
 <h2 align="center">Running the pipeline</h2>
 
