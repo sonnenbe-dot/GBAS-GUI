@@ -428,20 +428,22 @@ Furtheremore a combination of matrix and allelelist will be outputted in a JSON 
 <img width="521" height="398" alt="image" src="https://github.com/user-attachments/assets/9767772d-f4dc-41eb-b1be-c81bf9c06249" />
 </p>
 <br>
-Since we previously added a path to a medatafile file the medata information will be included here. Otherwise it will be left empty.
+
+The metadata field in the above JSON output will be left empty if no metadata input was specified.
+
 <br>
 All final outputs will be stored in the folder AlleleCall in the output folder.
 <br><br>
 
 <h2 align="center">Adding and extracting from database</h2>
 
-In the next part lwe will add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.
+In the next part we will add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.
 <p align="center">
 <img width="355" height="448" alt="image" src="https://github.com/user-attachments/assets/8f004cf2-c67e-4893-baae-47b641e942e0" />
 </p>
 <br>
 
-The button **Add to local Database** will generate a new SQLITE file (DB) with the name choosen in the Pipeline Parameters window. By default this name will just be database. After clicking the button we should see the confirmation that all alleles have been stored.
+The button **Add to local Database** will generate a new SQLite file (DB) with the name choosen in the Pipeline Parameters window. By default this name will just be database. After clicking the button we should see the confirmation that all alleles have been stored.
 <p align="center">
 <img width="355" height="450" alt="image" src="https://github.com/user-attachments/assets/b77ddfe0-57e6-4436-a9b2-d923103b29bc" />
 </p>
