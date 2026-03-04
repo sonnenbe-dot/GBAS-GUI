@@ -399,7 +399,7 @@ The markerplots file will open automatically once the first part of the pipeline
 </p>
 <br><br>
 
-Since we use 4 samples and 4 primers we expect the resulting matrix to be of dimension 4x4. However because of the diploid nature of the micromeria samples, each Locus can have a total of 2 alleles and thus the matrix will be of dimension 4x8. If the samples were of haploid nature then the resulting allele length matrix will of dimension 4x4.
+Since we use 4 samples and 4 primers and our default value for the Ploidy entry field is diploid the dimension of the resulting matrix will be 4x8. If the samples were of haploid nature then the resulting length matrix will be of dimension 4x4.
 <p align="center">
 <img width="569" height="94" alt="image" src="https://github.com/user-attachments/assets/0ef1f9a6-7b17-427a-b64c-7b04e047ee22" />
 </p>
