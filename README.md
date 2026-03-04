@@ -437,7 +437,8 @@ All final outputs will be stored in the folder AlleleCall in the output folder.
 
 <h2 align="center">Adding and extracting from database</h2>
 
-In the next part we will add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.
+In the next part we will add this output along with the medata into a local SQLite database. We click on the **Add to Database** button in the right column and set the input fields to the primerfile, metadata file and the JSON output of the second pipeline part. If the GUI has not been closed after running the pipeline then the input fields will already be set automatically.<br>
+**Warning**: This part will only work if you specified a path to a metadata input file.
 <p align="center">
 <img width="355" height="448" alt="image" src="https://github.com/user-attachments/assets/8f004cf2-c67e-4893-baae-47b641e942e0" />
 </p>
