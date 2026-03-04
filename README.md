@@ -392,7 +392,7 @@ Start the first part of pipeline using the **Run Length Detection** button in th
 </p>
 <br><br>
 
-The first part of the pipeline will produce markerplots (PDF) and the length matrix (in both EXCEL and JSON format). 
+The first part of the pipeline will produce markerplots (PDF) and the codominant length matrix (in both CSV and JSON format). 
 The markerplots file will open automatically once the first part of the pipeline is finished.
 <p align="center">
 <img width="553" height="485" alt="image" src="https://github.com/user-attachments/assets/a5ba23b9-e3dc-4e94-ade8-9dbd4e64e87a" />
