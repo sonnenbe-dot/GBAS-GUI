@@ -23,8 +23,8 @@ A local graphical user interface (GUI) application which enables a user-friendly
 * [Tutorial](#tutorial)
   * [Preparing the data](#preparing-the-data)
   * [Running the pipeline](#running-the-pipeline)
-  * [Adding and extracting from database](#add-to-database)
-  * [Calculating PIC values for all 4 markers](#pic-calculation)
+  * [Adding and extracting from database](#adding-and-extracting-from-database)
+  * [Calculating PIC values for all 4 markers](#calculating-pic-values-for-all-4-markers)
 
 
 <h2 align="center">Introduction</h2>
