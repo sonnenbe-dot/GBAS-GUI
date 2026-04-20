@@ -180,6 +180,8 @@ def get_variants(Counter_dict : dict, number_alleles_allowed : int):
     #for variant, count in Counter_dict.items():
         #variants_counts.append(count)
     variants_counts.sort() #Sort the counts in ascending order
+    
+    #Want more than 2 or 1 counts
     highest_counts = variants_counts[-number_alleles_allowed:] #get last 2 or 1 counts (these will be the 2 highest or 1 highest count)
     variant_results = [] #storing all variants which correspond to highest 2/1 counts
     incHapCount = 0 # count summ of the included haplotypes
