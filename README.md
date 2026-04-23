@@ -63,7 +63,7 @@ gbas_gui_vers2_start
 Furthermore in order to run the pipeline the user needs to install Python (>3.10) and Java. All other dependencies are downloaded through the installation process.
 
 <h2 align="center">Bin</h2>
-The bin folder contains all the necessary external executables in order to run the GBAS-GUI pipeline. This folder must be in the same location as the starting point of the GUI application in order to be recognized. The bin folder will contain the executables for Trimmomatic (REF) and Usearch (REF). The first part of the pipeline calls upon these executables; therefore, they are necessary for the pipeline to proceed.
+The bin folder contains all the necessary external executables in order to run the GBAS-GUI pipeline. This folder must be in the same location as the starting point of the GUI application in order to be recognized. The bin folder will contain the executables for Trimmomatic (Bolger et al. 2014) and Usearch (Edger et al. 2015). The first part of the pipeline calls upon these executables; therefore, they are necessary for the pipeline to proceed.
 Below is a graphical view of the bin folder structure.
 <br><br>
 The bin can be either downloaded through the command as described above.
