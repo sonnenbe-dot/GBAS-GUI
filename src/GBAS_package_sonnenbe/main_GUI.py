@@ -126,6 +126,7 @@ class main_window(ctk.CTkFrame):
                 "Trimmomatic" : Path(Path(self.paramsdict["Bin"]) / "Trimmomatic-0.39" / "trimmomatic-0.39.jar"),
                 "UsearchLinux" : Path(Path(self.paramsdict["Bin"]) / "usearch11.0.667_i86linux32"),
                 "UsearchWindows" : Path(Path(self.paramsdict["Bin"]) / "usearch11.0.667_win32.exe")
+                #"UsearchMax" : Path(Path(self.paramsdict["Bin"]) / "usearch11.0.667_i86osx64")
                 # "RScriptDiploid" : Path(Path(self.paramsdict["Bin"]) / "Rscript_Markerlength_STUTTER_Color_BaryzentricMinsize20_notVerbose.R"),
                 # "RScriptHaploid" : Path(Path(self.paramsdict["Bin"]) / "Rscript_Markerlength_Haploid.R"),
             },

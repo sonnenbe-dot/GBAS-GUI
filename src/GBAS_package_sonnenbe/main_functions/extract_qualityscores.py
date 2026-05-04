@@ -19,7 +19,7 @@ def main():
 
     mergedout_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\outputs\output_2samples_2primers\MergedOut"
     output_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\output_quality_scores"
-    allelesout_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\outputs\output_2samples_2primers\AllelesOut" #AllelesOut_test
+    allelesout_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\outputs\output_2samples_2primers\AllelesOut_test" #AllelesOut_test
     
     #samplelist_path_str r"C:\Users\Sebastian\Documents\Micromeria_test\inputs\samples.txt"
 
@@ -118,7 +118,7 @@ def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sit
     for genotype in genotype_tuple: #only 2
         sum = []
         for i in range(0, number_sites, 1):
-            base_error_probability = 10**((-qualities[i])/10)
+            base_error_probability = float(10**((-qualities[i])/10))
             if (read[i] != genotype[i]):
                 sum.append(base_error_probability/3)
             else:
@@ -165,6 +165,8 @@ def calculate_likelihoods(json_input_dict : Path, alleleouts_path : Path, sample
         print(locus)
         print(sample)
 
+        
+
         if (not(locus in dict_likelihoods)):
             dict_likelihoods[locus] = {}
 
@@ -185,7 +187,7 @@ def calculate_likelihoods(json_input_dict : Path, alleleouts_path : Path, sample
             genotype_likelihood = math.prod(genotype_pair_likelihood_terms)
 
             dict_likelihoods[locus][sample]["Genotypes"][genotype_pair_diploid_str]["Likelihood"] = genotype_likelihood
-
+    
 
 
         # if (len(sequence) == length and sequence.count("N") == 0):
