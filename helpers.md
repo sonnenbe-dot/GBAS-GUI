@@ -32,3 +32,6 @@ c) Merging branch into main
 -) git branch (number of all branches and which on which branch currently)
 -) git pull origin main (get latest version of remote main branch and merge it with local folder without overwriting new local changes)
 -) git merge <branch_name> me
+-) git clone https://github.com/sonnenbe-dot/GBAS-GUI.git (cloning my remote repo into local folder)
+-) git branch -a (see all local and remote branches of the repository)
+-) git switch --track origin/allele_determination_likelihoods switching to the remote branch allele_determination_likelihoods and creating the local branch allele_determination_likelihoods as well
