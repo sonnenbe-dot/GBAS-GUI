@@ -20,8 +20,15 @@ b) Change branch and push additions to new branch
     3) git commit -m "text-message"
     4) git push -u origin <new branch name> (origin default name of remote branch)
 
+c) Merging branch into main
+    1) git switch main (switch to main branch)
+    2) git pull origin main (get latest changes from remote main and merge it with local main branch without overwriting new local changes)
+    3) git merge <branch_name> (merging branch into main)
+    4) git push -u origin main (push new main with merged branch into main branch of remote repo)
 
 
 #Other helpful git commands:
 -) git status (check uncommitted changes and new files)
 -) git branch (number of all branches and which on which branch currently)
+-) git pull origin main (get latest version of remote main branch and merge it with local folder without overwriting new local changes)
+-) git merge <branch_name> me
