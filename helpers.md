@@ -11,7 +11,7 @@ a) Push changes to main branch
     1) git init (only when there is no hidden .git file in the location)
     2) git add . (add everything new)
     3) git commit -m "text-message"
-    4) git push -u origin main
+    4) git push -u origin main (-u remembers which remote branch is tracked for future pushes, here it is tracked to origin, default name of the remote repo)
     5) git pull origin main (only if remote and local have both different changes, gain remote changes to local without overwriting local)
 
 b) Change branch and push additions to new branch
