@@ -3,7 +3,7 @@
 #Deploy on pip test server:
 1) python -m build
 2) py -m twine upload --repository testpypi dist/* --verbose (input API key)
-3) pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade 
+3) pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade GBAS-package-sonnenbe-vers2
 
 #Git commands:
 
