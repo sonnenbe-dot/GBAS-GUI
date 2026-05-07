@@ -283,9 +283,9 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Heterozygous"
                             #print("Reached3")
-                            ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="green")
-                            ax.bar(max_length, max_count_relative, width=0.1, color="green", edgecolor="green")
-                            ax.bar(max_length2, max_count2_relative, width=0.1, color="green", edgecolor="green")
+                            ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="dark green")
+                            ax.bar(max_length, max_count_relative, width=0.1, color="dark green", edgecolor="dark green")
+                            ax.bar(max_length2, max_count2_relative, width=0.1, color="dark green", edgecolor="dark green")
                             ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             ax.text(x=max_length2, y=max_count2_relative + 0.5, s=str(max_length2), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             if ("LengthBoundaries" in rest):
@@ -299,9 +299,9 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Heterozygous"
                             #print("Reached4")
-                            ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="red")
-                            ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
-                            ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
+                            ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="dark green")
+                            ax.bar(max_length, max_count_relative, width=0.1, color="dark green", edgecolor="dark green")
+                            ax.bar(max_length2, max_count2_relative, width=0.1, color="dark green", edgecolor="dark green")
                             ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             ax.text(x=max_length2, y=max_count2_relative + 0.5, s=str(max_length2), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             if ("LengthBoundaries" in rest):
@@ -316,8 +316,8 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Possibly heterozygous point mutation"
                             #print("Reached5")
                             ax.text(0.5, 1.02, "Possibly heterozygous point mutation, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="green")
-                            ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
-                            ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
+                            ax.bar(max_length, max_count_relative, width=0.1, color="green", edgecolor="green")
+                            ax.bar(max_length2, max_count2_relative, width=0.1, color="green", edgecolor="green")
                             ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             ax.text(x=max_length2, y=max_count2_relative + 0.5, s=str(max_length2), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             if ("LengthBoundaries" in rest):
@@ -331,9 +331,9 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Heterozygous"
-                            ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="black")
-                            ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
-                            ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
+                            ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="dark green")
+                            ax.bar(max_length, max_count_relative, width=0.1, color="dark green", edgecolor="dark green")
+                            ax.bar(max_length2, max_count2_relative, width=0.1, color="dark green", edgecolor="dark green")
                             ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             ax.text(x=max_length2, y=max_count2_relative + 0.5, s=str(max_length2), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                             if ("LengthBoundaries" in rest):
@@ -346,7 +346,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Needs manual check"
-                            ax.text(0.5, 1.02, "Needs manual check, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="black")
+                            ax.text(0.5, 1.02, "Needs manual check, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="red")
                             ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
                             ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
                             ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
@@ -361,8 +361,8 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             #print("Reached7")
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
-                            length_matrix_dict[primer]["Samples"][sample]["Information"] = "Possibly heterozygous point mutation"
-                            ax.text(0.5, 1.02, "Possibly heterozygous point mutation, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="green")
+                            length_matrix_dict[primer]["Samples"][sample]["Information"] = "Heterozygous"
+                            ax.text(0.5, 1.02, "Heterozygous, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="green")
                             ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
                             ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
                             ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
@@ -377,7 +377,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                             length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length2] = max_count2
                             length_matrix_dict[primer]["Samples"][sample]["Information"] = "Needs Manual Check"
-                            ax.text(0.5, 1.02, "Needs manual check, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="black")
+                            ax.text(0.5, 1.02, "Needs manual check, read length and count is: " + str(max_length) + ": " + str(max_count) + "and " + str(max_length2) + ": " + str(max_count2) + ", Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="red")
                             ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="red")
                             ax.bar(max_length2, max_count2_relative, width=0.1, color="red", edgecolor="red")
                             ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
@@ -393,7 +393,7 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                     length_matrix_dict[primer]["Samples"][sample]["LengthAlleles"][max_length] = max_count
                     length_matrix_dict[primer]["Samples"][sample]["Information"] = "Homozygous, only one read length present"
                     ax.text(0.5, 1.02, "Homozygous, only one read length present: " + str(max_length) + ": " + str(max_count) + " Total Count: " + str(total_count), transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="black")
-                    ax.bar(max_length, max_count_relative, width=0.1, color="red", edgecolor="blue")
+                    ax.bar(max_length, max_count_relative, width=0.1, color="blue", edgecolor="blue")
                     ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                     if ("LengthBoundaries" in rest):
                         text_to_add = "Length Boundaries: "
@@ -410,7 +410,10 @@ def runMarkerplots_diploid(markerstatistics_path_json : Path, markerplots_path :
                             text_to_add += "[" + str(boundary[0]) + "," + str(boundary[1]) + "], "
                         ax.text(0.5, -0.3, text_to_add, transform=ax.transAxes, ha="center", va="top", fontsize=9, color="black")
                 else:
-                    ax.text(0.5, 1.02, "Too little read count", transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="black")
+                    ax.text(0.5, 1.02, "Too little read count", transform=ax.transAxes, ha="center", va="bottom", fontsize=9, color="red")
+                    #Testing it for testfiles!!!
+                    # ax.bar(max_length, max_count_relative, width=0.1, color="black", edgecolor="blue")
+                    # ax.text(x=max_length, y=max_count_relative + 0.5, s=str(max_length), ha="center", va="bottom", fontsize=8, color="black", weight="bold")
                     length_matrix_dict[primer]["Samples"][sample]["Information"] = "Too Little Read Count"
                     if ("LengthBoundaries" in rest):
                         text_to_add = "Length Boundaries: "
