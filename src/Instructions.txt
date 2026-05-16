@@ -1,0 +1,11 @@
+###Instructions for using the GBAS-GUI: 
+
+#The GUI is separated into 3 columns: Preparation, Pipeline and Database. 
+
+Preparation handles the setup of all necessary inputs and the validity. 
+
+Pipeline handles the usage of the pipeline in normal and advanced mode. 
+Database section handles the insertion of datasets produced by the pipeline into the local database as well as PIC calculation. 
+
+
+For more information on the GUI please visit the official documentation at https://github.com/sonnenbe-dot/GUI-GBAS-2
