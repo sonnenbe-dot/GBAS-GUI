@@ -2,12 +2,15 @@ from pathlib import Path
 
 import json, math
 
+import numpy as np
+
 from GBAS_package_sonnenbe.helper_functions.parse_fastq import parse_fastq
 from GBAS_package_sonnenbe.helper_functions.parse_fasta import parse_fasta
 from GBAS_package_sonnenbe.helper_functions.parse_samplefile import get_samples
 
 from itertools import product, combinations_with_replacement
-import math
+
+from collections import Counter
 
 
 def main():
@@ -19,7 +22,7 @@ def main():
 
     mergedout_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\outputs\output_2samples_2primers\MergedOut"
     output_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\output_quality_scores"
-    allelesout_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\outputs\output_2samples_2primers\AllelesOut_test" #AllelesOut_test
+    allelesout_path_str = r"C:\Users\Sebastian\Documents\Micromeria_test\outputs\output_2samples_2primers\AllelesOut" #AllelesOut_test #AllelesOut_test2
     
     #samplelist_path_str r"C:\Users\Sebastian\Documents\Micromeria_test\inputs\samples.txt"
 
@@ -33,10 +36,10 @@ def main():
     allelesout_path = Path(allelesout_path_str)
     json_input_path = output_path / "quality_scores.json"
     samplelist_path = inputs_path / "samples.txt"
-    sites = [0, 1, 2, 3]
     outputpath = Path(r"C:\Users\Sebastian\Documents\Micromeria_test\output_likelihoods")
+    outputpath_multiple = Path(r"C:\Users\Sebastian\Documents\Micromeria_test\output_likelihoods_multiple")
 
-    calculate_likelihoods(json_input_path, allelesout_path, samplelist_path, sites, outputpath)
+    calculate_likelihoods(json_input_path, allelesout_path, samplelist_path, 0.7, outputpath_multiple)
 
 
     return 0
@@ -88,15 +91,13 @@ def get_quality_scores(input_path : Path, output_path : Path, indexcomboposition
 
 
 def construct_genotype_options_diploid(bases : list, sites : list):
-    #bases = ["A", "C", "T", "G"]
-    # possible_genotypes_number = len(bases)**len(sites)
-    # print(possible_genotypes_number)
-    #possible_genotypes = [(base1, base2) for base1 in bases for base2 in bases]
-    #print(possible_genotypes)
     possible_genotypes = ["".join(genotype) for genotype in product(bases, repeat = len(sites))]
-    genotype_pairs = list(combinations_with_replacement(possible_genotypes, 2))
+    genotype_pairs = combinations_with_replacement(possible_genotypes, 2)
     return possible_genotypes, genotype_pairs
 
+def construct_genotype_options_diploid_new(sites : dict):
+    possible_genotypes = list(product(*sites.values())) #product() gives cartesian product of all sublists
+    return (possible_genotypes, list(combinations_with_replacement(possible_genotypes, 2))) #combinations_with_replacements gives all pairs (hence why 2 as an argument) from all given genotypes
 
 
 def logsumexp(log_values):
@@ -107,23 +108,6 @@ def logsumexp(log_values):
 
 
 def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sites : int, qualities : list):
-    # for i, base in enumerate(read, 0):
-    #     sum1 = []
-    #     for base_genotype in genotype[0]:
-    #         if (base != base_genotype):
-    #             sum1.append(qualities[i]/3)
-    #         else:
-    #             sum1.append((1-qualities[i]))
-    #     probability = (1/2) * math.prod(sum1)
-    #     sum2 = []
-    #     for base_genotype in genotype[1]:
-    #         if (base != base_genotype):
-    #             sum2.append(qualities[i]/3)
-    #         else:
-    #             sum2.append((1-qualities[i]))
-    #     probability = (1/2) * math.prod(sum2)
-    
-    probability = 0
     allele_log_probs = []
     for genotype in genotype_tuple: #only 2
         site_log_probs = []
@@ -131,15 +115,12 @@ def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sit
             base_error_probability = float(10**((-qualities[i])/10))
             if (read[i] != genotype[i]):
                 prob = base_error_probability/3
-                #sum.append(base_error_probability/3)
             else:
                 prob = 1-base_error_probability
-                #sum.append((1-base_error_probability))
             if (prob == 0):
                 site_log_probs.append(-math.inf)
             else:
                 site_log_probs.append(math.log(prob))
-        #probability += (1/2) * math.prod(sum)
 
         allele_log_prob = sum(site_log_probs)
         allele_log_probs.append(math.log(0.5) + allele_log_prob)
@@ -167,35 +148,38 @@ def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sit
     # print(probability)
 
 
-    
     return logsumexp(allele_log_probs)
 
 
+
+def find_sites(fastafile : Path, consensusthreshold : float):
+    sites = {}
+    fasta_dict = parse_fasta(fastafile)
+
+    #check if file has sequences with different lengths:
+    seq_length_fixed = len(list(fasta_dict.values())[0])
+    different_lengths = [seq for header, seq in fasta_dict.items() if (len(seq) != seq_length_fixed)]
+    if (different_lengths):
+        raise Exception("Different Sequence Lengths in the file " + fastafile.name + " \n")
+
+    for i in range(0, seq_length_fixed, 1):
+        calc = []
+        for header, sequence in fasta_dict.items():
+            calc.append(sequence[i])
+        frequencies = Counter(calc)
+        if (not any((count/len(fasta_dict) >= consensusthreshold for count in frequencies.values()))):
+            sites[i] = list(frequencies.keys())
+
+    return sites
     
-def calculate_likelihoods(json_input_dict : Path, alleleouts_path : Path, samplelist_path : Path, sites : list, output_path : Path):
+def calculate_likelihoods(json_input_dict : Path, alleleouts_path : Path, samplelist_path : Path, consensusthreshold : float, output_path : Path):
     quality_scores = {}
     with open(json_input_dict, "r") as f:
         quality_scores = json.load(f)
     
     samples_dict, number_lines = get_samples(str(samplelist_path))
-
-    print(samples_dict)
-
-    #for position in positions:
-    # number_bases = 4
-    # number_chromosomes = 2
-    #genotype_option = math.comb(4+2-1, 2)
-
-    bases = ["A", "C", "T", "G"]
-    #sites = [0, 2]
-    possible_genotypes, genotype_pairs_diploid = construct_genotype_options_diploid(bases, sites)
-
-    print(genotype_pairs_diploid)
-    print(len(genotype_pairs_diploid))
     
-    
-
-    dict_likelihoods = {}
+    output_path.mkdir(parents=True, exist_ok=True)
 
     for fastafile in alleleouts_path.iterdir():
         if not(fastafile.suffix == ".fasta"):
@@ -206,51 +190,84 @@ def calculate_likelihoods(json_input_dict : Path, alleleouts_path : Path, sample
         print(locus)
         print(sample)
 
+        print("Processing file " + fastafile.name + "\n\n")
+
         
+        dict_likelihoods = {
+            "locus" : locus,
+            "sample" : sample,
+            "length" : length,
+            "sites" : {}, # {site : bases}
+            "Genotypes" : {}
+        }
 
-        if (not(locus in dict_likelihoods)):
-            dict_likelihoods[locus] = {}
+        # if (not(locus in dict_likelihoods)):
+        #     dict_likelihoods[locus] = {}
 
-        if (not(sample in dict_likelihoods[locus])):
-            dict_likelihoods[locus][sample] = {}
+        # if (not(sample in dict_likelihoods[locus])):
+        #     dict_likelihoods[locus][sample] = {}
 
-        dict_likelihoods[locus][sample]["Genotypes"] = {}
+        # dict_likelihoods[locus][sample]["Genotypes"] = {}
+
+        #Find all possible base sites for the fasta file where no base reaches a frequency equal to consensusthreshold
+        sites = find_sites(fastafile, consensusthreshold)
+        dict_likelihoods["sites"] = sites
+
+        print(print("File " + fastafile.name + " we find " + str(len(sites)) + " base positions for 'N's. \n\n"))
+        print(sites)
+
+        # for site, bases in sites.items():
+        #     possible_genotypes, genotype_pairs_diploid = construct_genotype_options_diploid_new(bases, site)
+        #     for header, sequence in parse_fasta(fastafile).items():
+        #         header_merged = "@M" + header #Merged files have header beginning with @M, AllelesOut have header but with > instead of @M
+        #         quality = quality_scores["Indexcombos"][sample]["Sequences"][header_merged][1][site]
+
+        # for header, sequence in parse_fasta(fastafile).items():
+        #     header_merged = "@M" + header #Merged files have header beginning with @M, AllelesOut have header but with > instead of @M
+        #     for site, bases in sites.items():
+        #         quality = quality_scores["Indexcombos"][sample]["Sequences"][header_merged][1][site]
+
+        #Given the number of sites found for the fasta file and the given nucleotides, determine all possible genotypes (for diploid we have genotype pairs)
+        possible_genotypes, genotype_pairs_diploid = construct_genotype_options_diploid_new(sites)
+
+        print(print("File has " + str(len(possible_genotypes)) + " possible genotypes and " + str(len(genotype_pairs_diploid)) + " possible diploid genotype pairs. \n\n"))
+
+        # print(possible_genotypes)
+        # print(genotype_pairs_diploid)
+
+        #parsing the fasta file
+        fasta_dict = parse_fasta(fastafile)
 
         for genotype_pair_diploid in genotype_pairs_diploid:
-            genotype_pair_diploid_str = ",".join([pair for pair in genotype_pair_diploid])
-            dict_likelihoods[locus][sample]["Genotypes"][genotype_pair_diploid_str] = {}
+            #print(genotype_pair_diploid)
+            genotype_pair_diploid_str = ",".join(["".join([base for base in pair]) for pair in genotype_pair_diploid])
+            #print(genotype_pair_diploid_str)
+            dict_likelihoods["Genotypes"][genotype_pair_diploid_str] = {}
             genotype_pair_log_likelihood_terms = []
-            for header, sequence in parse_fasta(fastafile).items():
+            for header, sequence in fasta_dict.items():
                 header_merged = "@M" + header #Merged files have header beginning with @M, AllelesOut have header but with > instead of @M
-                qualities = [quality_scores["Indexcombos"][sample]["Sequences"][header_merged][1][site] for site in sites]
-                observed_bases = "".join([sequence[site] for site in sites])
-                genotype_pair_log_likelihood_terms.append(calculate_probability_diploid(genotype_pair_diploid, observed_bases, len(sites), qualities))
+                qualities = [quality_scores["Indexcombos"][sample]["Sequences"][header_merged][1][site] for site in sites.keys()]
+                observed_bases = "".join([sequence[site] for site in sites.keys()])
+                genotype_pair_log_likelihood_terms.append(calculate_probability_diploid(genotype_pair_diploid, observed_bases, len(sites.keys()), qualities))
             
-            
-            #genotype_likelihood = math.prod(genotype_pair_likelihood_terms)
 
             genotype_log_likelihood = sum(genotype_pair_log_likelihood_terms)
 
-            dict_likelihoods[locus][sample]["Genotypes"][genotype_pair_diploid_str]["LogLikelihood"] = genotype_log_likelihood
+            dict_likelihoods["Genotypes"][genotype_pair_diploid_str]["LogLikelihood"] = genotype_log_likelihood
 
-            log_likelihoods = [data["LogLikelihood"] for data in dict_likelihoods[locus][sample]["Genotypes"].values()]
+            log_likelihoods = [data["LogLikelihood"] for data in dict_likelihoods["Genotypes"].values()]
 
             max_log_likelihood = max(log_likelihoods)
 
-            for genotype_name, data in dict_likelihoods[locus][sample]["Genotypes"].items():
+            for genotype_name, data in dict_likelihoods["Genotypes"].items():
                 rel_log_likelihood = data["LogLikelihood"] - max_log_likelihood
                 data["RelativeLogLikelihood"] = rel_log_likelihood
                 data["RelativeLikelihood"] = math.exp(rel_log_likelihood)
 
 
-        # if (len(sequence) == length and sequence.count("N") == 0):
-        #     result[header] = sequence 
-
-    output_path.mkdir(parents=True, exist_ok=True)
-
-    out_path = output_path / "likelihoods.json"
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(dict_likelihoods, f, indent=4, ensure_ascii=False)
+        out_path = output_path / (locus + "_" + sample + "_" + length + "_likelihoods.json")
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(dict_likelihoods, f, indent=4, ensure_ascii=False)
     
     
 

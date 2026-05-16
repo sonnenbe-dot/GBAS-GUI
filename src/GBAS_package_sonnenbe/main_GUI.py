@@ -31,7 +31,7 @@ from GBAS_package_sonnenbe.main_functions.markerstatistics import runLengthstati
 from GBAS_package_sonnenbe.main_functions.markerplots import runMarkerplots_GUI
 
 from GBAS_package_sonnenbe.main_functions.extract_lengths import run_Length_Extraction_GUI, run_Length_Extraction
-from GBAS_package_sonnenbe.main_functions.consensus_all import RunConsensusAll_GUI, RunConsensusAll
+from GBAS_package_sonnenbe.main_functions.consensus_all import FindVariants_Likelihoods_GUI, RunConsensusAll_GUI, RunConsensusAll
 from GBAS_package_sonnenbe.main_functions.allele_determination import RunVariants_Determination_GUI
 from GBAS_package_sonnenbe.main_functions.allele_calling import run_Allele_Call_GUI
 
@@ -137,7 +137,7 @@ class main_window(ctk.CTkFrame):
 
         
         self.outputfolders_list1 = ['QC', 'SeparatOut', 'MergedOut', 'MarkerStatistics', 'MarkerStatisticsDuplicates',  'AlleleLenghtCounts', 'MarkerPlots', 'Markerplots_dupl']
-        self.outputfolders_list2 = ['AllelesOut', 'ConsensusOut', 'ConsensusTogether', 'Corrected', 'AlleleCall', 'AdditionalInfo']
+        self.outputfolders_list2 = ['AllelesOut', 'QualityScores', 'Variants_Likelihoods', 'ConsensusOut', 'ConsensusTogether', 'Corrected', 'AlleleCall', 'AdditionalInfo']
 
         self.add_dots_pipelinetextbox = False
 
@@ -356,8 +356,7 @@ class main_window(ctk.CTkFrame):
                 "Demultiplexing" : {},
                 "LengthCounts" : {},
                 "Markerplots" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "FindVariants_Likelihoods" : {},
                 "AlleleCall" : {},
                 "RamUsage" : {},
                 "Total" : {}
@@ -428,8 +427,7 @@ class main_window(ctk.CTkFrame):
                 "LengthCounts" : {},
                 "Markerplots" : {},
                 "LengthExtraction" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "FindVariants_Likelihoods" : {},
                 "AlleleCall" : {},
                 "Total" : {},
                 "RamUsage" : { }
@@ -451,7 +449,7 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.insert("end", f"\nTime spent: {logs['ConsensusSeqs']['Time']:.4g}.\n")
 
         RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
-        logs["NCorrection"]["Time"] = t.lap()
+        logs["FindVariants_Likelihoods"]["Time"] = t.lap()
         self.textbox_pipeline.insert("end", f"\nTime spent: {logs['NCorrection']['Time']:.4g}.\n")
 
         run_Allele_Call_GUI(self.textbox_pipeline, self.paramsdict)

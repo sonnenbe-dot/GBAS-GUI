@@ -20,7 +20,7 @@ from GBAS_package_sonnenbe.main_functions.markerstatistics import runLengthstati
 from GBAS_package_sonnenbe.main_functions.markerplots import runMarkerplots_GUI
 
 from GBAS_package_sonnenbe.main_functions.extract_lengths import run_Length_Extraction_GUI, run_Length_Extraction
-from GBAS_package_sonnenbe.main_functions.consensus_all import RunConsensusAll_GUI, RunConsensusAll
+from GBAS_package_sonnenbe.main_functions.consensus_all import FindVariants_Likelihoods_GUI, RunConsensusAll_GUI, RunConsensusAll
 from GBAS_package_sonnenbe.main_functions.allele_determination import RunVariants_Determination_GUI
 from GBAS_package_sonnenbe.main_functions.allele_calling import run_Allele_Call_GUI
 
@@ -162,7 +162,7 @@ class advanced_window(tk.Toplevel):
         scrollframe_pipeline2.grid(row=0, column=0, rowspan=1, sticky="nsew")
         scrollframe_pipeline2.grid_columnconfigure(0, weight=1)
         
-        options = ["LengthExtraction", "ConsensusSequence", "AlleleDetection", "AlleleCall"]
+        options = ["LengthExtraction", "FindVariants_Likelihoods", "AlleleCall"]
         for i, option in enumerate(options):
             checkbox_var = tk.IntVar(value = self.checkbox_states_pipeline_advanced[option])
             checkbox = ctk.CTkCheckBox(scrollframe_pipeline2, text=option, variable=checkbox_var)
@@ -219,8 +219,7 @@ class advanced_window(tk.Toplevel):
                 "LengthCounts" : {},
                 "Markerplots" : {},
                 "LengthExtraction" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "FindVariants_Likelihoods" : {},
                 "AlleleCall" : {},
                 "RamUsage" : {},
                 "Total" : {}
@@ -289,8 +288,7 @@ class advanced_window(tk.Toplevel):
                 "LengthCounts" : {},
                 "Markerplots" : {},
                 "LengthExtraction" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "FindVariants_Likelihoods" : {},
                 "AlleleCall" : {},
                 "RamUsage" : {},
                 "Total" : {}
@@ -307,14 +305,10 @@ class advanced_window(tk.Toplevel):
             run_Length_Extraction_GUI(self.textbox_pipeline, self.paramsdict)
             logs["LengthExtraction"]["Time"] = t.lap()
             self.textbox_pipeline.insert("end", f"\nTime spent: {logs['LengthExtraction']['Time']:.4g}.\n")
-        if (self.checkbox_states_pipeline_advanced["ConsensusSequence"] == 1):
-            RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, self.number_cores)
-            logs["ConsensusSeqs"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['ConsensusSeqs']['Time']:.4g}.\n")
-        if (self.checkbox_states_pipeline_advanced["AlleleDetection"] == 1):
-            RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
-            logs["NCorrection"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['NCorrection']['Time']:.4g}.\n")
+        if (self.checkbox_states_pipeline_advanced["FindVariants_Likelihoods"] == 1):
+            FindVariants_Likelihoods_GUI(self.textbox_pipeline, self.paramsdict, self.performance, self.number_cores)
+            logs["FindVariants_Likelihoods"]["Time"] = t.lap()
+            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['FindVariants_Likelihoods']['Time']:.4g}.\n")
         if (self.checkbox_states_pipeline_advanced["AlleleCall"] == 1):
             run_Allele_Call_GUI(self.textbox_pipeline, self.paramsdict)
             logs["AlleleCall"]["Time"] = t.lap()
