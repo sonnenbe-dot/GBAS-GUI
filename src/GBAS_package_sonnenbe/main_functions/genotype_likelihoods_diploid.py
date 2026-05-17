@@ -12,6 +12,8 @@ from itertools import product, combinations_with_replacement
 
 from collections import Counter
 
+import customtkinter as ctk
+
 
 
 
@@ -46,7 +48,7 @@ def main():
     output_qualityscores_path = Path(output_path_str)
     allelesout_path = Path(allelesout_path_str)
     samplelist_path = inputs_path / "samples.txt"
-    outputpath_multiple = Path(r"C:\Users\Sebastian\Documents\Micromeria_test\Corrected")
+    outputpath_multiple = Path(r"C:\Users\Sebastian\Documents\Micromeria_test\variants_likelihoods")
 
     calculate_likelihoods_diploid(mergedout_path, output_qualityscores_path, allelesout_path, samplelist_path, outputpath_multiple, 0.7, 1, True, 15)
 
@@ -55,32 +57,47 @@ def main():
 
 
 
-# def get_quality_scores(input_path : Path, output_path : Path, indexcomboposition : int):
-#     out = {"Indexcombos" : {}}
+def calculate_likelihoods_diploid_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, performance : bool, number_cores : int):
+    #input paths
+    mergedout_path = Path(paramsdict["Outputfolder"] + '/MergedOut')
+    allelesout_path = Path(paramsdict["Outputfolder"] + '/AllelesOut')
+    samples_dict, number_lines = get_samples(paramsdict["Samplefile"])
+    consensusthreshold = float(paramsdict["Consensusthreshold"])
+    indexcomboposition = int(paramsdict["Indexcomboposition"])
 
-#     for fastqfile in input_path.iterdir():
-#         if not(fastqfile.suffix == ".fastq"):
-#             continue
-
-#         indexcombo = fastqfile.name.split("_")[indexcomboposition-1]
-#         out["Indexcombos"][indexcombo]  = {}
-#         out["Indexcombos"][indexcombo]["Sequences"]  = {}
-#         print("Getting Quality scores for sample " + indexcombo + "...\n")
-#         for header, data in parse_fastq(fastqfile).items():
-#             quality = data["quality"]
-#             length = len(data["sequence"])
-
-#             out["Indexcombos"][indexcombo]["Sequences"][header] = {}
-#             list_qualities_converted = []
-#             for char in quality:
-#                 list_qualities_converted.append(ord(char) - 33) #ord() gets the unicode for the given characters, if its an ASCII character than it givs the ASCII number (0-128)
-#             out["Indexcombos"][indexcombo]["Sequences"][header] = (length, list_qualities_converted)
+    #output paths:
+    qualities_path = Path(paramsdict["Outputfolder"] + '/QualityScores')
+    variants_path = Path(paramsdict["Outputfolder"] + '/Variants_Likelihoods')
+    corrected_path = Path(paramsdict["Outputfolder"] + '/Corrected')
     
-#     output_path.mkdir(parents=True, exist_ok=True)
+    #Calling likelihood calculation (diploid)
+    textbox_pipeline.insert('end-1c', "\nCalculating likelihoods to determine sequence variants. \n")
+    calculate_likelihoods_diploid(mergedout_path, qualities_path, allelesout_path, samples_dict, variants_path, consensusthreshold, indexcomboposition, performance, number_cores)
+    joinSamplesSameMarker(variants_path, corrected_path)
+    textbox_pipeline.insert('end-1c', "\nFinished calculating likelihoods to determine sequence variants. \n")
 
-#     out_path = output_path / "quality_scores.json"
-#     with open(out_path, "w", encoding="utf-8") as f:
-#         json.dump(out, f, indent=4, ensure_ascii=False)
+
+
+def joinSamplesSameMarker(variants_path : Path, corrected_path : Path):
+    loci_list = []
+    for fastafile in variants_path.iterdir():
+        if not(fastafile.suffix == ".fasta"):
+            continue
+        locus = "_".join(fastafile.name.split('_')[0:2])
+        if (locus not in loci_list):
+            loci_list.append(locus)
+
+    for locus in loci_list:
+        print(f"Adding all Consensussequences for Locus {locus} into one file. \n")
+        output_fasta_path = corrected_path / (locus + '_together_Corr.fasta')
+        with open(output_fasta_path, 'w') as output_fasta:
+            for file in variants_path.iterdir():
+                if (file.stem.startswith(locus+"_") and file.suffix == ".fasta"):
+                    #input_fasta_path = Path(consensusout_path + '/' + file)
+                    with open(file) as input_fasta:
+                        for line in input_fasta:
+                            output_fasta.write(line)
+
 
 
 
@@ -200,10 +217,7 @@ def find_sites(fastafile : Path, consensusthreshold : float):
     return seq_length_fixed, consensus_bases, sites
 
     
-def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_path : Path, allelesout_path : Path, samplelist_path : Path, outputpath_likelihoods : Path, consensusthreshold : float, indexcomboposition : int, performance : bool, number_cores : int):
-    #parse samplesheet
-    samples_dict, number_lines = get_samples(str(samplelist_path))
-    
+def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_path : Path, allelesout_path : Path, samples_dict : dict, outputpath_likelihoods : Path, consensusthreshold : float, indexcomboposition : int, performance : bool, number_cores : int): 
     #make outputfolders for likelihoods and quality scores if they dont exist
     output_qualityscores_path.mkdir(parents=True, exist_ok=True)
     outputpath_likelihoods.mkdir(parents=True, exist_ok=True)
@@ -301,7 +315,7 @@ def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_pa
         relativelikelihood = correct_likelihood_value["RelativeLikelihood"]
 
 
-        fastq_path = outputpath_likelihoods / (locus + "_" + sample + "_" + length + "_corrected.fasta")
+        fastq_path = outputpath_likelihoods / (locus + "_" + sample + "_" + length + "_likelihoods.fasta")
         with open(fastq_path, "w") as outputfile:
             header1 = locus + "_" + sample + "_Al_" + length + "_C_" + str(relativelikelihood) + "_0"
             outputfile.write('>' + header1[1:] + "\n")

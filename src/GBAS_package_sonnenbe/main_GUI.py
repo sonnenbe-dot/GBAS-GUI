@@ -34,7 +34,7 @@ from GBAS_package_sonnenbe.main_functions.markerplots import runMarkerplots_GUI
 from GBAS_package_sonnenbe.main_functions.extract_lengths import run_Length_Extraction_GUI, run_Length_Extraction
 from GBAS_package_sonnenbe.main_functions.consensus_all import FindVariants_Likelihoods_GUI, RunConsensusAll_GUI, RunConsensusAll
 from GBAS_package_sonnenbe.main_functions.allele_determination import RunVariants_Determination_GUI
-from GBAS_package_sonnenbe.main_functions.genotype_likelihoods_diploid import calculate_likelihoods_diploid
+from GBAS_package_sonnenbe.main_functions.genotype_likelihoods_diploid import calculate_likelihoods_diploid_GUI
 from GBAS_package_sonnenbe.main_functions.allele_calling import run_Allele_Call_GUI
 
 from GBAS_package_sonnenbe.main_functions.PIC_calculation import calculate_PIC
@@ -139,7 +139,7 @@ class main_window(ctk.CTkFrame):
 
         
         self.outputfolders_list1 = ['QC', 'SeparatOut', 'MergedOut', 'MarkerStatistics', 'MarkerStatisticsDuplicates',  'AlleleLenghtCounts', 'MarkerPlots', 'Markerplots_dupl']
-        self.outputfolders_list2 = ['AllelesOut', 'QualityScores', 'Variants_Likelihoods', 'ConsensusOut', 'ConsensusTogether', 'Corrected', 'AlleleCall', 'AdditionalInfo']
+        self.outputfolders_list2 = ['AllelesOut', 'QualityScores', 'ConsensusOut', 'ConsensusTogether', 'Corrected', 'AlleleCall', 'AdditionalInfo']
 
         self.add_dots_pipelinetextbox = False
 
@@ -148,7 +148,7 @@ class main_window(ctk.CTkFrame):
         self.number_cores = multiprocessing.cpu_count()-1
         self.allele_determination_likelihood = False
 
-        self.advanced_pipeline_options = ["Trimmomatic", "Usearch", "Demultiplexing", "Markerstatistics", "Markerplots+Markermatrix",  "LengthExtraction", "ConsensusSequence", "AlleleDetection", "AlleleCall"]
+        self.advanced_pipeline_options = ["Trimmomatic", "Usearch", "Demultiplexing", "Markerstatistics", "Markerplots+Markermatrix",  "LengthExtraction", "ConsensusSequences", "AlleleDetection", "AlleleCall"]
         self.checkbox_states_pipeline_advanced = {key : 0 for key in self.advanced_pipeline_options}
         self.checkboxes_pipeline1 = []
         self.checkboxes_pipeline2 = []
@@ -283,12 +283,10 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
 
-    def update_advanced(self, text : str, performance : bool, zipping : bool, checkbox_states_pipeline_advanced : dict):
+    def update_advanced(self, text : str, checkbox_states_pipeline_advanced : dict):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
         self.checkbox_states_pipeline_advanced = checkbox_states_pipeline_advanced
-        self.performance = performance
-        self.zipping = zipping
 
     def update_extract(self, text : str, include_dict1 : dict, include_dict2 : dict):
         self.textbox_pipeline.delete(0.0, 'end')
@@ -373,7 +371,7 @@ class main_window(ctk.CTkFrame):
                 "Demultiplexing" : {},
                 "LengthCounts" : {},
                 "Markerplots" : {},
-                "FindVariants_Likelihoods" : {},
+                "FindVariants" : {},
                 "AlleleCall" : {},
                 "RamUsage" : {},
                 "Total" : {}
@@ -444,7 +442,7 @@ class main_window(ctk.CTkFrame):
                 "LengthCounts" : {},
                 "Markerplots" : {},
                 "LengthExtraction" : {},
-                "FindVariants_Likelihoods" : {},
+                "AlleleDetection" : {},
                 "AlleleCall" : {},
                 "Total" : {},
                 "RamUsage" : { }
@@ -461,13 +459,13 @@ class main_window(ctk.CTkFrame):
         logs["LengthExtraction"]["Time"] = t.lap()
         self.textbox_pipeline.insert("end", f"\nTime spent: {logs['LengthExtraction']['Time']:.4g}.\n")
 
-        RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
-        logs["ConsensusSeqs"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['ConsensusSeqs']['Time']:.4g}.\n")
-
-        RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
-        logs["FindVariants_Likelihoods"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['NCorrection']['Time']:.4g}.\n")
+        if (self.allele_determination_likelihood):
+            calculate_likelihoods_diploid_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
+        else:
+            RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
+            RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
+        logs["AlleleDetection"]["Time"] = t.lap()
+        self.textbox_pipeline.insert("end", f"\nTime spent: {logs["AlleleDetection"]['Time']:.4g}.\n")
 
         run_Allele_Call_GUI(self.textbox_pipeline, self.paramsdict)
         logs["AlleleCall"]["Time"] = t.lap()
@@ -495,7 +493,7 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert('end-1c', "Show Advanced Pipeline Options Window \n")
         self.parse_parameterfile()
-        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, self.zipping, int(self.paramsdict["NumberCores"]), self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, float(self.paramsdict["Filtering"]), on_done=self.update_advanced)
+        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, self.zipping, self.allele_determination_likelihood, int(self.paramsdict["NumberCores"]), self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, float(self.paramsdict["Filtering"]), on_done=self.update_advanced)
 
     def adding_dataset(self):
         self.textbox_pipeline.delete(0.0, 'end')
