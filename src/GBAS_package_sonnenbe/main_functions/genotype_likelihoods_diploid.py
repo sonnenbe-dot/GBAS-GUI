@@ -50,14 +50,14 @@ def main():
     samplelist_path = inputs_path / "samples.txt"
     outputpath_multiple = Path(r"C:\Users\Sebastian\Documents\Micromeria_test\variants_likelihoods")
 
-    calculate_likelihoods_diploid(mergedout_path, output_qualityscores_path, allelesout_path, samplelist_path, outputpath_multiple, 0.7, 1, True, 15)
+    calculate_likelihoods_diploid(mergedout_path, output_qualityscores_path, allelesout_path, samplelist_path, outputpath_multiple, 0.7, 1, True, 15, 5)
 
 
     return 0
 
 
 
-def calculate_likelihoods_diploid_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, performance : bool, number_cores : int):
+def calculate_likelihoods_diploid_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, performance : bool, number_cores : int, base_positions_number : int):
     #input paths
     mergedout_path = Path(paramsdict["Outputfolder"] + '/MergedOut')
     allelesout_path = Path(paramsdict["Outputfolder"] + '/AllelesOut')
@@ -71,10 +71,12 @@ def calculate_likelihoods_diploid_GUI(textbox_pipeline : ctk.CTkTextbox, paramsd
     corrected_path = Path(paramsdict["Outputfolder"] + '/Corrected')
     
     #Calling likelihood calculation (diploid)
-    textbox_pipeline.insert('end-1c', "\nCalculating likelihoods to determine sequence variants. \n")
-    calculate_likelihoods_diploid(mergedout_path, qualities_path, allelesout_path, samples_dict, variants_path, consensusthreshold, indexcomboposition, performance, number_cores)
-    joinSamplesSameMarker(variants_path, corrected_path)
-    textbox_pipeline.insert('end-1c', "\nFinished calculating likelihoods to determine sequence variants. \n")
+    # textbox_pipeline.insert('end-1c', "\nCalculating likelihoods to determine sequence variants. \n")
+    # calculate_likelihoods_diploid(mergedout_path, qualities_path, allelesout_path, samples_dict, variants_path, consensusthreshold, indexcomboposition, performance, number_cores, base_positions_number)
+    # joinSamplesSameMarker(variants_path, corrected_path)
+    # textbox_pipeline.insert('end-1c', "\nFinished calculating likelihoods to determine sequence variants. \n")
+
+    textbox_pipeline.insert('end-1c', "\nSorry.\nCalling alleles based on genotype likelihoods is currently broken. Fix will come soon.\n")
 
 
 
@@ -190,7 +192,7 @@ def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sit
 
 
 
-def find_sites(fastafile : Path, consensusthreshold : float):
+def find_sites(fastafile : Path, consensusthreshold : float, base_positions_number_max : int):
     sites = {}
     consensus_bases = {}
     fasta_dict = parse_fasta(fastafile)
@@ -207,28 +209,38 @@ def find_sites(fastafile : Path, consensusthreshold : float):
             calc.append(sequence[i])
         frequencies = Counter(calc)
         if (not any((count/len(fasta_dict) >= consensusthreshold for count in frequencies.values()))):
-            sites[i] = list(frequencies.keys())
-        else:
-            for base, count in frequencies.items():
-                if ((count/len(fasta_dict) >= consensusthreshold)):
-                    consensus_bases[i] = base
-                    break
+            #sites[i] = list(frequencies.keys())
+            #sites[i] = frequencies
+            sites[i] = {}
+            sites[i]["MaxCount"] = max(frequencies.values())
+            sites[i]["BasesCounts"] = list(frequencies.items())
+            sites[i]["Bases"] = list(frequencies.keys())
+        for base, count in frequencies.items():
+            if ((count/len(fasta_dict) >= consensusthreshold)):
+                consensus_bases[i] = base
+                break
+        # else:
+        #     for base, count in frequencies.items():
+        #         if ((count/len(fasta_dict) >= consensusthreshold)):
+        #             consensus_bases[i] = base
+        #             break
 
     return seq_length_fixed, consensus_bases, sites
 
     
-def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_path : Path, allelesout_path : Path, samples_dict : dict, outputpath_likelihoods : Path, consensusthreshold : float, indexcomboposition : int, performance : bool, number_cores : int): 
+def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_path : Path, allelesout_path : Path, samples_dict : dict, outputpath_likelihoods : Path, consensusthreshold : float, indexcomboposition : int, performance : bool, number_cores : int, base_positions_number : int): 
     #make outputfolders for likelihoods and quality scores if they dont exist
     output_qualityscores_path.mkdir(parents=True, exist_ok=True)
     outputpath_likelihoods.mkdir(parents=True, exist_ok=True)
 
     #determine likelihoods for each fasta in allelesout and save in corrected folder
     for fastafile in allelesout_path.iterdir():
+        fastaname = fastafile.stem
         if not(fastafile.suffix == ".fasta"):
             continue
-        locus = "_".join(fastafile.name.split('_')[0:2])
-        sample = fastafile.name.split('_')[2]
-        length = fastafile.name.split('_')[4]
+        locus = "_".join(fastaname.split('_')[0:2])
+        sample = fastaname.split('_')[2]
+        length = fastaname.split('_')[4]
         if (not(sample in samples_dict["reverse"])):
             print("File " + fastafile.name + " will be skipped because sample " + sample + " cannot be found in samplesheet. \n\n")
             continue
@@ -237,29 +249,71 @@ def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_pa
         print("Processing file " + fastafile.name + "\n\n")
 
 
+        print(locus)
+        print(sample)
+        print(length)
+        print(indexcombo)
+
+
         
         dict_likelihoods = {
             "locus" : locus,
             "sample" : sample,
             "length" : length,
+            "NumberSequences" : 0,
             "sites" : {}, # {site : bases}
             "Genotypes" : {}
         }
 
         #Find all possible base sites for the fasta file where no base reaches a frequency equal to consensusthreshold
-        seq_length_fixed, consensus_bases, sites = find_sites(fastafile, consensusthreshold)
+        seq_length_fixed, consensus_bases, sites = find_sites(fastafile, consensusthreshold, base_positions_number)
         dict_likelihoods["sites"] = sites
         print("File " + fastafile.name + " we find " + str(len(sites)) + " base positions for 'N's. \n\n")
 
+
+        print(sites)
+
+        #sites_bases = {position : rest["Bases"] for position, rest in sites.items()}
+        max_counts_sorted_ascending = [rest["MaxCount"] for position, rest in sites.items()]
+        max_counts_sorted_ascending.sort()
+
+        #print(sites_bases)
+        print(max_counts_sorted_ascending)
+
+        #only take the first base_positions_number max_counts
+        count = 0
+        max_counts_sorted_ascending_limited = []
+        while ((count < base_positions_number) and (count < len(max_counts_sorted_ascending))):
+            max_counts_sorted_ascending_limited.append(max_counts_sorted_ascending[count])
+            count += 1
+        
+        
+        #delete position keys if their max_count is not in max_counts_sorted_ascending_limited
+        sites_new = {}
+        for position, rest in sites.items():
+            if (rest["MaxCount"] in max_counts_sorted_ascending_limited):
+                sites_new[position] = rest
+        
+        print("New dict bases: \n")
+        print(sites_new)
+
+        #delete position keys from consensusbases:
+        consensus_bases_new = {}
+        for position, base in consensus_bases.items():
+            if (position not in sites_new):
+                consensus_bases_new[position] = base
+
+        sites_bases = {position : rest["Bases"] for position, rest in sites_new.items()}
+
         mergedoutfilepath = Path(mergedout_path / (indexcombo + "_joined.fastq"))
         qualityscores_outputfilepath = Path(output_qualityscores_path / (locus + "_" + sample + "_" + str(length) + "_qualityscores.json"))
-        quality_scores_dict = get_quality_scores(mergedoutfilepath, qualityscores_outputfilepath, sites)
+        quality_scores_dict = get_quality_scores(mergedoutfilepath, qualityscores_outputfilepath, sites_new)
         #print(print("For file " + fastafile.name + " we find our qualities for the base positions. \n\n"))
 
     
 
         #Given the number of sites found for the fasta file and the given nucleotides, determine all possible genotypes (for diploid we have genotype pairs)
-        possible_genotypes, genotype_pairs_diploid = construct_genotype_options_diploid_new(sites)
+        possible_genotypes, genotype_pairs_diploid = construct_genotype_options_diploid_new(sites_bases)
 
         number_possible_genotype_pairs = len(possible_genotypes) * (len(possible_genotypes) + 1) // 2
         print("File " + fastafile.name + " has " + str(len(possible_genotypes)) + " possible genotypes and " + str(number_possible_genotype_pairs) + " possible diploid genotype pairs. \n\n")
@@ -267,27 +321,27 @@ def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_pa
 
         #parsing the fasta file
         fasta_dict = parse_fasta(fastafile)
+        dict_likelihoods["NumberSequences"] = len(fasta_dict.keys())
         
         #Iterating over all genotype pairs calculating likelihoods for each genotype pair
         likelihood_results = []
         if (performance):
             pool = multiprocessing.Pool(processes=number_cores)
             try:
-                args_list = [(genotype_pair_diploid, fasta_dict, quality_scores_dict, sites) for genotype_pair_diploid in genotype_pairs_diploid]
+                args_list = [(genotype_pair_diploid, fasta_dict, quality_scores_dict, sites_new) for genotype_pair_diploid in genotype_pairs_diploid]
                 results = pool.starmap_async(calculate_likelihood_per_genotype, args_list)
                 likelihood_results = results.get()
             except KeyboardInterrupt:
                 print("\nInterrupted by user. Terminating workers...")
                 pool.terminate() # Kill workers immediately
                 pool.join()      # Clean up resources
-                print("Done.")
                 return # or sys.exit(1)
             else:
                 pool.close()
                 pool.join()
         else:
             for genotype_pair_diploid in genotype_pairs_diploid:
-                likelihood_results.append(calculate_likelihood_per_genotype(genotype_pair_diploid, fasta_dict, quality_scores_dict, sites))
+                likelihood_results.append(calculate_likelihood_per_genotype(genotype_pair_diploid, fasta_dict, quality_scores_dict, sites_new))
         
         # print(likelihood_results)
 
@@ -314,33 +368,43 @@ def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_pa
         correct_likelihood_value = list(dict_likelihoods["Genotypes"].values())[0]
         relativelikelihood = correct_likelihood_value["RelativeLikelihood"]
 
+        
 
         fastq_path = outputpath_likelihoods / (locus + "_" + sample + "_" + length + "_likelihoods.fasta")
         with open(fastq_path, "w") as outputfile:
             header1 = locus + "_" + sample + "_Al_" + length + "_C_" + str(relativelikelihood) + "_0"
-            outputfile.write('>' + header1[1:] + "\n")
+            outputfile.write('>' + header1 + "\n")
+
+            print("NOW \n")
+            print(len(sites_new))
+            print(len(consensus_bases_new))
+            print(len(sites))
+            print(len(consensus_bases))
+            print(seq_length_fixed)
 
             counter_seq = 0
             correct_likelihood_genotype_first = correct_likelihood_genotype.split(",")[0]
             for i in range(0, seq_length_fixed, 1):
-                if (i in sites.keys()):
+                if (i in sites_new.keys()):
                     outputfile.write(correct_likelihood_genotype_first[counter_seq])
                     counter_seq += 1
                 else:
-                    outputfile.write(consensus_bases[i])
+                    outputfile.write(consensus_bases_new[i])
             outputfile.write("\n")
 
             header2 = locus + "_" + sample + "_Al_" + length + "_C_" + str(relativelikelihood) + "_1"
-            outputfile.write('>' + header2[1:] + "\n")
+            outputfile.write('>' + header2 + "\n")
             
             counter_seq = 0
             correct_likelihood_genotype_second = correct_likelihood_genotype.split(",")[1]
             for i in range(0, seq_length_fixed, 1):
-                if (i in sites.keys()):
+                if (i in sites_new.keys()):
                     outputfile.write(correct_likelihood_genotype_second[counter_seq])
                     counter_seq += 1
                 else:
-                    outputfile.write(consensus_bases[i])
+                    outputfile.write(consensus_bases_new[i])
+            
+            outputfile.write("\n")
             
 
     
@@ -348,7 +412,7 @@ def calculate_likelihoods_diploid(mergedout_path : Path, output_qualityscores_pa
 def calculate_likelihood_per_genotype(genotype_pair_diploid : tuple, fasta_dict : dict, quality_scores_dict : dict, sites : dict):
     genotype_pair_diploid_str = ",".join(["".join([base for base in pair]) for pair in genotype_pair_diploid])
     #print(genotype_pair_diploid_str)
-    genotype_pair_log_likelihood_terms = []
+    #genotype_pair_log_likelihood_terms = []
     genotype_log_likelihood = 0.0
     for header, sequence in fasta_dict.items():
         header_merged = "@M" + header #Merged files have header beginning with @M, AllelesOut have header but with > instead of @M

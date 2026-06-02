@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "GBAS_package_sonnenbe_likelihoods"
-version = "1.0"
+name = "GBAS_package_sonnenbe_vers2"
+version = "2.2.4"
 dependencies = [
   "customtkinter>=5.2.0",
   "matplotlib>=3.7.0",
@@ -13,7 +13,7 @@ dependencies = [
 authors = [
   { name="Sebastian Sonnenberg", email="sebastian.sonnenberg@boku.ac.at" },
 ]
-description = "A GUI for the GBAS pipeline with likelihood approach for genotypes"
+description = "A GUI for the GBAS pipeline"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -38,9 +38,9 @@ where = ["src"]
 ]
 
 [project.scripts]
-gbas_gui_likelihood_start = "GBAS_package_sonnenbe.main_GUI:main"
-gbas_get_bin_likelihood = "GBAS_package_sonnenbe.bin.copy_bin:main"
+gbas_gui_vers2_start = "GBAS_package_sonnenbe.main_GUI:main"
+gbas_get_bin_vers2 = "GBAS_package_sonnenbe.bin.copy_bin:main"
 
 [project.urls]
-Homepage = "https://github.com/sonnenbe-dot/GUI-GBAS-2"
-Issues = "https://github.com/sonnenbe-dot/GUI-GBAS-2/issues"
+Homepage = "https://github.com/sonnenbe-dot/GBAS-GUI"
+Issues = "https://github.com/sonnenbe-dot/GBAS-GUI/issues"

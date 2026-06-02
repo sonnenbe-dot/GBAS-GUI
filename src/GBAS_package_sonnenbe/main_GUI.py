@@ -147,6 +147,7 @@ class main_window(ctk.CTkFrame):
         self.zipping = False
         self.number_cores = multiprocessing.cpu_count()-1
         self.allele_determination_likelihood = False
+        self.base_positions_number = 5
 
         self.advanced_pipeline_options = ["Trimmomatic", "Usearch", "Demultiplexing", "Markerstatistics", "Markerplots+Markermatrix",  "LengthExtraction", "ConsensusSequences", "AlleleDetection", "AlleleCall"]
         self.checkbox_states_pipeline_advanced = {key : 0 for key in self.advanced_pipeline_options}
@@ -294,10 +295,11 @@ class main_window(ctk.CTkFrame):
         self.checkbox_include_dict = include_dict1
         self.checkbox_states_dict2 = include_dict2
     
-    def update_additional_parameters(self, performance : bool, zipping : bool, likelihoods : bool):
+    def update_additional_parameters(self, performance : bool, zipping : bool, likelihoods : bool, base_positions_num : int):
         self.performance = performance
         self.zipping = zipping
         self.allele_determination_likelihood = likelihoods
+        self.base_positions_number = base_positions_num
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", "Pipeline has not started:" + "\n\n" * 2)
 
@@ -325,7 +327,7 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert('end-1c', "Show Additional Parameters Window \n")
         #self.parse_parameterfile()
-        obj = additional_params_window(self, self.performance, self.zipping, self.allele_determination_likelihood, on_done=self.update_additional_parameters)
+        obj = additional_params_window(self, self.performance, self.zipping, self.allele_determination_likelihood, self.base_positions_number, on_done=self.update_additional_parameters)
 
 
     def append_period(self):
@@ -460,7 +462,7 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.insert("end", f"\nTime spent: {logs['LengthExtraction']['Time']:.4g}.\n")
 
         if (self.allele_determination_likelihood):
-            calculate_likelihoods_diploid_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
+            calculate_likelihoods_diploid_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]), self.base_positions_number)
         else:
             RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
             RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
@@ -493,7 +495,7 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert('end-1c', "Show Advanced Pipeline Options Window \n")
         self.parse_parameterfile()
-        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, self.zipping, self.allele_determination_likelihood, int(self.paramsdict["NumberCores"]), self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, float(self.paramsdict["Filtering"]), on_done=self.update_advanced)
+        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, self.zipping, self.allele_determination_likelihood, int(self.paramsdict["NumberCores"]), self.base_positions_number, self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, float(self.paramsdict["Filtering"]), on_done=self.update_advanced)
 
     def adding_dataset(self):
         self.textbox_pipeline.delete(0.0, 'end')

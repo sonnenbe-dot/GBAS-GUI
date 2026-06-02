@@ -26,7 +26,7 @@ from GBAS_package_sonnenbe.main_functions.genotype_likelihoods_diploid import ca
 from GBAS_package_sonnenbe.main_functions.allele_calling import run_Allele_Call_GUI
 
 class advanced_window(tk.Toplevel):
-    def __init__(self, parent, current_workspace : Path, paramsdict : dict, performance : bool, zipping : bool, allele_determination_likelihood : bool, num_cores : int, checkbox_states_pipeline_advanced : dict, executablesdict : dict, parameters_list : list, list_mandatory : list, textbox_pipeline : ctk.CTkTextbox, outputfolders_list1 : list, outputfolders_list2 : list, filtering_param : float, on_done):
+    def __init__(self, parent, current_workspace : Path, paramsdict : dict, performance : bool, zipping : bool, allele_determination_likelihood : bool, num_cores : int, base_positions_number : int, checkbox_states_pipeline_advanced : dict, executablesdict : dict, parameters_list : list, list_mandatory : list, textbox_pipeline : ctk.CTkTextbox, outputfolders_list1 : list, outputfolders_list2 : list, filtering_param : float, on_done):
         super().__init__(parent)
 
         self.filtering_param = filtering_param
@@ -58,6 +58,7 @@ class advanced_window(tk.Toplevel):
         self.performance = performance
         self.zipping = zipping
         self.allele_determination_likelihood = allele_determination_likelihood
+        self.base_positions_number = base_positions_number
 
         # self.checkbox_performance = 1
         # self.checkbox_zipping = 1
@@ -316,7 +317,7 @@ class advanced_window(tk.Toplevel):
         if (self.checkbox_states_pipeline_advanced["AlleleDetection"] == 1):
             if (self.allele_determination_likelihood):
                 if (self.allele_determination_likelihood):
-                    calculate_likelihoods_diploid_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
+                    calculate_likelihoods_diploid_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]), self.base_positions_number)
                 else:
                     RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
             logs["AlleleDetection"]["Time"] = t.lap()

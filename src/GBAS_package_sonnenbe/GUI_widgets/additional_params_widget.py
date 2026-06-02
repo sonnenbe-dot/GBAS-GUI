@@ -4,7 +4,7 @@ import customtkinter as ctk
 from pathlib import Path
 
 class additional_params_window(tk.Toplevel):
-    def __init__(self, parent, high_performance : bool, zipping_files : bool, likelihood_approach : bool, on_done):
+    def __init__(self, parent, high_performance : bool, zipping_files : bool, likelihood_approach : bool, base_positions_number : int, on_done):
         super().__init__(parent)
 
         self.on_done = on_done
@@ -24,6 +24,9 @@ class additional_params_window(tk.Toplevel):
 
         self.checkboxes_additional = []
 
+        self.base_positions_number = base_positions_number
+        self.number_pos_entry = None
+
         self.title("Additional Parameters")
         self.transient(parent)
         self.focus_set()
@@ -41,7 +44,7 @@ class additional_params_window(tk.Toplevel):
     
     def closing(self):
         try:
-            self.on_done(self.checkboxes_additional[0].get(), self.checkboxes_additional[1].get(), self.checkboxes_additional[2].get())
+            self.on_done(self.checkboxes_additional[0].get(), self.checkboxes_additional[1].get(), self.checkboxes_additional[2].get(), int(self.number_pos_entry.get()))
         finally:
             self.destroy()
     
@@ -71,3 +74,9 @@ class additional_params_window(tk.Toplevel):
         checkbox_likelihood_approach = ctk.CTkCheckBox(additional_input_settings, text="Likelihood Approach", variable=likelihood_approach_var)
         checkbox_likelihood_approach.grid(row=3, column=0, padx=10, pady=(5, 5), sticky="w")
         self.checkboxes_additional.append(checkbox_likelihood_approach)
+
+        ctk.CTkLabel(additional_input_settings, text="Number Positions", width=20, font=ctk.CTkFont(size=15, weight="bold")).grid(column=0, row=4, padx=10, pady=10)
+        self.number_pos_entry = ctk.CTkEntry(additional_input_settings, corner_radius=5)
+        #ctk.CTkButton(parameterfile_frame, text="Browse", width=70, height=25, font=ctk.CTkFont(size=14), text_color="black", fg_color = "#add8e6", hover_color="#87ceeb", command=lambda entry = parameterfile_entry, dir_param = self.params["Outputfolder"] : self.browse_file(entry, dir_param)).grid(column=2, row=0, padx=5, pady=5)
+        self.number_pos_entry.insert(tk.END, str(self.base_positions_number))
+        self.number_pos_entry.grid(column=1, row=4, padx=5, pady=5)
