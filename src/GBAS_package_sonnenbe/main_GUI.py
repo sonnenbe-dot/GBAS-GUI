@@ -23,6 +23,7 @@ from GBAS_package_sonnenbe.GUI_widgets.advanced_widget import advanced_window
 from GBAS_package_sonnenbe.GUI_widgets.database_widget import Database_adding_window, Database_status_window
 from GBAS_package_sonnenbe.GUI_widgets.extract_subset_widget import extract_subset_window
 from GBAS_package_sonnenbe.GUI_widgets.allele_comparison_widget import allele_comparison_window
+from GBAS_package_sonnenbe.GUI_widgets.additional_params_widget import additional_params_window
 
 from GBAS_package_sonnenbe.main_functions.trimmomatic import checkInputDir, runTrimomatic, runTrimomatic_GUI
 from GBAS_package_sonnenbe.main_functions.merging import runUsearch, runUsearch_GUI
@@ -31,8 +32,9 @@ from GBAS_package_sonnenbe.main_functions.markerstatistics import runLengthstati
 from GBAS_package_sonnenbe.main_functions.markerplots import runMarkerplots_GUI
 
 from GBAS_package_sonnenbe.main_functions.extract_lengths import run_Length_Extraction_GUI, run_Length_Extraction
-from GBAS_package_sonnenbe.main_functions.consensus_all import RunConsensusAll_GUI, RunConsensusAll
+from GBAS_package_sonnenbe.main_functions.consensus_all import FindVariants_Likelihoods_GUI, RunConsensusAll_GUI, RunConsensusAll
 from GBAS_package_sonnenbe.main_functions.allele_determination import RunVariants_Determination_GUI
+from GBAS_package_sonnenbe.main_functions.genotype_likelihoods_diploid import calculate_likelihoods_diploid_GUI
 from GBAS_package_sonnenbe.main_functions.allele_calling import run_Allele_Call_GUI
 
 from GBAS_package_sonnenbe.main_functions.PIC_calculation import calculate_PIC
@@ -137,15 +139,17 @@ class main_window(ctk.CTkFrame):
 
         
         self.outputfolders_list1 = ['QC', 'SeparatOut', 'MergedOut', 'MarkerStatistics', 'MarkerStatisticsDuplicates',  'AlleleLenghtCounts', 'MarkerPlots', 'Markerplots_dupl']
-        self.outputfolders_list2 = ['AllelesOut', 'ConsensusOut', 'ConsensusTogether', 'Corrected', 'AlleleCall', 'AdditionalInfo']
+        self.outputfolders_list2 = ['AllelesOut', 'QualityScores', 'ConsensusOut', 'ConsensusTogether', 'Corrected', 'AlleleCall', 'AdditionalInfo']
 
         self.add_dots_pipelinetextbox = False
 
         self.performance = True
         self.zipping = False
         self.number_cores = multiprocessing.cpu_count()-1
+        self.allele_determination_likelihood = False
+        self.base_positions_number = 5
 
-        self.advanced_pipeline_options = ["Trimmomatic", "Usearch", "Demultiplexing", "Markerstatistics", "Markerplots+Markermatrix",  "LengthExtraction", "ConsensusSequence", "AlleleDetection", "AlleleCall"]
+        self.advanced_pipeline_options = ["Trimmomatic", "Usearch", "Demultiplexing", "Markerstatistics", "Markerplots+Markermatrix",  "LengthExtraction", "ConsensusSequences", "AlleleDetection", "AlleleCall"]
         self.checkbox_states_pipeline_advanced = {key : 0 for key in self.advanced_pipeline_options}
         self.checkboxes_pipeline1 = []
         self.checkboxes_pipeline2 = []
@@ -196,14 +200,15 @@ class main_window(ctk.CTkFrame):
         self.parameters = ctk.CTkFrame(self, width=100, corner_radius=2)
         self.parameters.grid(row=0, column=0, rowspan=6, sticky="nsew")
         self.parameters.grid_columnconfigure(0, weight=1)
-        self.parameters.grid_rowconfigure(5, weight=1)
+        self.parameters.grid_rowconfigure(6, weight=1)
         ctk.CTkLabel(self.parameters, text="Preparation", font=ctk.CTkFont(size=28, weight="bold")).grid(row=0, column=0, padx=20, pady=(20, 20))
         ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Pipeline Parameters", command = self.get_general_params).grid(row=1, column=0, padx=20, pady=(10, 10)) #, command = self.get_general_params
         ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Workspace Status", command = self.get_status_window).grid(row=2, column=0, padx=20, pady=(10, 20)) #, command = self.check_status
         ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Data Preparation", command = self.get_data_prep).grid(row=3, column=0, padx=20, pady=(10, 20)) #, command = self.check_status
-        ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Instructions", command = self.get_instructions).grid(row=5, column=0, padx=20, pady=(20, 5)) #, command = self.get_instructions
-        ctk.CTkLabel(self.parameters, text="Appearance:", font=ctk.CTkFont(size=10, weight="bold")).grid(row=6, column=0, padx=20, pady=(5, 5))
-        ctk.CTkOptionMenu(self.parameters, values=["Dark", "Light"], command=self.change_appearance_mode_event).grid(row=7, column=0, padx=20, pady=(5, 10))
+        ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Additional Parameters", command = self.get_additional_parameters).grid(row=4, column=0, padx=20, pady=(10, 20)) #, command = self.check_status
+        ctk.CTkButton(self.parameters, border_width=1, border_color="black", text_color="black", text = "Instructions", command = self.get_instructions).grid(row=6, column=0, padx=20, pady=(20, 5)) #, command = self.get_instructions
+        ctk.CTkLabel(self.parameters, text="Appearance:", font=ctk.CTkFont(size=10, weight="bold")).grid(row=7, column=0, padx=20, pady=(5, 5))
+        ctk.CTkOptionMenu(self.parameters, values=["Dark", "Light"], command=self.change_appearance_mode_event).grid(row=8, column=0, padx=20, pady=(5, 10))
 
 
         self.separator1 = tk.Canvas(self, width=2, bg='black')
@@ -279,18 +284,24 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
 
-    def update_advanced(self, text : str, performance : bool, zipping : bool, checkbox_states_pipeline_advanced : dict):
+    def update_advanced(self, text : str, checkbox_states_pipeline_advanced : dict):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
         self.checkbox_states_pipeline_advanced = checkbox_states_pipeline_advanced
-        self.performance = performance
-        self.zipping = zipping
 
     def update_extract(self, text : str, include_dict1 : dict, include_dict2 : dict):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert("0.0", text + "\n\n" * 2)
         self.checkbox_include_dict = include_dict1
         self.checkbox_states_dict2 = include_dict2
+    
+    def update_additional_parameters(self, performance : bool, zipping : bool, likelihoods : bool, base_positions_num : int):
+        self.performance = performance
+        self.zipping = zipping
+        self.allele_determination_likelihood = likelihoods
+        self.base_positions_number = base_positions_num
+        self.textbox_pipeline.delete(0.0, 'end')
+        self.textbox_pipeline.insert("0.0", "Pipeline has not started:" + "\n\n" * 2)
 
     
     def get_data_prep(self):
@@ -312,6 +323,12 @@ class main_window(ctk.CTkFrame):
         Path(self.paramsdict["Outputfolder"]).mkdir(parents=True, exist_ok=True)
         status_window(self, self.paramsdict, self.executablesdict, self.parameters_list, self.list_not_mandatory, self.list_mandatory, on_done=self.update_textbox)
     
+    def get_additional_parameters(self):
+        self.textbox_pipeline.delete(0.0, 'end')
+        self.textbox_pipeline.insert('end-1c', "Show Additional Parameters Window \n")
+        #self.parse_parameterfile()
+        obj = additional_params_window(self, self.performance, self.zipping, self.allele_determination_likelihood, self.base_positions_number, on_done=self.update_additional_parameters)
+
 
     def append_period(self):
         self.textbox_pipeline.insert('end-1c', ".")
@@ -356,8 +373,7 @@ class main_window(ctk.CTkFrame):
                 "Demultiplexing" : {},
                 "LengthCounts" : {},
                 "Markerplots" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "FindVariants" : {},
                 "AlleleCall" : {},
                 "RamUsage" : {},
                 "Total" : {}
@@ -428,8 +444,7 @@ class main_window(ctk.CTkFrame):
                 "LengthCounts" : {},
                 "Markerplots" : {},
                 "LengthExtraction" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "AlleleDetection" : {},
                 "AlleleCall" : {},
                 "Total" : {},
                 "RamUsage" : { }
@@ -446,13 +461,13 @@ class main_window(ctk.CTkFrame):
         logs["LengthExtraction"]["Time"] = t.lap()
         self.textbox_pipeline.insert("end", f"\nTime spent: {logs['LengthExtraction']['Time']:.4g}.\n")
 
-        RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
-        logs["ConsensusSeqs"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['ConsensusSeqs']['Time']:.4g}.\n")
-
-        RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
-        logs["NCorrection"]["Time"] = t.lap()
-        self.textbox_pipeline.insert("end", f"\nTime spent: {logs['NCorrection']['Time']:.4g}.\n")
+        if (self.allele_determination_likelihood):
+            calculate_likelihoods_diploid_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]), self.base_positions_number)
+        else:
+            RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
+            RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
+        logs["AlleleDetection"]["Time"] = t.lap()
+        self.textbox_pipeline.insert("end", f"\nTime spent: {logs["AlleleDetection"]['Time']:.4g}.\n")
 
         run_Allele_Call_GUI(self.textbox_pipeline, self.paramsdict)
         logs["AlleleCall"]["Time"] = t.lap()
@@ -480,7 +495,7 @@ class main_window(ctk.CTkFrame):
         self.textbox_pipeline.delete(0.0, 'end')
         self.textbox_pipeline.insert('end-1c', "Show Advanced Pipeline Options Window \n")
         self.parse_parameterfile()
-        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, self.zipping, int(self.paramsdict["NumberCores"]), self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, float(self.paramsdict["Filtering"]), on_done=self.update_advanced)
+        advanced_window(self, self.current_workspace, self.paramsdict, self.performance, self.zipping, self.allele_determination_likelihood, int(self.paramsdict["NumberCores"]), self.base_positions_number, self.checkbox_states_pipeline_advanced, self.executablesdict, self.parameters_list, self.list_mandatory, self.textbox_pipeline, self.outputfolders_list1, self.outputfolders_list2, float(self.paramsdict["Filtering"]), on_done=self.update_advanced)
 
     def adding_dataset(self):
         self.textbox_pipeline.delete(0.0, 'end')
@@ -526,7 +541,7 @@ class main_window(ctk.CTkFrame):
             file.write("Preparation handles the setup of all necessary inputs and the validity. \n\n")
             file.write("Pipeline handles the usage of the pipeline in normal and advanced mode. \n")
             file.write("Database section handles the insertion of datasets produced by the pipeline into the local database as well as PIC calculation. \n\n\n")
-            file.write("For more information on the GUI please visit the official documentation at https://github.com/sonnenbe-dot/GUI-GBAS-2\n")
+            file.write("For more information on the GUI please visit the official documentation at https://github.com/sonnenbe-dot/GUI-GBAS\n")
             
         if (self.paramsdict["Operatingsystem"].lower() == "windows"):
             os.startfile("Instructions.txt")

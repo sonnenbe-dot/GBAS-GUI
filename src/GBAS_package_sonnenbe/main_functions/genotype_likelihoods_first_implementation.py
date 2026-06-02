@@ -7,7 +7,6 @@ from GBAS_package_sonnenbe.helper_functions.parse_fasta import parse_fasta
 from GBAS_package_sonnenbe.helper_functions.parse_samplefile import get_samples
 
 from itertools import product, combinations_with_replacement
-import math
 
 
 def main():

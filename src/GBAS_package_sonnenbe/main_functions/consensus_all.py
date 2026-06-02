@@ -1,17 +1,160 @@
 from pathlib import Path
 import customtkinter as ctk
-import json, csv, subprocess, os, sys, multiprocessing
+import json, csv, subprocess, os, sys, multiprocessing, math
+from itertools import product, combinations_with_replacement
 
 from GBAS_package_sonnenbe.helper_functions.write_fasta import writeFasta
 from GBAS_package_sonnenbe.helper_functions.parse_fasta import parse_fasta
 from GBAS_package_sonnenbe.helper_functions.parse_fastq import parse_fastq
 
 from GBAS_package_sonnenbe.main_functions.extract_lengths import extract_locinames_from_matrix
+from GBAS_package_sonnenbe.helper_functions.parse_samplefile import get_samples
 
 def main():
 
 
     return 0
+
+
+
+
+
+def FindVariants_Likelihoods_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, performance : bool, number_cores : int):
+    mergedout_path = Path(paramsdict["Outputfolder"] + '/MergedOut')
+    qualities_path = Path(paramsdict["Outputfolder"] + '/QualityScores')
+    allelesout_path = Path(paramsdict["Outputfolder"] + '/AllelesOut')
+    variants_path = Path(paramsdict["Outputfolder"] + '/Variants_Likelihoods')
+    textbox_pipeline.insert('end-1c', "\nStoring Quality Scores! \n")
+    get_quality_scores(mergedout_path, qualities_path, 1)
+    textbox_pipeline.insert('end-1c', "\nFinishedStoring Quality Scores! \n")
+    textbox_pipeline.insert('end-1c', "\nFinding Variants! \n")
+    samples_dict, number_lines = get_samples(paramsdict["Samplefile"])
+    FindVariantsAll(allelesout_path, qualities_path, variants_path, samples_dict, float(paramsdict["Consensusthreshold"]), performance, number_cores)
+    textbox_pipeline.insert('end-1c', "\nFinished finding Variants! \n")
+
+    # consensustogetherpath = Path(paramsdict["Outputfolder"] + "/ConsensusTogether")
+    # length_matrix_json_path = Path(paramsdict["Outputfolder"] + '/MarkerPlots/markermatrix.json')
+    # loci_list = extract_locinames_from_matrix(length_matrix_json_path)
+    # textbox_pipeline.insert('end-1c', "\nStarting Adding all ConsensusSequences per Marker into 1 file! \n")
+    # joinSamplesSameMarker(consensusout_path, consensustogetherpath, loci_list)
+    # textbox_pipeline.insert('end-1c', "\nFinished Adding all ConsensusSequences per Marker into 1 file! \n")
+
+
+def FindVariantsAll(allelesoutpath : Path, qualities_path : Path, variants_path : Path, samples_dict : dict, consensusthreshold : float, performance : bool, number_cores : int):
+    quality_scores = {}
+    qualities_dict = qualities_path / "quality_scores.json"
+    with open(qualities_dict, "r") as f:
+        quality_scores = json.load(f)
+    
+    try:
+        if (performance):
+            with multiprocessing.Pool(processes = number_cores) as pool:
+                processes = []
+                args_list = [(allelesoutfilepath, quality_scores, variants_path, samples_dict, consensusthreshold) for allelesoutfilepath in allelesoutpath.iterdir()]
+                results = pool.starmap_async(FindVariantsPerFile, args_list)
+                processes = results.get()
+        else:
+            for allelesoutfilepath in allelesoutpath.iterdir():
+                FindVariantsPerFile(allelesoutfilepath, quality_scores, variants_path, samples_dict, consensusthreshold)
+    except Exception as e:
+            print(f"Error when trying to run ConsensusAll! \nException: {e} \n")
+
+
+def construct_genotype_options_diploid(bases : list, sites : list):
+    possible_genotypes = ["".join(genotype) for genotype in product(bases, repeat = len(sites))]
+    genotype_pairs = list(combinations_with_replacement(possible_genotypes, 2))
+    return possible_genotypes, genotype_pairs
+
+def logsumexp(log_values):
+    max_log = max(log_values)
+    if max_log == -math.inf:
+        return -math.inf
+    return max_log + math.log(sum(math.exp(x - max_log) for x in log_values))
+
+
+def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sites : int, qualities : list):
+    allele_log_probs = []
+    for genotype in genotype_tuple: #only 2
+        site_log_probs = []
+        for i in range(0, number_sites, 1):
+            base_error_probability = float(10**((-qualities[i])/10))
+            if (read[i] != genotype[i]):
+                prob = base_error_probability/3
+            else:
+                prob = 1-base_error_probability
+            if (prob == 0):
+                site_log_probs.append(-math.inf)
+            else:
+                site_log_probs.append(math.log(prob))
+
+        allele_log_prob = sum(site_log_probs)
+        allele_log_probs.append(math.log(0.5) + allele_log_prob)
+    
+    return logsumexp(allele_log_probs)
+
+
+def FindVariantsPerFile(allelesoutfilepath : Path, quality_scores : dict, variants_path : Path, samples_dict : dict, consensusthreshold : float):
+    
+    for fastafile in allelesoutfilepath.iterdir():
+        if not(fastafile.suffix == ".fasta"):
+            continue
+        locus = "_".join(fastafile.name.split('_')[0:2])
+        sample = fastafile.name.split('_')[2]
+        length = fastafile.name.split('_')[4]
+        print(locus)
+        print(sample)
+
+    bases = ["A", "C", "T", "G"]
+    sites = [0, 1, 2]
+    possible_genotypes, genotype_pairs_diploid = construct_genotype_options_diploid(bases, sites)
+
+    
+
+
+
+
+
+
+
+
+
+
+
+def get_quality_scores(input_path : Path, output_path : Path, indexcomboposition : int):
+    out = {"Indexcombos" : {}}
+
+    for fastqfile in input_path.iterdir():
+        if not(fastqfile.suffix == ".fastq"):
+            continue
+
+        indexcombo = fastqfile.name.split("_")[indexcomboposition-1]
+        out["Indexcombos"][indexcombo]  = {}
+        out["Indexcombos"][indexcombo]["Sequences"]  = {}
+        print("Getting Quality scores for sample " + indexcombo + "...\n")
+        for header, data in parse_fastq(fastqfile).items():
+            quality = data["quality"]
+            length = len(data["sequence"])
+
+            out["Indexcombos"][indexcombo]["Sequences"][header] = {}
+            list_qualities_converted = []
+            for char in quality:
+                list_qualities_converted.append(ord(char) - 33) #ord() gets the unicode for the given characters, if its an ASCII character than it givs the ASCII number (0-128)
+            out["Indexcombos"][indexcombo]["Sequences"][header] = (length, list_qualities_converted)
+    
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    out_path = output_path / "quality_scores.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(out, f, indent=4, ensure_ascii=False)
+
+
+
+
+
+
+
+
+
 
 
 def RunConsensusAll_GUI(textbox_pipeline : ctk.CTkTextbox, paramsdict : dict, performance : bool, number_cores : int):

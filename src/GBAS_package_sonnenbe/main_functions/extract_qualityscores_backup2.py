@@ -33,7 +33,7 @@ def main():
     allelesout_path = Path(allelesout_path_str)
     json_input_path = output_path / "quality_scores.json"
     samplelist_path = inputs_path / "samples.txt"
-    sites = [0, 1, 2, 3]
+    sites = [0, 1]
     outputpath = Path(r"C:\Users\Sebastian\Documents\Micromeria_test\output_likelihoods")
 
     calculate_likelihoods(json_input_path, allelesout_path, samplelist_path, sites, outputpath)
@@ -97,15 +97,6 @@ def construct_genotype_options_diploid(bases : list, sites : list):
     genotype_pairs = list(combinations_with_replacement(possible_genotypes, 2))
     return possible_genotypes, genotype_pairs
 
-
-
-def logsumexp(log_values):
-    max_log = max(log_values)
-    if max_log == -math.inf:
-        return -math.inf
-    return max_log + math.log(sum(math.exp(x - max_log) for x in log_values))
-
-
 def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sites : int, qualities : list):
     # for i, base in enumerate(read, 0):
     #     sum1 = []
@@ -124,51 +115,19 @@ def calculate_probability_diploid(genotype_tuple : tuple, read : str, number_sit
     #     probability = (1/2) * math.prod(sum2)
     
     probability = 0
-    allele_log_probs = []
     for genotype in genotype_tuple: #only 2
-        site_log_probs = []
+        sum = []
         for i in range(0, number_sites, 1):
             base_error_probability = float(10**((-qualities[i])/10))
             if (read[i] != genotype[i]):
-                prob = base_error_probability/3
-                #sum.append(base_error_probability/3)
+                sum.append(base_error_probability/3)
             else:
-                prob = 1-base_error_probability
-                #sum.append((1-base_error_probability))
-            if (prob == 0):
-                site_log_probs.append(-math.inf)
-            else:
-                site_log_probs.append(math.log(prob))
-        #probability += (1/2) * math.prod(sum)
-
-        allele_log_prob = sum(site_log_probs)
-        allele_log_probs.append(math.log(0.5) + allele_log_prob)
+                sum.append((1-base_error_probability))
+        probability += (1/2) * math.prod(sum)
     
-    #print(probability)
-
-    # probability = 0
-    # for genotype in genotype_tuple: #only 2
-    #     genotype_prob = 0
-    #     sum = 0
-    #     for i in range(0, number_sites, 1):
-    #         base_error_probability = float(10**((-qualities[i])/10))
-    #         if (read[i] != genotype[i]):
-    #             prob = base_error_probability/3
-    #         else:
-    #             prob = 1-base_error_probability
-            
-    #         if (prob == 0):
-    #             sum += -math.inf
-    #         else:
-    #             sum += math.log(prob)
-
-    #     sum += math.log((1/2))
+    print(probability)
     
-    # print(probability)
-
-
-    
-    return logsumexp(allele_log_probs)
+    return probability
 
 
     
@@ -219,28 +178,16 @@ def calculate_likelihoods(json_input_dict : Path, alleleouts_path : Path, sample
         for genotype_pair_diploid in genotype_pairs_diploid:
             genotype_pair_diploid_str = ",".join([pair for pair in genotype_pair_diploid])
             dict_likelihoods[locus][sample]["Genotypes"][genotype_pair_diploid_str] = {}
-            genotype_pair_log_likelihood_terms = []
+            genotype_pair_likelihood_terms = []
             for header, sequence in parse_fasta(fastafile).items():
                 header_merged = "@M" + header #Merged files have header beginning with @M, AllelesOut have header but with > instead of @M
                 qualities = [quality_scores["Indexcombos"][sample]["Sequences"][header_merged][1][site] for site in sites]
                 observed_bases = "".join([sequence[site] for site in sites])
-                genotype_pair_log_likelihood_terms.append(calculate_probability_diploid(genotype_pair_diploid, observed_bases, len(sites), qualities))
-            
-            
-            #genotype_likelihood = math.prod(genotype_pair_likelihood_terms)
+                genotype_pair_likelihood_terms.append(calculate_probability_diploid(genotype_pair_diploid, observed_bases, len(sites), qualities))
+            genotype_likelihood = math.prod(genotype_pair_likelihood_terms)
 
-            genotype_log_likelihood = sum(genotype_pair_log_likelihood_terms)
-
-            dict_likelihoods[locus][sample]["Genotypes"][genotype_pair_diploid_str]["LogLikelihood"] = genotype_log_likelihood
-
-            log_likelihoods = [data["LogLikelihood"] for data in dict_likelihoods[locus][sample]["Genotypes"].values()]
-
-            max_log_likelihood = max(log_likelihoods)
-
-            for genotype_name, data in dict_likelihoods[locus][sample]["Genotypes"].items():
-                rel_log_likelihood = data["LogLikelihood"] - max_log_likelihood
-                data["RelativeLogLikelihood"] = rel_log_likelihood
-                data["RelativeLikelihood"] = math.exp(rel_log_likelihood)
+            dict_likelihoods[locus][sample]["Genotypes"][genotype_pair_diploid_str]["Likelihood"] = genotype_likelihood
+    
 
 
         # if (len(sequence) == length and sequence.count("N") == 0):

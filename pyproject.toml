@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "GBAS_package_sonnenbe_vers2"
+version = "2.2.4"
+dependencies = [
+  "customtkinter>=5.2.0",
+  "matplotlib>=3.7.0",
+  "pandas>=2.0.0",
+]
+authors = [
+  { name="Sebastian Sonnenberg", email="sebastian.sonnenberg@boku.ac.at" },
+]
+description = "A GUI for the GBAS pipeline"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+# The key ("GBAS_package_sonnenbe") must match your package import name
+"GBAS_package_sonnenbe" = [
+  "bin/*",      # All files in bin
+  "bin/**/*",   # All subdirectories and files inside
+  "copy_bin.py" # The script for copying the bin
+]
+
+[project.scripts]
+gbas_gui_vers2_start = "GBAS_package_sonnenbe.main_GUI:main"
+gbas_get_bin_vers2 = "GBAS_package_sonnenbe.bin.copy_bin:main"
+
+[project.urls]
+Homepage = "https://github.com/sonnenbe-dot/GBAS-GUI"
+Issues = "https://github.com/sonnenbe-dot/GBAS-GUI/issues"

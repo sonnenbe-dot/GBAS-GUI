@@ -20,12 +20,13 @@ from GBAS_package_sonnenbe.main_functions.markerstatistics import runLengthstati
 from GBAS_package_sonnenbe.main_functions.markerplots import runMarkerplots_GUI
 
 from GBAS_package_sonnenbe.main_functions.extract_lengths import run_Length_Extraction_GUI, run_Length_Extraction
-from GBAS_package_sonnenbe.main_functions.consensus_all import RunConsensusAll_GUI, RunConsensusAll
+from GBAS_package_sonnenbe.main_functions.consensus_all import FindVariants_Likelihoods_GUI, RunConsensusAll_GUI, RunConsensusAll
 from GBAS_package_sonnenbe.main_functions.allele_determination import RunVariants_Determination_GUI
+from GBAS_package_sonnenbe.main_functions.genotype_likelihoods_diploid import calculate_likelihoods_diploid_GUI
 from GBAS_package_sonnenbe.main_functions.allele_calling import run_Allele_Call_GUI
 
 class advanced_window(tk.Toplevel):
-    def __init__(self, parent, current_workspace : Path, paramsdict : dict, performance : bool, zipping : bool, num_cores : int, checkbox_states_pipeline_advanced : dict, executablesdict : dict, parameters_list : list, list_mandatory : list, textbox_pipeline : ctk.CTkTextbox, outputfolders_list1 : list, outputfolders_list2 : list, filtering_param : float, on_done):
+    def __init__(self, parent, current_workspace : Path, paramsdict : dict, performance : bool, zipping : bool, allele_determination_likelihood : bool, num_cores : int, base_positions_number : int, checkbox_states_pipeline_advanced : dict, executablesdict : dict, parameters_list : list, list_mandatory : list, textbox_pipeline : ctk.CTkTextbox, outputfolders_list1 : list, outputfolders_list2 : list, filtering_param : float, on_done):
         super().__init__(parent)
 
         self.filtering_param = filtering_param
@@ -56,12 +57,15 @@ class advanced_window(tk.Toplevel):
         self.number_cores = num_cores
         self.performance = performance
         self.zipping = zipping
-        self.checkbox_performance = 1
-        self.checkbox_zipping = 1
-        if (not(self.performance)):
-            self.checkbox_performance = 0
-        if (not(self.zipping)):
-            self.checkbox_zipping = 0
+        self.allele_determination_likelihood = allele_determination_likelihood
+        self.base_positions_number = base_positions_number
+
+        # self.checkbox_performance = 1
+        # self.checkbox_zipping = 1
+        # if (not(self.performance)):
+        #     self.checkbox_performance = 0
+        # if (not(self.zipping)):
+        #     self.checkbox_zipping = 0
         
         self.checkbox_states_pipeline_advanced = checkbox_states_pipeline_advanced
         self.checkboxes_pipeline1 = []
@@ -86,62 +90,62 @@ class advanced_window(tk.Toplevel):
                 checkbox_text = checkbox.cget("text")
                 self.checkbox_states_pipeline_advanced[checkbox_text] = checkbox.get()
             
-            self.checkbox_performance = self.checkbox_advanced[0].get()
-            self.checkbox_zipping = self.checkbox_advanced[1].get()
+            # self.checkbox_performance = self.checkbox_advanced[0].get()
+            # self.checkbox_zipping = self.checkbox_advanced[1].get()
             # for checkbox in self.checkbox_advanced:
             #     self.checkbox_performance = checkbox.get()
 
             #update self.number_cores here as well in the future!
             
-            if (self.checkbox_performance):
-                self.performance = True
-            else:
-                self.performance = False
-            if (self.checkbox_zipping):
-                self.zipping = True
-            else:
-                self.zipping = False
-            self.on_done("Pipeline has not started:", self.performance, self.zipping, self.checkbox_states_pipeline_advanced)
+            # if (self.checkbox_performance):
+            #     self.performance = True
+            # else:
+            #     self.performance = False
+            # if (self.checkbox_zipping):
+            #     self.zipping = True
+            # else:
+            #     self.zipping = False
+            self.on_done("Pipeline has not started:", self.checkbox_states_pipeline_advanced)
         finally:
             self.destroy()
 
     
     def build_window(self):
-        ctk.CTkLabel(self, text="Advanced Input Settings:", font=ctk.CTkFont(size=20, weight="bold")).grid(row=0, column=0, padx=20, pady=(20, 20))
+        # ctk.CTkLabel(self, text="Advanced Input Settings:", font=ctk.CTkFont(size=20, weight="bold")).grid(row=0, column=0, padx=20, pady=(20, 20))
         
-        advanced_input_settings = ctk.CTkFrame(self, width=100, corner_radius=2)
-        advanced_input_settings.grid(row=1, column=0, rowspan=1, sticky="nsew")
-        advanced_input_settings.grid_columnconfigure(0, weight=1)
-        advanced_input_settings.grid_columnconfigure(1, weight=1)
-        advanced_input_settings.grid_columnconfigure(2, weight=1)
-        advanced_input_settings.grid_rowconfigure(0, weight=1)
-        advanced_input_settings.grid_rowconfigure(1, weight=1)
+        # advanced_input_settings = ctk.CTkFrame(self, width=100, corner_radius=2)
+        # advanced_input_settings.grid(row=1, column=0, rowspan=1, sticky="nsew")
+        # advanced_input_settings.grid_columnconfigure(0, weight=1)
+        # advanced_input_settings.grid_columnconfigure(1, weight=1)
+        # advanced_input_settings.grid_columnconfigure(2, weight=1)
+        # advanced_input_settings.grid_rowconfigure(0, weight=1)
+        # advanced_input_settings.grid_rowconfigure(1, weight=1)
         
         
-        checkbox_performance_var = tk.IntVar(value = self.checkbox_performance)
-        checkbox_performance = ctk.CTkCheckBox(advanced_input_settings, text="HighPerformance", variable=checkbox_performance_var)
-        checkbox_performance.grid(row=1, column=0, padx=10, pady=(5, 5), sticky="w")
-        self.checkbox_advanced.append(checkbox_performance)
+        # checkbox_performance_var = tk.IntVar(value = self.checkbox_performance)
+        # checkbox_performance = ctk.CTkCheckBox(advanced_input_settings, text="HighPerformance", variable=checkbox_performance_var)
+        # checkbox_performance.grid(row=1, column=0, padx=10, pady=(5, 5), sticky="w")
+        # self.checkbox_advanced.append(checkbox_performance)
 
-        checkbox_zipping_var = tk.IntVar(value = self.checkbox_zipping)
-        checkbox_zipping = ctk.CTkCheckBox(advanced_input_settings, text="Zipping files", variable=checkbox_zipping_var)
-        checkbox_zipping.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="w")
-        self.checkbox_advanced.append(checkbox_zipping)
+        # checkbox_zipping_var = tk.IntVar(value = self.checkbox_zipping)
+        # checkbox_zipping = ctk.CTkCheckBox(advanced_input_settings, text="Zipping files", variable=checkbox_zipping_var)
+        # checkbox_zipping.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="w")
+        # self.checkbox_advanced.append(checkbox_zipping)
         
         advanced_pipeline1_settings_logo = ctk.CTkLabel(self, text="Advanced Pipeline Settings (1):", font=ctk.CTkFont(size=20, weight="bold"))
-        advanced_pipeline1_settings_logo.grid(row=3, column=0, padx=20, pady=(20, 20))
+        advanced_pipeline1_settings_logo.grid(row=0, column=0, padx=20, pady=(20, 20))
         
         advanced_pipeline1_settings = ctk.CTkFrame(self, width=100, corner_radius=2)
-        advanced_pipeline1_settings.grid(row=4, column=0, rowspan=1, sticky="nsew")
+        advanced_pipeline1_settings.grid(row=1, column=0, rowspan=1, sticky="nsew")
         advanced_pipeline1_settings.grid_columnconfigure(0, weight=1)
         advanced_pipeline1_settings.grid_rowconfigure(0, weight=1)
         advanced_pipeline1_settings.grid_rowconfigure(1, weight=1)
         
         advanced_pipeline2_settings_logo = ctk.CTkLabel(self, text="Advanced Pipeline Settings (2):", font=ctk.CTkFont(size=20, weight="bold"))
-        advanced_pipeline2_settings_logo.grid(row=5, column=0, padx=20, pady=(20, 20))
+        advanced_pipeline2_settings_logo.grid(row=2, column=0, padx=20, pady=(20, 20))
         
         advanced_pipeline2_settings = ctk.CTkFrame(self, width=100, corner_radius=2)
-        advanced_pipeline2_settings.grid(row=6, column=0, rowspan=1, sticky="nsew")
+        advanced_pipeline2_settings.grid(row=3, column=0, rowspan=1, sticky="nsew")
         advanced_pipeline2_settings.grid_columnconfigure(0, weight=1)
         advanced_pipeline2_settings.grid_rowconfigure(0, weight=1)
         advanced_pipeline2_settings.grid_rowconfigure(1, weight=1)
@@ -162,7 +166,7 @@ class advanced_window(tk.Toplevel):
         scrollframe_pipeline2.grid(row=0, column=0, rowspan=1, sticky="nsew")
         scrollframe_pipeline2.grid_columnconfigure(0, weight=1)
         
-        options = ["LengthExtraction", "ConsensusSequence", "AlleleDetection", "AlleleCall"]
+        options = ["LengthExtraction", "ConsensusSequences", "AlleleDetection", "AlleleCall"]
         for i, option in enumerate(options):
             checkbox_var = tk.IntVar(value = self.checkbox_states_pipeline_advanced[option])
             checkbox = ctk.CTkCheckBox(scrollframe_pipeline2, text=option, variable=checkbox_var)
@@ -219,8 +223,8 @@ class advanced_window(tk.Toplevel):
                 "LengthCounts" : {},
                 "Markerplots" : {},
                 "LengthExtraction" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "ConsensusSequences" : {},
+                "AlleleDetection" : {},
                 "AlleleCall" : {},
                 "RamUsage" : {},
                 "Total" : {}
@@ -289,8 +293,8 @@ class advanced_window(tk.Toplevel):
                 "LengthCounts" : {},
                 "Markerplots" : {},
                 "LengthExtraction" : {},
-                "ConsensusSeqs" : {},
-                "NCorrection" : {},
+                "ConsensusSequences" : {},
+                "AlleleDetection" : {},
                 "AlleleCall" : {},
                 "RamUsage" : {},
                 "Total" : {}
@@ -307,14 +311,17 @@ class advanced_window(tk.Toplevel):
             run_Length_Extraction_GUI(self.textbox_pipeline, self.paramsdict)
             logs["LengthExtraction"]["Time"] = t.lap()
             self.textbox_pipeline.insert("end", f"\nTime spent: {logs['LengthExtraction']['Time']:.4g}.\n")
-        if (self.checkbox_states_pipeline_advanced["ConsensusSequence"] == 1):
-            RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, self.number_cores)
-            logs["ConsensusSeqs"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['ConsensusSeqs']['Time']:.4g}.\n")
+        if (self.checkbox_states_pipeline_advanced["ConsensusSequences"] == 1):
+            RunConsensusAll_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]))
+            logs["ConsensusSequences"]["Time"] = t.lap()
         if (self.checkbox_states_pipeline_advanced["AlleleDetection"] == 1):
-            RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
-            logs["NCorrection"]["Time"] = t.lap()
-            self.textbox_pipeline.insert("end", f"\nTime spent: {logs['NCorrection']['Time']:.4g}.\n")
+            if (self.allele_determination_likelihood):
+                if (self.allele_determination_likelihood):
+                    calculate_likelihoods_diploid_GUI(self.textbox_pipeline, self.paramsdict, self.performance, int(self.paramsdict["NumberCores"]), self.base_positions_number)
+                else:
+                    RunVariants_Determination_GUI(self.textbox_pipeline, self.paramsdict)
+            logs["AlleleDetection"]["Time"] = t.lap()
+            self.textbox_pipeline.insert("end", f"\nTime spent: {logs["AlleleDetection"]['Time']:.4g}.\n")
         if (self.checkbox_states_pipeline_advanced["AlleleCall"] == 1):
             run_Allele_Call_GUI(self.textbox_pipeline, self.paramsdict)
             logs["AlleleCall"]["Time"] = t.lap()
