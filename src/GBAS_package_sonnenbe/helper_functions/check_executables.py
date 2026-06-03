@@ -42,14 +42,20 @@ def check_executables(executables_dict : dict) -> bool:
     for dir in executables_dict["Folders"]:
         if (not(is_valid(executables_dict["Folders"][dir]))):
             flag = False
+            print("Not valid: \n")
+            print(dir)
             break
     for file in executables_dict["Files"]:
         if (not(is_valid(executables_dict["Files"][file]))):
             flag = False
+            print("Not valid: \n")
+            print(file)
             break
     for additional in executables_dict["Additional"]:
         if (not(is_valid(executables_dict["Additional"][additional]))):
             flag = False
+            print("Not valid: \n")
+            print(additional)
             break
     return flag
 

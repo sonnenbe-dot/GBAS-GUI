@@ -28,6 +28,7 @@ c) Merging branch into main
 
 
 #Other helpful git commands:
+-) git branch <new branch name> (create a new branch from your current branch)
 -) git status (check uncommitted changes and new files)
 -) git branch (number of all branches and which on which branch currently)
 -) git pull origin main (get latest version of remote main branch and merge it with local folder without overwriting new local changes)
