@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "GBAS_package_sonnenbe_vers2"
-version = "2.2.5"
+version = "2.2.7"
 dependencies = [
   "customtkinter>=5.2.0",
   "matplotlib>=3.7.0",

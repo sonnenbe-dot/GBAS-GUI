@@ -73,13 +73,14 @@ def demultiplex_per_file(fastqfile : Path, MergedOutfolderpath : Path, Separatou
                     elif int(mismatch(motifF, primerF)) <= int(maxmismatch) and int(mismatch(motifR, primerR)) <= int(maxmismatch):
                         flag = True
                     if (flag):
+                        sequence_trimmed = sequence[len(primerF):-len(primerR)]
                         if (locus in primerdict["primersboundaries"]):
                             for boundary in primerdict["primersboundaries"][locus]:
                                 if (len(sequence) >= boundary[0] and len(sequence) <= boundary[1]):
-                                    outputfile.write('>' + header[1:] + '\n' + sequence + '\n')
+                                    outputfile.write('>' + header[1:] + '\n' + sequence_trimmed + '\n')
                                     break
                         elif (len(sequence) >= int(minlength)):
-                            outputfile.write('>' + header[1:] + '\n' + sequence + '\n')
+                            outputfile.write('>' + header[1:] + '\n' + sequence_trimmed + '\n')
 
 
 

@@ -54,8 +54,10 @@ def usearch_per_file(file : Path, QCfolderpath : Path, MergedOutfolderpath : str
         #exe = str(Path(paramsdict["Bin"] + '/' + os.path.basename(os.path.normpath(executablesdict["Files"]["UsearchWindows"]))))
         if (paramsdict["Operatingsystem"].lower() == "windows"):
             exe = str(Path(executablesdict["Files"]["UsearchWindows"]))
-        else:
+        elif (paramsdict["Operatingsystem"].lower() == "linux"):
             exe = str(Path(executablesdict["Files"]["UsearchLinux"]))
+        else:
+            exe = str(Path(executablesdict["Files"]["UsearchMac"]))
         code = exe + ' -fastq_mergepairs ' + R1 + ' -reverse ' + R2 + ' -fastqout ' + out + ' -fastq_pctid 80 -fastq_maxdiffs 40'
         print('running: ' + code) # print code
         subprocess.call(code, shell=True)

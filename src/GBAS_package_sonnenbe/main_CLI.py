@@ -360,3 +360,8 @@ class PeakMemoryTracker:
     def max_mem_mb(self):
         """Returns max memory in MB"""
         return self.max_mem_bytes / (1024 ** 2)
+    
+
+
+if __name__ == "__main__":
+    main()
